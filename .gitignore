@@ -1,0 +1,18 @@
+# Ambiente virtual
+venv/
+.env
+
+# Arquivos de sistema
+__pycache__/
+*.pyc
+
+# Banco de dados/dados locais
+dados/*.json
+
+# Configurações de IDEs
+.vscode/
+.idea/
+
+# Arquivos temporários
+*.log
+*.tmp
