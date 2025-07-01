@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block titulo %}Sessões{% endblock %}
+
+{% block conteudo %}
+<h1>Agendamentos de Sessões</h1>
+<a href="{{ url_for('nova_sessao') }}">Agendar nova sessão</a>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Artista</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Observações</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for agendamento in sessoes %}
+        <tr>
+            <td>{{ agendamento.cliente }}</td>
+            <td>{{ agendamento.artista }}</td>
+            <td>{{ agendamento.data }}</td>
+            <td>{{ agendamento.hora }}</td>
+            <td>{{ agendamento.observacoes }}</td>
+            <td>
+                <a href="{{ url_for('excluir_agendamento_route', indice=loop.index0) }}"
+                   onclick="return confirm('Tem certeza que deseja excluir este agendamento?');">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

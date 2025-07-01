@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block titulo %}Registrar Pagamento{% endblock %}
+
+{% block conteudo %}
+    <h1>Registrar Pagamento</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li style="color: {% if category == 'erro' %}red{% else %}green{% endif %};">
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>Valor: <input type="number" step="0.01" name="valor" value="{{ valor|default('') }}" required></label><br>
+        <label>Forma de Pagamento: <input type="text" name="forma_pagamento" value="{{ forma_pagamento|default('') }}" required></label><br>
+        <label>Cliente: <input type="text" name="cliente" value="{{ cliente|default('') }}" required></label><br>
+        <label>Artista: <input type="text" name="artista" value="{{ artista|default('') }}" required></label><br>
+        <label>Descrição: <input type="text" name="descricao" value="{{ descricao|default('') }}" required></label><br>
+        <button type="submit">Registrar</button>
+    </form>
+{% endblock %}

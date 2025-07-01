@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nova Sessão{% endblock %}
+
+{% block conteudo %}
+    <h1>Agendar Nova Sessão</h1>
+    <form method="POST">
+        <label>Cliente: <input type="text" name="cliente" required></label><br>
+        <label>Artista: <input type="text" name="artista" required></label><br>
+        <label>Data: <input type="date" name="data" required></label><br>
+        <label>Hora: <input type="time" name="hora" required></label><br>
+        <label>Observações: <input type="text" name="observacoes"></label><br>
+        <button type="submit">Agendar</button>
+    </form>
+{% endblock %}

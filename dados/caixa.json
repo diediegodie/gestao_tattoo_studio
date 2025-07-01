@@ -1,0 +1,34 @@
+[
+    {
+        "data": "2025-07-01",
+        "valor": 600.0,
+        "forma_pagamento": "crébito",
+        "cliente": "joãozinho",
+        "descricao": "seila",
+        "tatuador": ""
+    },
+    {
+        "data": "2025-07-01",
+        "valor": 1000.0,
+        "forma_pagamento": "dinheiro",
+        "cliente": "robertinhu",
+        "descricao": "vai saber deus q sabe",
+        "artista": "tafi"
+    },
+    {
+        "data": "2025-07-01",
+        "valor": 600.0,
+        "forma_pagamento": "débito",
+        "cliente": "zé",
+        "descricao": "aaaaa",
+        "artista": "jesus"
+    },
+    {
+        "data": "2025-07-01",
+        "valor": 234234.0,
+        "forma_pagamento": "dsfsdf",
+        "cliente": "asdfsfsd",
+        "descricao": "sdfasfsa",
+        "artista": "sdfasfs"
+    }
+]

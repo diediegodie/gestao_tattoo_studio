@@ -1,0 +1,16 @@
+[
+    {
+        "nome": "Tinta",
+        "descricao": "marca tal",
+        "valor_unitario": 40.0,
+        "quantidade": 2,
+        "total": 80.0
+    },
+    {
+        "nome": "outra tinta",
+        "descricao": "marca tal, texto maior etc so para teste mesmo blablabla",
+        "valor_unitario": 50.0,
+        "quantidade": 3,
+        "total": 150.0
+    }
+]

@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "cliente": "Nananana",
+        "artista": "ananana",
+        "data": "2025-08-12",
+        "hora": "15:00",
+        "observacoes": "seila"
+    },
+    {
+        "id": 2,
+        "cliente": "joãozinho",
+        "artista": "Fito",
+        "data": "2025-08-02",
+        "hora": "16:12",
+        "observacoes": "teste teste"
+    }
+]
