@@ -71,8 +71,23 @@ def gerar_relatorio(tipo="diario"):
     print(f"\n➡ Total {tipo}: R$ {total:.2f}\n")
 
 
-
 def mostrar_e_acumular(pagamento, _):
     print(
         f"{pagamento['data']} | {pagamento['cliente']} | R$ {pagamento['valor']:.2f} | {pagamento['forma_pagamento']} | {pagamento['descricao']}"
     )
+
+
+def gerar_extrato_mensal(mes, ano):
+    pagamentos = carregar_pagamentos()
+    extrato = []
+
+    for pagamento in pagamentos:
+        data_pagamento = datetime.strptime(pagamento["data"], "%Y-%m-%d").date()
+        if data_pagamento.month == mes and data_pagamento.year == ano:
+            extrato.append(pagamento)
+
+    hoje = datetime.now().date()
+    if mes == hoje.month and ano == hoje.year:
+        return None  # Mês atual ainda em andamento
+
+    return extrato

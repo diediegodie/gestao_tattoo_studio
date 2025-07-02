@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block titulo %}Extrato Mensal{% endblock %}
+
+{% block conteudo %}
+<h1>Extrato Mensal</h1>
+
+<form method="POST">
+    <label>Mês: <input type="number" name="mes" min="1" max="12" required></label>
+    <label>Ano: <input type="number" name="ano" min="2000" max="2100" required></label>
+    <button type="submit">Buscar Extrato</button>
+</form>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li class="mensagem-{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% if extrato %}
+    <h2>Pagamentos - {{ mes }}/{{ ano }}</h2>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Artista</th>
+                <th>Valor (R$)</th>
+                <th>Forma Pagamento</th>
+                <th>Descrição</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in extrato %}
+            <tr>
+                <td>{{ p.data }}</td>
+                <td>{{ p.cliente }}</td>
+                <td>{{ p.artista }}</td>
+                <td>R$ {{ "%.2f"|format(p.valor) }}</td>
+                <td>{{ p.forma_pagamento }}</td>
+                <td>{{ p.descricao }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}
