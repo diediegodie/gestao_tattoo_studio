@@ -1,6 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from financeiro.caixa import carregar_pagamentos, registrar_pagamento, excluir_pagamento
+from financeiro.caixa import (
+    carregar_pagamentos,
+    registrar_pagamento,
+    excluir_pagamento,
+    salvar_pagamentos,
+)
 from datetime import datetime
+from cadastro_interno.artistas import carregar_artistas
 
 financeiro_bp = Blueprint("financeiro_bp", __name__, url_prefix="/financeiro")
 
@@ -15,7 +21,10 @@ def listar_pagamentos():
         try:
             inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
             fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
-            pagamentos = [p for p in pagamentos if inicio <= datetime.strptime(p["data"], "%Y-%m-%d").date() <= fim]
+            pagamentos = [
+                p for p in pagamentos
+                if inicio <= datetime.strptime(p["data"], "%Y-%m-%d").date() <= fim
+            ]
         except ValueError:
             flash("Formato de data inválido.", "erro")
 
@@ -24,6 +33,8 @@ def listar_pagamentos():
 
 @financeiro_bp.route("/registrar", methods=["GET", "POST"])
 def registrar_pagamento_route():
+    artistas = carregar_artistas()
+
     if request.method == "POST":
         valor = request.form.get("valor", "").strip()
         forma = request.form.get("forma_pagamento", "").strip()
@@ -61,24 +72,28 @@ def registrar_pagamento_route():
                 cliente=cliente,
                 artista=artista,
                 descricao=descricao,
+                artistas=artistas,
             )
 
         registrar_pagamento(valor_float, forma, cliente, descricao, artista)
         flash("Pagamento registrado com sucesso!", "sucesso")
         return redirect(url_for("financeiro_bp.listar_pagamentos"))
 
-    return render_template("financeiro/registrar_pagamento.html")
+    return render_template("financeiro/registrar_pagamento.html", artistas=artistas)
 
 
-@financeiro_bp.route("/excluir/<int:indice>", methods=["GET"])
+@financeiro_bp.route("/excluir/<int:indice>")
 def excluir_pagamento_route(indice):
     excluir_pagamento(indice)
     flash("Pagamento excluído com sucesso.", "sucesso")
     return redirect(url_for("financeiro_bp.listar_pagamentos"))
 
+
 @financeiro_bp.route("/editar/<int:indice>", methods=["GET", "POST"])
 def editar_pagamento(indice):
     pagamentos = carregar_pagamentos()
+    artistas = carregar_artistas()
+
     if indice < 0 or indice >= len(pagamentos):
         flash("Pagamento não encontrado.", "erro")
         return redirect(url_for("financeiro_bp.listar_pagamentos"))
@@ -95,7 +110,7 @@ def editar_pagamento(indice):
         erros = []
         if not cliente or not artista or not valor_str or not forma_pagamento:
             erros.append("Preencha todos os campos obrigatórios.")
-        
+
         try:
             valor = float(valor_str)
             if valor <= 0:
@@ -106,7 +121,12 @@ def editar_pagamento(indice):
         if erros:
             for erro in erros:
                 flash(erro, "erro")
-            return render_template("financeiro/editar_pagamento.html", pagamento=pagamento, indice=indice)
+            return render_template(
+                "financeiro/editar_pagamento.html",
+                pagamento=pagamento,
+                indice=indice,
+                artistas=artistas
+            )
 
         pagamento.update({
             "cliente": cliente,
@@ -119,4 +139,9 @@ def editar_pagamento(indice):
         flash("Pagamento atualizado com sucesso!", "sucesso")
         return redirect(url_for("financeiro_bp.listar_pagamentos"))
 
-    return render_template("financeiro/editar_pagamento.html", pagamento=pagamento, indice=indice)
+    return render_template(
+        "financeiro/editar_pagamento.html",
+        pagamento=pagamento,
+        indice=indice,
+        artistas=artistas
+    )

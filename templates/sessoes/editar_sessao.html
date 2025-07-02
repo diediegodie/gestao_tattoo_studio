@@ -19,7 +19,16 @@
 
 <form method="POST">
   <label>Cliente: <input type="text" name="cliente" value="{{ sessao.cliente }}" required></label><br>
-  <label>Artista: <input type="text" name="artista" value="{{ sessao.artista }}" required></label><br>
+
+  <label>Artista:
+    <select name="artista" required>
+      <option value="">Selecione um artista</option>
+      {% for a in artistas %}
+        <option value="{{ a }}" {% if sessao.artista == a %}selected{% endif %}>{{ a }}</option>
+      {% endfor %}
+    </select>
+  </label><br>
+
   <label>Data: <input type="date" name="data" value="{{ sessao.data }}" required></label><br>
   <label>Hora: <input type="time" name="hora" value="{{ sessao.hora }}" required></label><br>
   <label>Observações: <input type="text" name="observacoes" value="{{ sessao.observacoes }}"></label><br>

@@ -44,7 +44,10 @@
             <td>{{ produto.get("nome", "") }}</td>
             <td>{{ produto.get("descricao", "") }}</td>
             <td>R$ {{ "%.2f"|format(produto.get("valor_unitario", 0)) }}</td>
-            <td>{{ produto.get("quantidade", 0) }}</td>
+            <td style="color: {% if produto.get('quantidade', 0) < 5 %}red{% else %}black{% endif %};">
+                {{ produto.get("quantidade", 0) }}
+            </td>
+
             <td>R$ {{ "%.2f"|format(produto.get("total", 0)) }}</td>
             <td>
               <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')">Excluir</a> |

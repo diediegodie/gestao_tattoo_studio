@@ -5,9 +5,11 @@ from sessoes.agendamento import (
     agendar_sessao,
     excluir_agendamento,
 )
+from cadastro_interno.artistas import carregar_artistas
 from datetime import datetime
 
 sessoes_bp = Blueprint("sessoes_bp", __name__, url_prefix="/sessoes")
+
 
 @sessoes_bp.route("/")
 def listar_sessoes():
@@ -19,14 +21,21 @@ def listar_sessoes():
         try:
             inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
             fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
-            sessoes = [s for s in sessoes if inicio <= datetime.strptime(s["data"], "%Y-%m-%d").date() <= fim]
+            sessoes = [
+                s
+                for s in sessoes
+                if inicio <= datetime.strptime(s["data"], "%Y-%m-%d").date() <= fim
+            ]
         except ValueError:
             flash("Formato de data inválido.", "erro")
 
     return render_template("sessoes/sessoes.html", sessoes=sessoes)
 
+
 @sessoes_bp.route("/nova", methods=["GET", "POST"])
 def nova_sessao():
+    artistas = carregar_artistas()  # Lista para o <select>
+
     if request.method == "POST":
         cliente = request.form.get("cliente", "").strip()
         artista = request.form.get("artista", "").strip()
@@ -55,13 +64,15 @@ def nova_sessao():
                 data=data,
                 hora=hora,
                 observacoes=observacoes,
+                artistas=artistas,  # Envia a lista para o template
             )
 
         agendar_sessao(cliente, artista, data, hora, observacoes)
         flash("Sessão agendada com sucesso!", "sucesso")
         return redirect(url_for("sessoes_bp.listar_sessoes"))
 
-    return render_template("sessoes/nova_sessao.html")
+    return render_template("sessoes/nova_sessao.html", artistas=artistas)
+
 
 @sessoes_bp.route("/excluir/<int:indice>")
 def excluir_agendamento_route(indice):
@@ -69,9 +80,11 @@ def excluir_agendamento_route(indice):
     flash("Agendamento excluído com sucesso!", "sucesso")
     return redirect(url_for("sessoes_bp.listar_sessoes"))
 
+
 @sessoes_bp.route("/editar/<int:indice>", methods=["GET", "POST"])
 def editar_agendamento(indice):
     agendamentos = carregar_agendamentos()
+    artistas = carregar_artistas()  # Lista para o <select>
 
     if indice < 0 or indice >= len(agendamentos):
         flash("Agendamento não encontrado.", "erro")
@@ -100,7 +113,12 @@ def editar_agendamento(indice):
         if erros:
             for erro in erros:
                 flash(erro, "erro")
-            return render_template("sessoes/editar_sessao.html", sessao=sessao, indice=indice)
+            return render_template(
+                "sessoes/editar_sessao.html",
+                sessao=sessao,
+                indice=indice,
+                artistas=artistas,
+            )
 
         # Atualiza os dados
         sessao["cliente"] = cliente
@@ -113,4 +131,6 @@ def editar_agendamento(indice):
         flash("Agendamento atualizado com sucesso!", "sucesso")
         return redirect(url_for("sessoes_bp.listar_sessoes"))
 
-    return render_template("sessoes/editar_sessao.html", sessao=sessao, indice=indice)
+    return render_template(
+        "sessoes/editar_sessao.html", sessao=sessao, indice=indice, artistas=artistas
+    )

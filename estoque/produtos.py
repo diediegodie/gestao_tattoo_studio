@@ -27,6 +27,10 @@ def gerar_novo_id(produtos):
 # --- Cadastrar novo produto ---
 def cadastrar_produto(nome, descricao, valor_unitario, quantidade, total):
     produtos = carregar_produtos()
+    
+    # Verifica se já existe produto com mesmo nome (case insensitive)
+    if any(p["nome"].lower() == nome.lower() for p in produtos):
+        return False  # Produto já existe, não cadastra de novo
 
     novo = {
         "id": gerar_novo_id(produtos),
@@ -39,6 +43,8 @@ def cadastrar_produto(nome, descricao, valor_unitario, quantidade, total):
 
     produtos.append(novo)
     salvar_produtos(produtos)
+    return True
+
 
 # --- Excluir produto pelo nome ---
 def excluir_produto(nome):

@@ -23,6 +23,7 @@ def listar_produtos():
 @estoque_bp.route("/novo", methods=["GET", "POST"])
 def novo_produto():
     if request.method == "POST":
+        print("POST recebido")
         nome = request.form.get("nome", "").strip()
         descricao = request.form.get("descricao", "").strip()
         valor_unitario_str = request.form.get("valor_unitario", "").strip()

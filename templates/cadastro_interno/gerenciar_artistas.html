@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cadastro Interno{% endblock %}
+
+{% block conteudo %}
+<h1>Cadastro de Artistas</h1>
+
+<!-- MENSAGENS -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li style="color: {% if category == 'erro' %}red{% else %}green{% endif %};">
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<!-- FORMULÁRIO DE NOVO ARTISTA -->
+<form method="POST" action="{{ url_for('cadastro_bp.novo_artista') }}">
+  <label for="nome">Novo artista:</label>
+  <input type="text" name="nome" required>
+  <button type="submit">Adicionar</button>
+</form>
+
+<!-- LISTA DE ARTISTAS -->
+<h2>Artistas Cadastrados</h2>
+<ul>
+  {% for artista in artistas %}
+    <li>
+      {{ artista }}
+      [<a href="{{ url_for('cadastro_bp.editar_artista', nome_antigo=artista) }}">Editar</a>] |
+      [<a href="{{ url_for('cadastro_bp.excluir_artista', nome=artista) }}" onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>]
+    </li>
+  {% else %}
+    <p>Nenhum artista cadastrado.</p>
+  {% endfor %}
+</ul>
+{% endblock %}
