@@ -4,7 +4,18 @@
 
 {% block conteudo %}
 <h1>Agendamentos de Sessões</h1>
-<a href="{{ url_for('sessoes_bp.nova_sessao') }}">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li class="mensagem-{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<a href="{{ url_for('sessoes_bp.nova_sessao') }}">Agendar nova sessão</a>
 
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>
@@ -26,7 +37,7 @@
             <td>{{ agendamento.hora }}</td>
             <td>{{ agendamento.observacoes }}</td>
             <td>
-                <a href="{{ url_for('sessoes_bp.excluir_agendamento_route', indice=loop.index0) }}">
+                <a href="#" onclick='return confirmDelete("{{ url_for("sessoes_bp.excluir_agendamento_route", indice=loop.index0) }}")'>Excluir</a>
             </td>
         </tr>
         {% endfor %}

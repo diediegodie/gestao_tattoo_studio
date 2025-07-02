@@ -20,21 +20,27 @@ def novo_produto():
 
         erros = []
 
+        # Validação dos campos
         if not nome:
-            erros.append("Nome é obrigatório.")
+            erros.append("Nome do produto é obrigatório.")
+        if not valor_unitario_str:
+            erros.append("Valor unitário é obrigatório.")
+        if not quantidade_str:
+            erros.append("Quantidade é obrigatória.")
+
         try:
             valor_unitario = float(valor_unitario_str)
             if valor_unitario <= 0:
                 erros.append("Valor unitário deve ser maior que zero.")
         except ValueError:
-            erros.append("Valor unitário inválido.")
+            erros.append("Valor unitário inválido. Use ponto como separador decimal.")
 
         try:
             quantidade = int(quantidade_str)
             if quantidade <= 0:
                 erros.append("Quantidade deve ser maior que zero.")
         except ValueError:
-            erros.append("Quantidade inválida.")
+            erros.append("Quantidade inválida. Use apenas números inteiros.")
 
         if erros:
             for erro in erros:

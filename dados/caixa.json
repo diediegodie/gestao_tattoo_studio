@@ -30,5 +30,13 @@
         "cliente": "asdfsfsd",
         "descricao": "sdfasfsa",
         "artista": "sdfasfs"
+    },
+    {
+        "data": "2025-07-02",
+        "valor": 2343.0,
+        "forma_pagamento": "adoasa",
+        "cliente": "adsdas",
+        "descricao": "asdasda",
+        "artista": "asdasd"
     }
 ]

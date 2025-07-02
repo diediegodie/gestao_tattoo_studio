@@ -5,6 +5,16 @@
 {% block conteudo %}
 <h1>Lista de Produtos</h1>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li class="mensagem-{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
 <a href="{{ url_for('estoque_bp.novo_produto') }}">Cadastrar novo produto</a>
 
 {% if produtos %}
@@ -28,7 +38,7 @@
             <td>{{ produto.get("quantidade", 0) }}</td>
             <td>R$ {{ "%.2f"|format(produto.get("total", 0)) }}</td>
             <td>
-                <a href="{{ url_for('estoque_bp.excluir_produto_route', nome=produto['nome']) }}">
+                <a href="#" onclick='return confirmDelete("{{ url_for("estoque_bp.excluir_produto_route", nome=produto.get("nome")) }}")'>Excluir</a>
             </td>
         </tr>
         {% endfor %}

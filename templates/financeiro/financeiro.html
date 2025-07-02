@@ -3,51 +3,50 @@
 {% block titulo %}Financeiro{% endblock %}
 
 {% block conteudo %}
-    <h1>Pagamentos Registrados</h1>
+<h1>Pagamentos Registrados</h1>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-          {% for category, message in messages %}
-            <li class="mensagem-{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li class="mensagem-{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 
-    <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}">Registrar novo pagamento</a>
+<a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}">Registrar novo pagamento</a>
 
-    {% if pagamentos %}
-    <table border="1" cellpadding="5" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Cliente</th>
-                <th>Artista</th>
-                <th>Valor (R$)</th>
-                <th>Forma Pagamento</th>
-                <th>Descrição</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in pagamentos %}
-            <tr>
-                <td>{{ p.data }}</td>
-                <td>{{ p.cliente }}</td>
-                <td>{{ p.artista }}</td>
-                <td>R$ {{ "%.2f"|format(p.valor) }}</td>
-                <td>{{ p.forma_pagamento }}</td>
-                <td>{{ p.descricao }}</td>
-                <td>
-                    <a href="{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}"
-                       onclick="return confirm('Tem certeza que deseja excluir este pagamento?');">Excluir</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
+{% if pagamentos %}
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Artista</th>
+            <th>Valor (R$)</th>
+            <th>Forma Pagamento</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in pagamentos %}
+        <tr>
+            <td>{{ p.data }}</td>
+            <td>{{ p.cliente }}</td>
+            <td>{{ p.artista }}</td>
+            <td>R$ {{ "%.2f"|format(p.valor) }}</td>
+            <td>{{ p.forma_pagamento }}</td>
+            <td>{{ p.descricao }}</td>
+            <td>
+                <a href="#" onclick='return confirmDelete("{{ url_for("financeiro_bp.excluir_pagamento_route", indice=loop.index0) }}")'>Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
     <p>Nenhum pagamento registrado.</p>
-    {% endif %}
+{% endif %}
 {% endblock %}

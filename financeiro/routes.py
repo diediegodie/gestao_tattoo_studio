@@ -3,10 +3,12 @@ from financeiro.caixa import carregar_pagamentos, registrar_pagamento, excluir_p
 
 financeiro_bp = Blueprint("financeiro_bp", __name__, url_prefix="/financeiro")
 
+
 @financeiro_bp.route("/")
 def listar_pagamentos():
     pagamentos = carregar_pagamentos()
     return render_template("financeiro/financeiro.html", pagamentos=pagamentos)
+
 
 @financeiro_bp.route("/registrar", methods=["GET", "POST"])
 def registrar_pagamento_route():
@@ -18,12 +20,15 @@ def registrar_pagamento_route():
         descricao = request.form.get("descricao", "").strip()
 
         erros = []
+
+        if not valor:
+            erros.append("Valor é obrigatório.")
         try:
             valor_float = float(valor)
             if valor_float <= 0:
                 erros.append("Valor deve ser maior que zero.")
         except ValueError:
-            erros.append("Valor inválido.")
+            erros.append("Valor inválido. Use ponto como separador decimal.")
 
         if not forma:
             erros.append("Forma de pagamento é obrigatória.")
@@ -51,6 +56,7 @@ def registrar_pagamento_route():
         return redirect(url_for("financeiro_bp.listar_pagamentos"))
 
     return render_template("financeiro/registrar_pagamento.html")
+
 
 @financeiro_bp.route("/excluir/<int:indice>", methods=["GET"])
 def excluir_pagamento_route(indice):
