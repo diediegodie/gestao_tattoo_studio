@@ -38,7 +38,8 @@
             <td>{{ produto.get("quantidade", 0) }}</td>
             <td>R$ {{ "%.2f"|format(produto.get("total", 0)) }}</td>
             <td>
-                <a href="#" onclick='return confirmDelete("{{ url_for("estoque_bp.excluir_produto_route", nome=produto.get("nome")) }}")'>Excluir</a>
+              <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')">Excluir</a> |
+              <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}">Editar</a>
             </td>
         </tr>
         {% endfor %}

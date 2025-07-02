@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from estoque.produtos import carregar_produtos, cadastrar_produto, excluir_produto
+from estoque.produtos import carregar_produtos, cadastrar_produto, excluir_produto, salvar_produtos
 
 estoque_bp = Blueprint("estoque_bp", __name__, url_prefix="/estoque")
 
@@ -66,3 +66,55 @@ def excluir_produto_route(nome):
     excluir_produto(nome)
     flash(f"Produto '{nome}' excluído com sucesso!", "sucesso")
     return redirect(url_for("estoque_bp.listar_produtos"))
+
+
+@estoque_bp.route("/editar/<nome>", methods=["GET", "POST"])
+def editar_produto(nome):
+    produtos = carregar_produtos()
+    produto = next((p for p in produtos if p["nome"] == nome), None)
+
+    if not produto:
+        flash("Produto não encontrado.", "erro")
+        return redirect(url_for("estoque_bp.listar_produtos"))
+
+    if request.method == "POST":
+        novo_nome = request.form.get("nome", "").strip()
+        descricao = request.form.get("descricao", "").strip()
+        valor_unitario_str = request.form.get("valor_unitario", "").strip()
+        quantidade_str = request.form.get("quantidade", "").strip()
+
+        erros = []
+
+        if not novo_nome:
+            erros.append("Nome é obrigatório.")
+        try:
+            valor_unitario = float(valor_unitario_str)
+            if valor_unitario <= 0:
+                erros.append("Valor unitário deve ser maior que zero.")
+        except ValueError:
+            erros.append("Valor unitário inválido.")
+
+        try:
+            quantidade = int(quantidade_str)
+            if quantidade <= 0:
+                erros.append("Quantidade deve ser maior que zero.")
+        except ValueError:
+            erros.append("Quantidade inválida.")
+
+        if erros:
+            for erro in erros:
+                flash(erro, "erro")
+            return render_template("estoque/editar_produto.html", produto=produto)
+
+        # Atualiza produto
+        produto["nome"] = novo_nome
+        produto["descricao"] = descricao
+        produto["valor_unitario"] = valor_unitario
+        produto["quantidade"] = quantidade
+        produto["total"] = valor_unitario * quantidade
+
+        salvar_produtos(produtos)
+        flash("Produto atualizado com sucesso!", "sucesso")
+        return redirect(url_for("estoque_bp.listar_produtos"))
+
+    return render_template("estoque/editar_produto.html", produto=produto)

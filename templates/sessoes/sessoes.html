@@ -37,7 +37,8 @@
             <td>{{ agendamento.hora }}</td>
             <td>{{ agendamento.observacoes }}</td>
             <td>
-                <a href="#" onclick='return confirmDelete("{{ url_for("sessoes_bp.excluir_agendamento_route", indice=loop.index0) }}")'>Excluir</a>
+                <a href="#" onclick='return confirmDelete("{{ url_for("sessoes_bp.excluir_agendamento_route", indice=loop.index0) }}")'>Excluir</a> |
+                <a href="{{ url_for('sessoes_bp.editar_agendamento', indice=loop.index0) }}">Editar</a>
             </td>
         </tr>
         {% endfor %}

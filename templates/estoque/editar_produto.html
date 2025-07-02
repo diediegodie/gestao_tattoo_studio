@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block titulo %}Editar Produto{% endblock %}
+
+{% block conteudo %}
+    <h1>Editar Produto</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li style="color: {% if category == 'erro' %}red{% else %}green{% endif %};">
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>Nome: <input type="text" name="nome" value="{{ produto.nome }}" required></label><br>
+        <label>Descrição: <input type="text" name="descricao" value="{{ produto.descricao }}"></label><br>
+        <label>Valor Unitário (R$): <input type="number" step="0.01" name="valor_unitario" value="{{ produto.valor_unitario }}" required></label><br>
+        <label>Quantidade: <input type="number" name="quantidade" value="{{ produto.quantidade }}" required></label><br>
+        <button type="submit">Salvar Alterações</button>
+    </form>
+{% endblock %}

@@ -40,7 +40,8 @@
             <td>{{ p.forma_pagamento }}</td>
             <td>{{ p.descricao }}</td>
             <td>
-                <a href="#" onclick='return confirmDelete("{{ url_for("financeiro_bp.excluir_pagamento_route", indice=loop.index0) }}")'>Excluir</a>
+                <a href="#" onclick='return confirmDelete("{{ url_for("financeiro_bp.excluir_pagamento_route", indice=loop.index0) }}")'>Excluir</a> |
+                <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}">Editar</a>
             </td>
         </tr>
         {% endfor %}
