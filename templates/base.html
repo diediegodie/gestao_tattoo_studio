@@ -1,22 +1,23 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <title>{% block titulo %}Sistema de Gestão{% endblock %}</title>
+    <meta charset="UTF-8">
+    <title>{% block titulo %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
     <!-- MENU FIXO -->
     <nav>
         <a href="{{ url_for('index') }}">Início</a> |
-        <a href="{{ url_for('listar_produtos') }}">Estoque</a> |
-        <a href="{{ url_for('listar_sessoes') }}">Sessões</a> |
-        <a href="{{ url_for('listar_pagamentos') }}">Financeiro</a> |
-        <a href="{{ url_for('registrar_pagamento_route') }}">Registrar Pagamento</a>
+        <a href="{{ url_for('estoque_bp.listar_produtos') }}">Estoque</a> |
+        <a href="{{ url_for('sessoes_bp.listar_sessoes') }}">Sessões</a> |
+        <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}">Financeiro</a> |
+        <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}">Registrar Pagamento</a>
     </nav>
     <hr>
 
-    <!-- CONTEÚDO DA PÁGINA -->
     {% block conteudo %}{% endblock %}
 
 </body>

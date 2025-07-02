@@ -1,18 +1,16 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from estoque.produtos import carregar_produtos, cadastrar_produto, excluir_produto
 
-estoque_bp = Blueprint("estoque", __name__)
+estoque_bp = Blueprint("estoque_bp", __name__, url_prefix="/estoque")
+
 
 @estoque_bp.route("/")
-def index():
-    return render_template("index.html")
-
-@estoque_bp.route("/estoque")
 def listar_produtos():
     produtos = carregar_produtos()
     return render_template("estoque/estoque.html", produtos=produtos)
 
-@estoque_bp.route("/estoque/novo", methods=["GET", "POST"])
+
+@estoque_bp.route("/novo", methods=["GET", "POST"])
 def novo_produto():
     if request.method == "POST":
         nome = request.form.get("nome", "").strip()
@@ -52,12 +50,13 @@ def novo_produto():
         total = valor_unitario * quantidade
         cadastrar_produto(nome, descricao, valor_unitario, quantidade, total)
         flash("Produto cadastrado com sucesso!", "sucesso")
-        return redirect(url_for("estoque.listar_produtos"))
+        return redirect(url_for("estoque_bp.listar_produtos"))
 
     return render_template("estoque/novo_produto.html")
 
-@estoque_bp.route("/estoque/excluir/<nome>")
+
+@estoque_bp.route("/excluir/<nome>")
 def excluir_produto_route(nome):
     excluir_produto(nome)
     flash(f"Produto '{nome}' excluído com sucesso!", "sucesso")
-    return redirect(url_for("estoque.listar_produtos"))
+    return redirect(url_for("estoque_bp.listar_produtos"))

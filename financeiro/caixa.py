@@ -28,7 +28,7 @@ def registrar_pagamento(valor, forma_pagamento, cliente, descricao, artista):
         "forma_pagamento": forma_pagamento.lower(),
         "cliente": cliente,
         "descricao": descricao,
-        "artista": artista
+        "artista": artista,
     }
     pagamentos.append(novo_pagamento)
     salvar_pagamentos(pagamentos)
@@ -42,7 +42,6 @@ def excluir_pagamento(indice):
         salvar_pagamentos(pagamentos)
 
 
-
 def gerar_relatorio(tipo="diario"):
     pagamentos = carregar_pagamentos()
     hoje = datetime.now().date()
@@ -54,22 +53,23 @@ def gerar_relatorio(tipo="diario"):
         data_pagamento = datetime.strptime(pagamento["data"], "%Y-%m-%d").date()
 
         if tipo == "diario" and data_pagamento == hoje:
-            mostrar_e_acumular(pagamento, total)
             total += pagamento["valor"]
+            mostrar_e_acumular(pagamento, total)
 
         elif tipo == "semanal" and (hoje - data_pagamento).days <= 7:
-            mostrar_e_acumular(pagamento, total)
             total += pagamento["valor"]
+            mostrar_e_acumular(pagamento, total)
 
         elif (
             tipo == "mensal"
             and data_pagamento.month == hoje.month
             and data_pagamento.year == hoje.year
         ):
-            mostrar_e_acumular(pagamento, total)
             total += pagamento["valor"]
+            mostrar_e_acumular(pagamento, total)
 
     print(f"\n➡ Total {tipo}: R$ {total:.2f}\n")
+
 
 
 def mostrar_e_acumular(pagamento, _):

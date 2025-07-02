@@ -4,7 +4,8 @@
 
 {% block conteudo %}
 <h1>Lista de Produtos</h1>
-<a href="{{ url_for('novo_produto') }}">Cadastrar novo produto</a>
+
+<a href="{{ url_for('estoque_bp.novo_produto') }}">Cadastrar novo produto</a>
 
 {% if produtos %}
 <table border="1" cellpadding="5" cellspacing="0">
@@ -27,8 +28,7 @@
             <td>{{ produto.get("quantidade", 0) }}</td>
             <td>R$ {{ "%.2f"|format(produto.get("total", 0)) }}</td>
             <td>
-                <a href="{{ url_for('excluir_produto_route', nome=produto['nome']) }}"
-                   onclick="return confirm('Tem certeza que deseja excluir este produto?');">Excluir</a>
+                <a href="{{ url_for('estoque_bp.excluir_produto_route', nome=produto['nome']) }}">
             </td>
         </tr>
         {% endfor %}

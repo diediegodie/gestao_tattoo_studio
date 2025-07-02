@@ -9,15 +9,13 @@
       {% if messages %}
         <ul>
           {% for category, message in messages %}
-            <li style="color: {% if category == 'erro' %}red{% else %}green{% endif %};">
-              {{ message }}
-            </li>
+            <li class="mensagem-{{ category }}">{{ message }}</li>
           {% endfor %}
         </ul>
       {% endif %}
     {% endwith %}
 
-    <a href="{{ url_for('registrar_pagamento_route') }}">Registrar novo pagamento</a>
+    <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}">Registrar novo pagamento</a>
 
     {% if pagamentos %}
     <table border="1" cellpadding="5" cellspacing="0">
@@ -42,7 +40,7 @@
                 <td>{{ p.forma_pagamento }}</td>
                 <td>{{ p.descricao }}</td>
                 <td>
-                    <a href="{{ url_for('excluir_pagamento_route', indice=loop.index0) }}"
+                    <a href="{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}"
                        onclick="return confirm('Tem certeza que deseja excluir este pagamento?');">Excluir</a>
                 </td>
             </tr>
