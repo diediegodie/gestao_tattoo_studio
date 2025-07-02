@@ -5,13 +5,25 @@ from sessoes.agendamento import (
     agendar_sessao,
     excluir_agendamento,
 )
+from datetime import datetime
 
 sessoes_bp = Blueprint("sessoes_bp", __name__, url_prefix="/sessoes")
 
 @sessoes_bp.route("/")
 def listar_sessoes():
-    agendamentos = carregar_agendamentos()
-    return render_template("sessoes/sessoes.html", sessoes=agendamentos)
+    sessoes = carregar_agendamentos()
+    data_inicio = request.args.get("data_inicio")
+    data_fim = request.args.get("data_fim")
+
+    if data_inicio and data_fim:
+        try:
+            inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+            fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
+            sessoes = [s for s in sessoes if inicio <= datetime.strptime(s["data"], "%Y-%m-%d").date() <= fim]
+        except ValueError:
+            flash("Formato de data inválido.", "erro")
+
+    return render_template("sessoes/sessoes.html", sessoes=sessoes)
 
 @sessoes_bp.route("/nova", methods=["GET", "POST"])
 def nova_sessao():

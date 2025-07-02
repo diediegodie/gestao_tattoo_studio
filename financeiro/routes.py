@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from financeiro.caixa import carregar_pagamentos, registrar_pagamento, excluir_pagamento
+from datetime import datetime
 
 financeiro_bp = Blueprint("financeiro_bp", __name__, url_prefix="/financeiro")
 
@@ -7,6 +8,17 @@ financeiro_bp = Blueprint("financeiro_bp", __name__, url_prefix="/financeiro")
 @financeiro_bp.route("/")
 def listar_pagamentos():
     pagamentos = carregar_pagamentos()
+    data_inicio = request.args.get("data_inicio")
+    data_fim = request.args.get("data_fim")
+
+    if data_inicio and data_fim:
+        try:
+            inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+            fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
+            pagamentos = [p for p in pagamentos if inicio <= datetime.strptime(p["data"], "%Y-%m-%d").date() <= fim]
+        except ValueError:
+            flash("Formato de data inválido.", "erro")
+
     return render_template("financeiro/financeiro.html", pagamentos=pagamentos)
 
 

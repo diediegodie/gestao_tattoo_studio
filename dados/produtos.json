@@ -1,24 +1,18 @@
 [
     {
-        "nome": "Tinta",
-        "descricao": "marca tal",
-        "valor_unitario": 1.0,
-        "quantidade": 1,
-        "total": 1.0
-    },
-    {
-        "nome": "outra tinta",
-        "descricao": "marca tal, texto",
-        "valor_unitario": 50.0,
-        "quantidade": 3,
-        "total": 150.0
-    },
-    {
         "id": 1,
-        "nome": "lalal",
+        "nome": "lalalasda",
         "descricao": "alalala",
         "valor_unitario": 123.0,
         "quantidade": 45,
         "total": 5535.0
+    },
+    {
+        "id": 2,
+        "nome": "weqasd",
+        "descricao": "asdasda",
+        "valor_unitario": 12.0,
+        "quantidade": 12,
+        "total": 144.0
     }
 ]

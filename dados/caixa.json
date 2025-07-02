@@ -38,5 +38,13 @@
         "cliente": "adsdas",
         "descricao": "asdasda",
         "artista": "asdasd"
+    },
+    {
+        "data": "2025-07-02",
+        "valor": 312.0,
+        "forma_pagamento": "werw",
+        "cliente": "werw",
+        "descricao": "werwe",
+        "artista": "werw"
     }
 ]

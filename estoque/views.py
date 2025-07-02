@@ -1,5 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from estoque.produtos import carregar_produtos, cadastrar_produto, excluir_produto, salvar_produtos
+from estoque.produtos import (
+    carregar_produtos,
+    cadastrar_produto,
+    excluir_produto,
+    salvar_produtos,
+)
 
 estoque_bp = Blueprint("estoque_bp", __name__, url_prefix="/estoque")
 
@@ -13,7 +18,6 @@ def listar_produtos():
         produtos = [p for p in produtos if termo in p.get("nome", "").lower()]
 
     return render_template("estoque/estoque.html", produtos=produtos, termo=termo)
-
 
 
 @estoque_bp.route("/novo", methods=["GET", "POST"])
@@ -58,6 +62,32 @@ def novo_produto():
                 valor_unitario=valor_unitario_str,
                 quantidade=quantidade_str,
             )
+
+        if erros:
+            for erro in erros:
+                flash(erro, "erro")
+            return render_template(
+                "estoque/novo_produto.html",
+                nome=nome,
+                descricao=descricao,
+                valor_unitario=valor_unitario_str,
+                quantidade=quantidade_str,
+            )
+
+        # VERIFICA DUPLICAÇÃO
+        produtos = carregar_produtos()
+        if any(p["nome"].lower() == nome.lower() for p in produtos):
+            flash("Já existe um produto com esse nome.", "erro")
+            return render_template(
+                "estoque/novo_produto.html",
+                nome=nome,
+                descricao=descricao,
+                valor_unitario=valor_unitario_str,
+                quantidade=quantidade_str,
+            )
+
+        total = valor_unitario * quantidade
+        cadastrar_produto(nome, descricao, valor_unitario, quantidade, total)
 
         total = valor_unitario * quantidade
         cadastrar_produto(nome, descricao, valor_unitario, quantidade, total)
@@ -110,6 +140,13 @@ def editar_produto(nome):
         if erros:
             for erro in erros:
                 flash(erro, "erro")
+            return render_template("estoque/editar_produto.html", produto=produto)
+
+        # Verifica se já existe outro produto com o mesmo nome
+        if novo_nome.lower() != nome.lower() and any(
+            p["nome"].lower() == novo_nome.lower() for p in produtos
+        ):
+            flash("Já existe outro produto com esse nome.", "erro")
             return render_template("estoque/editar_produto.html", produto=produto)
 
         # Atualiza produto
