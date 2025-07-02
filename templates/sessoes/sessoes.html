@@ -17,6 +17,15 @@
 
 <a href="{{ url_for('sessoes_bp.nova_sessao') }}">Agendar nova sessão</a>
 
+<form method="GET" action="{{ url_for('sessoes_bp.listar_sessoes') }}">
+    <input type="text" name="busca" placeholder="Buscar cliente..." value="{{ termo }}">
+    <button type="submit">Buscar</button>
+    {% if termo %}
+        <a href="{{ url_for('sessoes_bp.listar_sessoes') }}">Limpar</a>
+    {% endif %}
+</form>
+
+
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>
         <tr>

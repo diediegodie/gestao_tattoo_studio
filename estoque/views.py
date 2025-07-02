@@ -7,7 +7,13 @@ estoque_bp = Blueprint("estoque_bp", __name__, url_prefix="/estoque")
 @estoque_bp.route("/")
 def listar_produtos():
     produtos = carregar_produtos()
-    return render_template("estoque/estoque.html", produtos=produtos)
+    termo = request.args.get("busca", "").strip().lower()
+
+    if termo:
+        produtos = [p for p in produtos if termo in p.get("nome", "").lower()]
+
+    return render_template("estoque/estoque.html", produtos=produtos, termo=termo)
+
 
 
 @estoque_bp.route("/novo", methods=["GET", "POST"])

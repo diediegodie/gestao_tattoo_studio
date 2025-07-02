@@ -17,6 +17,15 @@
 
 <a href="{{ url_for('estoque_bp.novo_produto') }}">Cadastrar novo produto</a>
 
+<!-- Formulário de busca -->
+<form method="GET" action="{{ url_for('estoque_bp.listar_produtos') }}" style="margin-top: 10px; margin-bottom: 15px;">
+    <input type="text" name="busca" placeholder="Buscar produto por nome..." value="{{ termo or '' }}">
+    <button type="submit">Buscar</button>
+    {% if termo %}
+        <a href="{{ url_for('estoque_bp.listar_produtos') }}">Limpar</a>
+    {% endif %}
+</form>
+
 {% if produtos %}
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>

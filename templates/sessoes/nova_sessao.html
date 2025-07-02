@@ -2,24 +2,27 @@
 
 {% block titulo %}Nova Sessão{% endblock %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <ul>
-        {% for category, message in messages %}
-            <li class="mensagem-{{ category }}">{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-    {% endwith %}
-
 {% block conteudo %}
-    <h1>Agendar Nova Sessão</h1>
-    <form method="POST">
-        <label>Cliente: <input type="text" name="cliente" required></label><br>
-        <label>Artista: <input type="text" name="artista" required></label><br>
-        <label>Data: <input type="date" name="data" required></label><br>
-        <label>Hora: <input type="time" name="hora" required></label><br>
-        <label>Observações: <input type="text" name="observacoes"></label><br>
-        <button type="submit">Agendar</button>
-    </form>
+<h1>Agendar Nova Sessão</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li style="color: {% if category == 'erro' %}red{% else %}green{% endif %};">
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
+  <label>Cliente: <input type="text" name="cliente" value="{{ cliente or '' }}" required></label><br>
+  <label>Artista: <input type="text" name="artista" value="{{ artista or '' }}" required></label><br>
+  <label>Data: <input type="date" name="data" value="{{ data or '' }}" required></label><br>
+  <label>Hora: <input type="time" name="hora" value="{{ hora or '' }}" required></label><br>
+  <label>Observações: <input type="text" name="observacoes" value="{{ observacoes or '' }}"></label><br>
+  <button type="submit">Agendar</button>
+</form>
 {% endblock %}
