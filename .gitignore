@@ -16,3 +16,12 @@ dados/*.json
 # Arquivos temporários
 *.log
 *.tmp
+
+# .gitignore
+.env
+venv/
+__pycache__/
+*.pyc
+*.db
+*.sqlite
+/dados/*.json

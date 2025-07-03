@@ -1,23 +1,37 @@
 import json
 import os
 from datetime import datetime
+from pathlib import Path
 
-CAMINHO_ARQUIVO = "dados/caixa.json"
+BASE_DIR = Path(__file__).parent.parent
+CAMINHO_ARQUIVO = BASE_DIR / "dados" / "caixa.json"
 
 
 def carregar_pagamentos():
-    if not os.path.exists(CAMINHO_ARQUIVO):
-        return []
-    with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
-        try:
-            return json.load(arquivo)
-        except json.JSONDecodeError:
+    try:
+        if not CAMINHO_ARQUIVO.exists():
+            with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as f:
+                json.dump([], f)
             return []
+
+        with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+            if not isinstance(dados, list):
+                raise ValueError("Formato inválido de dados")
+            return dados
+    except Exception as e:
+        print(f"Erro ao carregar pagamentos: {str(e)}")
+        return []
 
 
 def salvar_pagamentos(lista):
-    with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
-        json.dump(lista, arquivo, indent=4, ensure_ascii=False)
+    try:
+        with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
+            json.dump(lista, arquivo, indent=4, ensure_ascii=False)
+        return True
+    except Exception as e:
+        print(f"Erro ao salvar pagamentos: {str(e)}")
+        return False
 
 
 def registrar_pagamento(valor, forma_pagamento, cliente, descricao, artista):
@@ -25,14 +39,13 @@ def registrar_pagamento(valor, forma_pagamento, cliente, descricao, artista):
     novo_pagamento = {
         "data": datetime.now().strftime("%Y-%m-%d"),
         "valor": float(valor),
-        "forma_pagamento": forma_pagamento.lower(),
+        "forma_pagamento": forma_pagamento,  # Já vem formatado
         "cliente": cliente,
         "descricao": descricao,
-        "artista": artista,
+        "artista": artista
     }
     pagamentos.append(novo_pagamento)
     salvar_pagamentos(pagamentos)
-    print("Pagamento registrado com sucesso.")
 
 
 def excluir_pagamento(indice):
