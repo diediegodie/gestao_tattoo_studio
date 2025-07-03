@@ -1,27 +1,52 @@
-# Ambiente virtual
+# ==============================================
+# Ambiente Python
+# ==============================================
+# Virtualenv
 venv/
 .env
 
-# Arquivos de sistema
+# Bytecode e cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Banco de dados/dados locais
-dados/*.json
-
-# Configurações de IDEs
-.vscode/
-.idea/
-
-# Arquivos temporários
-*.log
-*.tmp
-
-# .gitignore
-.env
-venv/
-__pycache__/
-*.pyc
+# ==============================================
+# Dados e bancos locais
+# ==============================================
+/dados/*.json
 *.db
 *.sqlite
-/dados/*.json
+*.sqlite3
+
+# ==============================================
+# IDEs e editores
+# ==============================================
+# VS Code
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# PyCharm/IntelliJ
+.idea/
+*.iml
+
+# ==============================================
+# Arquivos temporários e sistema
+# ==============================================
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# ==============================================
+# Outros
+# ==============================================
+# Arquivos de ambiente de desenvolvimento
+.env.local
+.env.development
+.env.test
