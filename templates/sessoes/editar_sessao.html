@@ -31,6 +31,7 @@
 
   <label>Data: <input type="date" name="data" value="{{ sessao.data }}" required></label><br>
   <label>Hora: <input type="time" name="hora" value="{{ sessao.hora }}" required></label><br>
+  <label>Valor (R$): <input type="number" step="0.01" name="valor" value="{{ sessao.valor or '' }}"></label><br>
   <label>Observações: <input type="text" name="observacoes" value="{{ sessao.observacoes }}"></label><br>
   <button type="submit">Salvar Alterações</button>
 </form>

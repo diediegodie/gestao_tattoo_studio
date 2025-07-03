@@ -26,7 +26,7 @@ def gerar_novo_id(agendamentos):
     return max(s["id"] for s in agendamentos) + 1
 
 
-def agendar_sessao(cliente, artista, data, hora, observacoes=""):
+def agendar_sessao(cliente, artista, data, hora, valor=None, observacoes=""):
     try:
         datetime.strptime(data, "%Y-%m-%d")
         datetime.strptime(hora, "%H:%M")
@@ -41,6 +41,7 @@ def agendar_sessao(cliente, artista, data, hora, observacoes=""):
         "artista": artista,
         "data": data,
         "hora": hora,
+        "valor": float(valor) if valor else None,
         "observacoes": observacoes,
     }
     agendamentos.append(nova_sessao)

@@ -20,18 +20,18 @@
 <form method="POST">
   <label>Cliente: <input type="text" name="cliente" value="{{ cliente or '' }}" required></label><br>
 
-<label>Artista:
-  <select name="artista" required>
-    <option value="">Selecione um artista</option>
-    {% for nome in artistas %}
-      <option value="{{ nome }}" {% if nome == artista %}selected{% endif %}>{{ nome }}</option>
-    {% endfor %}
-  </select>
-</label><br>
-
+  <label>Artista:
+    <select name="artista" required>
+      <option value="">Selecione um artista</option>
+      {% for nome in artistas %}
+        <option value="{{ nome }}" {% if nome == artista %}selected{% endif %}>{{ nome }}</option>
+      {% endfor %}
+    </select>
+  </label><br>
 
   <label>Data: <input type="date" name="data" value="{{ data or '' }}" required></label><br>
   <label>Hora: <input type="time" name="hora" value="{{ hora or '' }}" required></label><br>
+  <label>Valor (R$): <input type="number" step="0.01" name="valor" value="{{ valor or '' }}"></label><br>
   <label>Observações: <input type="text" name="observacoes" value="{{ observacoes or '' }}"></label><br>
   <button type="submit">Agendar</button>
 </form>

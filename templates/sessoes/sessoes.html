@@ -31,12 +31,12 @@
   <button type="submit">Filtrar</button>
 </form>
 
-
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>
         <tr>
             <th>Cliente</th>
             <th>Artista</th>
+            <th>Valor</th>
             <th>Data</th>
             <th>Hora</th>
             <th>Observações</th>
@@ -48,6 +48,7 @@
         <tr>
             <td>{{ agendamento.cliente }}</td>
             <td>{{ agendamento.artista }}</td>
+            <td>{% if agendamento.valor %}R$ {{ "%.2f"|format(agendamento.valor) }}{% endif %}</td>
             <td>{{ agendamento.data | data_brasileira }}</td>
             <td>{{ agendamento.hora }}</td>
             <td>{{ agendamento.observacoes }}</td>

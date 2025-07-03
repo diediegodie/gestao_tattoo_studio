@@ -5,8 +5,8 @@ from sessoes.agendamento import (
     agendar_sessao,
     excluir_agendamento,
 )
-from cadastro_interno.artistas import carregar_artistas
 from datetime import datetime
+from cadastro_interno.artistas import carregar_artistas
 
 sessoes_bp = Blueprint("sessoes_bp", __name__, url_prefix="/sessoes")
 
@@ -34,13 +34,14 @@ def listar_sessoes():
 
 @sessoes_bp.route("/nova", methods=["GET", "POST"])
 def nova_sessao():
-    artistas = carregar_artistas()  # Lista para o <select>
+    artistas = carregar_artistas()
 
     if request.method == "POST":
         cliente = request.form.get("cliente", "").strip()
         artista = request.form.get("artista", "").strip()
         data = request.form.get("data", "").strip()
         hora = request.form.get("hora", "").strip()
+        valor = request.form.get("valor", "").strip()
         observacoes = request.form.get("observacoes", "").strip()
 
         erros = []
@@ -63,11 +64,12 @@ def nova_sessao():
                 artista=artista,
                 data=data,
                 hora=hora,
+                valor=valor,
                 observacoes=observacoes,
-                artistas=artistas,  # Envia a lista para o template
+                artistas=artistas,
             )
 
-        agendar_sessao(cliente, artista, data, hora, observacoes)
+        agendar_sessao(cliente, artista, data, hora, valor, observacoes)
         flash("Sessão agendada com sucesso!", "sucesso")
         return redirect(url_for("sessoes_bp.listar_sessoes"))
 
