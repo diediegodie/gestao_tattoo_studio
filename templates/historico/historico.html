@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block titulo %}Histórico de Sessões{% endblock %}
+
+{% block conteudo %}
+<h1>Histórico de Sessões Finalizadas</h1>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Artista</th>
+            <th>Data da Sessão</th>
+            <th>Data de Fechamento</th>
+            <th>Valor</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sessao in sessoes %}
+        <tr>
+            <td>{{ sessao.get('cliente', '') }}</td>
+            <td>{{ sessao.get('artista', '') }}</td>
+            <td>{{ sessao.get('data', '') | data_brasileira }}</td>
+            <td>{{ sessao.get('data_fechamento', '') }}</td>
+            <td>R$ {{ "%.2f"|format(sessao.get('valor', 0)) }}</td>
+            <td>{{ 'Pago' if sessao.get('paga', False) else 'Pendente' }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">Nenhuma sessão no histórico</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

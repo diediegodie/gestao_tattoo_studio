@@ -3,6 +3,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import datetime  # Necessário para o filtro de data
+from calculadora import calculadora_bp
+from historico import historico_bp
+from historico.routes import historico_bp
+from sessoes.routes import sessoes_bp
 
 # Configuração inicial
 load_dotenv()
@@ -32,6 +36,8 @@ app.register_blueprint(financeiro_bp)
 app.register_blueprint(sessoes_bp)
 app.register_blueprint(extrato_bp)
 app.register_blueprint(cadastro_bp)
+app.register_blueprint(calculadora_bp)
+app.register_blueprint(historico_bp)
 
 @app.route("/")
 def index():

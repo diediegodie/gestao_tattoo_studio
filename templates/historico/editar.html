@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block titulo %}Editar Sessão Histórica{% endblock %}
+
+{% block conteudo %}
+<h1>Editar Sessão Histórica</h1>
+
+<form method="POST">
+    <div>
+        <label>Cliente: <strong>{{ sessao.cliente }}</strong></label>
+    </div>
+    <div>
+        <label>Artista: <strong>{{ sessao.artista }}</strong></label>
+    </div>
+    <div>
+        <label>Data: <strong>{{ sessao.data | data_brasileira }}</strong></label>
+    </div>
+    <div>
+        <label for="valor">Valor:</label>
+        <input type="number" step="0.01" name="valor" value="{{ sessao.valor }}" required>
+    </div>
+    <div>
+        <label for="observacoes">Observações:</label>
+        <textarea name="observacoes" rows="4" style="width: 100%">{{ sessao.observacoes }}</textarea>
+    </div>
+    <button type="submit">Salvar</button>
+    <a href="{{ url_for('sessoes_bp.listar_historico') }}">Cancelar</a>
+</form>
+{% endblock %}

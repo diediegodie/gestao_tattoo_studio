@@ -7,15 +7,20 @@ from sessoes.agendamento import (
 )
 from datetime import datetime
 from cadastro_interno.artistas import carregar_artistas
+from sessoes.historico import mover_para_historico
+import json
 
 sessoes_bp = Blueprint("sessoes_bp", __name__, url_prefix="/sessoes")
-
 
 @sessoes_bp.route("/")
 def listar_sessoes():
     sessoes = carregar_agendamentos()
+    termo = request.args.get("busca", "").strip().lower()
     data_inicio = request.args.get("data_inicio")
     data_fim = request.args.get("data_fim")
+    
+    if termo:
+        sessoes = [s for s in sessoes if termo in s.get('cliente', '').lower()]
 
     if data_inicio and data_fim:
         try:
@@ -28,9 +33,21 @@ def listar_sessoes():
             ]
         except ValueError:
             flash("Formato de data inválido.", "erro")
-
+    
     return render_template("sessoes/sessoes.html", sessoes=sessoes)
 
+@sessoes_bp.route("/fechar/<int:id>", methods=["POST"])
+def fechar_sessao(id):
+    agendamentos = carregar_agendamentos()
+    sessao = next((s for s in agendamentos if s["id"] == id), None)
+    
+    if sessao:
+        mover_para_historico(sessao)
+        agendamentos = [s for s in agendamentos if s["id"] != id]
+        salvar_agendamentos(agendamentos)
+        flash("Sessão finalizada e movida para o histórico!", "sucesso")
+    
+    return redirect(url_for('sessoes_bp.listar_sessoes'))
 
 @sessoes_bp.route("/nova", methods=["GET", "POST"])
 def nova_sessao():
@@ -75,18 +92,16 @@ def nova_sessao():
 
     return render_template("sessoes/nova_sessao.html", artistas=artistas)
 
-
 @sessoes_bp.route("/excluir/<int:indice>")
 def excluir_agendamento_route(indice):
     excluir_agendamento(indice)
     flash("Agendamento excluído com sucesso!", "sucesso")
     return redirect(url_for("sessoes_bp.listar_sessoes"))
 
-
 @sessoes_bp.route("/editar/<int:indice>", methods=["GET", "POST"])
 def editar_agendamento(indice):
     agendamentos = carregar_agendamentos()
-    artistas = carregar_artistas()  # Lista para o <select>
+    artistas = carregar_artistas()
 
     if indice < 0 or indice >= len(agendamentos):
         flash("Agendamento não encontrado.", "erro")
@@ -122,7 +137,6 @@ def editar_agendamento(indice):
                 artistas=artistas,
             )
 
-        # Atualiza os dados
         sessao["cliente"] = cliente
         sessao["artista"] = artista
         sessao["data"] = data
@@ -136,3 +150,78 @@ def editar_agendamento(indice):
     return render_template(
         "sessoes/editar_sessao.html", sessao=sessao, indice=indice, artistas=artistas
     )
+
+@sessoes_bp.route("/historico")
+def listar_historico():
+    try:
+        with open("dados/sessoes.json", "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+            historico = dados.get("historico", [])
+            
+            sessoes_historico = []
+            for sessao in historico:
+                if not any(s.get("id") == sessao.get("id") for s in sessoes_historico):
+                    sessoes_historico.append({
+                        "id": sessao.get("id"),
+                        "data": sessao.get("data", ""),
+                        "cliente": sessao.get("cliente", ""),
+                        "artista": sessao.get("artista", ""),
+                        "valor_pago": sessao.get("valor", 0),
+                        "comissao_artista": calcular_comissao(sessao.get("valor", 0)),
+                        "observacoes": sessao.get("observacoes", "")  # Adicione esta linha
+                    })
+            
+    except (FileNotFoundError, json.JSONDecodeError):
+        sessoes_historico = []
+    
+    return render_template("historico/sessoes.html", sessoes=sessoes_historico)
+
+def calcular_comissao(valor):
+    # Exemplo: 30% de comissão - ajuste conforme sua regra de negócio
+    return valor * 0.3 if valor else 0
+
+
+@sessoes_bp.route("/historico/excluir/<int:id>", methods=["POST"])
+def excluir_historico(id):
+    try:
+        with open("dados/sessoes.json", "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+    except (FileNotFoundError, json.JSONDecodeError):
+        dados = {"sessoes_ativas": [], "historico": []}
+    
+    # Filtra mantendo apenas os itens com ID diferente do que será excluído
+    dados["historico"] = [s for s in dados["historico"] if s.get("id") != id]
+    
+    # Salva as alterações
+    with open("dados/sessoes.json", "w", encoding="utf-8") as arquivo:
+        json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+    
+    flash("Sessão removida do histórico com sucesso!", "sucesso")
+    return redirect(url_for('sessoes_bp.listar_historico'))
+
+
+@sessoes_bp.route("/historico/editar/<int:id>", methods=["GET", "POST"])
+def editar_historico(id):
+    try:
+        with open("dados/sessoes.json", "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+    except (FileNotFoundError, json.JSONDecodeError):
+        dados = {"sessoes_ativas": [], "historico": []}
+    
+    sessao = next((s for s in dados["historico"] if s.get("id") == id), None)
+    
+    if not sessao:
+        flash("Sessão não encontrada no histórico.", "erro")
+        return redirect(url_for('sessoes_bp.listar_historico'))
+    
+    if request.method == "POST":
+        sessao["valor"] = float(request.form.get("valor", 0))
+        sessao["observacoes"] = request.form.get("observacoes", "")
+        
+        with open("dados/sessoes.json", "w", encoding="utf-8") as arquivo:
+            json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+        
+        flash("Sessão atualizada no histórico!", "sucesso")
+        return redirect(url_for('sessoes_bp.listar_historico'))
+    
+    return render_template("historico/editar.html", sessao=sessao)

@@ -26,7 +26,6 @@ def novo_produto():
         print("POST recebido")
         nome = request.form.get("nome", "").strip()
         descricao = request.form.get("descricao", "").strip()
-        valor_unitario_str = request.form.get("valor_unitario", "").strip()
         quantidade_str = request.form.get("quantidade", "").strip()
 
         erros = []
@@ -34,18 +33,8 @@ def novo_produto():
         # Validação dos campos
         if not nome:
             erros.append("Nome do produto é obrigatório.")
-        if not valor_unitario_str:
-            erros.append("Valor unitário é obrigatório.")
         if not quantidade_str:
             erros.append("Quantidade é obrigatória.")
-
-        try:
-            valor_unitario = float(valor_unitario_str)
-            if valor_unitario <= 0:
-                erros.append("Valor unitário deve ser maior que zero.")
-        except ValueError:
-            erros.append("Valor unitário inválido. Use ponto como separador decimal.")
-
         try:
             quantidade = int(quantidade_str)
             if quantidade <= 0:
@@ -60,7 +49,6 @@ def novo_produto():
                 "estoque/novo_produto.html",
                 nome=nome,
                 descricao=descricao,
-                valor_unitario=valor_unitario_str,
                 quantidade=quantidade_str,
             )
 
@@ -71,7 +59,6 @@ def novo_produto():
                 "estoque/novo_produto.html",
                 nome=nome,
                 descricao=descricao,
-                valor_unitario=valor_unitario_str,
                 quantidade=quantidade_str,
             )
 
@@ -83,15 +70,12 @@ def novo_produto():
                 "estoque/novo_produto.html",
                 nome=nome,
                 descricao=descricao,
-                valor_unitario=valor_unitario_str,
                 quantidade=quantidade_str,
             )
 
-        total = valor_unitario * quantidade
-        cadastrar_produto(nome, descricao, valor_unitario, quantidade, total)
+        cadastrar_produto(nome, descricao, quantidade)
 
-        total = valor_unitario * quantidade
-        cadastrar_produto(nome, descricao, valor_unitario, quantidade, total)
+        cadastrar_produto(nome, descricao, quantidade)
         flash("Produto cadastrado com sucesso!", "sucesso")
         return redirect(url_for("estoque_bp.listar_produtos"))
 

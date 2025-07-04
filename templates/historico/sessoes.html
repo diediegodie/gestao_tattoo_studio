@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block titulo %}Histórico de Sessões{% endblock %}
+
+{% block conteudo %}
+<h1>Histórico</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li class="mensagem-{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% if sessoes %}
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Artista</th>
+            <th>Valor</th>
+            <th>Comissão</th>
+            <th>Observações</th>  <!-- Nova coluna -->
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sessao in sessoes %}
+        <tr>
+            <td>{{ sessao.data | data_brasileira if sessao.data else '' }}</td>
+            <td>{{ sessao.cliente }}</td>
+            <td>{{ sessao.artista }}</td>
+            <td>R$ {{ "%.2f"|format(sessao.valor_pago) if sessao.valor_pago else '0,00' }}</td>
+            <td>R$ {{ "%.2f"|format(sessao.comissao_artista) if sessao.comissao_artista else '0,00' }}</td>
+            <td>{{ sessao.observacoes }}</td>  <!-- Nova célula -->
+            <td>
+                <a href="{{ url_for('sessoes_bp.editar_historico', id=sessao.id) }}">Editar</a>
+                <form action="{{ url_for('sessoes_bp.excluir_historico', id=sessao.id) }}" method="POST" style="display: inline;">
+                    <button type="submit" onclick="return confirm('Tem certeza?')">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>Nenhuma sessão finalizada ainda.</p>
+{% endif %}
+{% endblock %}

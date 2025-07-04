@@ -25,7 +25,7 @@ def gerar_novo_id(produtos):
     return max(p.get("id", 0) for p in produtos) + 1
 
 # --- Cadastrar novo produto ---
-def cadastrar_produto(nome, descricao, valor_unitario, quantidade, total):
+def cadastrar_produto(nome, descricao, quantidade):
     produtos = carregar_produtos()
     
     # Verifica se já existe produto com mesmo nome (case insensitive)
@@ -36,9 +36,7 @@ def cadastrar_produto(nome, descricao, valor_unitario, quantidade, total):
         "id": gerar_novo_id(produtos),
         "nome": nome,
         "descricao": descricao,
-        "valor_unitario": valor_unitario,
         "quantidade": quantidade,
-        "total": total,
     }
 
     produtos.append(novo)

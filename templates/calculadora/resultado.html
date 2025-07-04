@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block titulo %}Resultado{% endblock %}
+
+{% block conteudo %}
+<h1>Resultado</h1>
+<div class="resultado-container">
+    <div class="resultado-item">
+        <span class="label">Valor Total:</span>
+        <span class="value">R$ {{ "%.2f"|format(valor) }}</span>
+    </div>
+    <div class="resultado-item">
+        <span class="label">Porcentagem:</span>
+        <span class="value">{{ "%.1f"|format(porcentagem) }}%</span>
+    </div>
+    <hr>
+    <div class="resultado-item highlight">
+        <span class="label">Artista recebe:</span>
+        <span class="value">R$ {{ "%.2f"|format(comissao) }}</span>
+    </div>
+    <div class="resultado-item highlight">
+        <span class="label">Estúdio recebe:</span>
+        <span class="value">R$ {{ "%.2f"|format(estudio) }}</span>
+    </div>
+</div>
+
+{% if sessao_id %}
+<form action="{{ url_for('historico_bp.historico_sessoes') }}" method="POST">
+    <input type="hidden" name="sessao_id" value="{{ sessao_id }}">
+    <input type="hidden" name="valor" value="{{ valor }}">
+    <input type="hidden" name="porcentagem" value="{{ porcentagem }}">
+    <button type="submit" class="btn-confirmar">Confirmar e Fechar Sessão</button>
+</form>
+{% endif %}
+
+<a href="{{ url_for('calculadora_bp.calculadora') }}" class="btn-novo-calculo">Novo Cálculo</a>
+{% endblock %}

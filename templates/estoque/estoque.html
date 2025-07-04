@@ -3,7 +3,7 @@
 {% block titulo %}Estoque{% endblock %}
 
 {% block conteudo %}
-<h1>Lista de Produtos</h1>
+<h1>Controle de estoque</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -32,9 +32,7 @@
         <tr>
             <th>Nome</th>
             <th>Descrição</th>
-            <th>Valor Unitário (R$)</th>
             <th>Quantidade</th>
-            <th>Total (R$)</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -43,15 +41,12 @@
         <tr>
             <td>{{ produto.get("nome", "") }}</td>
             <td>{{ produto.get("descricao", "") }}</td>
-            <td>R$ {{ "%.2f"|format(produto.get("valor_unitario", 0)) }}</td>
             <td style="color: {% if produto.get('quantidade', 0) < 5 %}red{% else %}black{% endif %};">
                 {{ produto.get("quantidade", 0) }}
             </td>
-
-            <td>R$ {{ "%.2f"|format(produto.get("total", 0)) }}</td>
             <td>
-              <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')">Excluir</a> |
-              <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}">Editar</a>
+                <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')">Excluir</a> |
+                <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}">Editar</a>
             </td>
         </tr>
         {% endfor %}
