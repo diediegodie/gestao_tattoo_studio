@@ -4,6 +4,7 @@ from financeiro.caixa import (
     registrar_pagamento,
     excluir_pagamento,
     salvar_pagamentos,
+    CAMINHO_PAGAMENTOS,
 )
 from datetime import datetime
 from cadastro_interno.artistas import carregar_artistas
@@ -30,80 +31,45 @@ def listar_pagamentos():
         except ValueError:
             flash("Formato de data inválido.", "erro")
 
-    return render_template("financeiro/financeiro.html", pagamentos=pagamentos)
+    return render_template("financeiro/financeiro.html", 
+                         pagamentos=pagamentos,
+                         formas_pagamento=FORMAS_PAGAMENTO)
 
 @financeiro_bp.route("/registrar", methods=["GET", "POST"])
 def registrar_pagamento_route():
     artistas = carregar_artistas()
-
+    
     if request.method == "POST":
-        valor = request.form.get("valor", "").strip()
-        forma = request.form.get("forma_pagamento", "").strip()
-        outra_forma = request.form.get("outra_forma_pagamento", "").strip()
-        cliente = request.form.get("cliente", "").strip()
-        artista = request.form.get("artista", "").strip()
-        descricao = request.form.get("descricao", "").strip()
-
-        erros = []
-
-        # Validação do valor
-        if not valor:
-            erros.append("Valor é obrigatório.")
         try:
-            valor_float = float(valor)
-            if valor_float <= 0:
-                erros.append("Valor deve ser maior que zero.")
-        except ValueError:
-            erros.append("Valor inválido. Use ponto como separador decimal.")
-
-        # Validação da forma de pagamento
-        if not forma:
-            erros.append("Forma de pagamento é obrigatória.")
-        elif forma == "Outros" and not outra_forma:
-            erros.append("Por favor especifique a forma de pagamento")
-        elif forma not in FORMAS_PAGAMENTO:
-            erros.append("Forma de pagamento inválida.")
-
-        # Validações dos demais campos
-        if not cliente:
-            erros.append("Cliente é obrigatório.")
-        if not artista:
-            erros.append("Artista é obrigatório.")
-        if not descricao:
-            erros.append("Descrição é obrigatória.")
-
-        if erros:
-            for erro in erros:
-                flash(erro, "erro")
-            return render_template(
-                "financeiro/registrar_pagamento.html",
-                valor=valor,
-                forma_pagamento=forma,
-                outra_forma_pagamento=outra_forma,
-                cliente=cliente,
-                artista=artista,
-                descricao=descricao,
-                artistas=artistas,
-                formas_pagamento=FORMAS_PAGAMENTO
-            )
-
-        # Usa a forma customizada se for "Outros"
-        forma_final = outra_forma if forma == "Outros" else forma
-
-        registrar_pagamento(valor_float, forma_final, cliente, descricao, artista)
-        flash("Pagamento registrado com sucesso!", "sucesso")
-        return redirect(url_for("financeiro_bp.listar_pagamentos"))
-
-    return render_template(
-        "financeiro/registrar_pagamento.html",
-        artistas=artistas,
-        formas_pagamento=FORMAS_PAGAMENTO
-    )
+            novo_pagamento = {
+                "data": request.form.get("data"),
+                "cliente": request.form.get("cliente"),
+                "artista": request.form.get("artista"),
+                "valor": float(request.form.get("valor", 0)),
+                "forma_pagamento": request.form.get("forma_pagamento"),
+                "descricao": request.form.get("descricao", "")
+            }
+            
+            if registrar_pagamento(novo_pagamento):
+                flash("Pagamento registrado com sucesso!", "sucesso")
+                return redirect(url_for("financeiro_bp.listar_pagamentos"))
+            else:
+                flash("Erro ao registrar pagamento.", "erro")
+        except Exception as e:
+            print(f"Erro no registro: {e}")
+            flash("Dados inválidos no formulário.", "erro")
+    
+    # Corrigindo o nome do template aqui:
+    return render_template("financeiro/registrar_pagamento.html",
+                         artistas=artistas,
+                         formas_pagamento=FORMAS_PAGAMENTO)
 
 @financeiro_bp.route("/excluir/<int:indice>")
 def excluir_pagamento_route(indice):
-    excluir_pagamento(indice)
-    flash("Pagamento excluído com sucesso.", "sucesso")
+    if excluir_pagamento(indice):
+        flash("Pagamento excluído com sucesso.", "sucesso")
+    else:
+        flash("Erro ao excluir pagamento.", "erro")
     return redirect(url_for("financeiro_bp.listar_pagamentos"))
 
 @financeiro_bp.route("/editar/<int:indice>", methods=["GET", "POST"])
@@ -118,56 +84,25 @@ def editar_pagamento(indice):
     pagamento = pagamentos[indice]
 
     if request.method == "POST":
-        cliente = request.form.get("cliente", "").strip()
-        artista = request.form.get("artista", "").strip()
-        valor_str = request.form.get("valor", "").strip()
-        forma_pagamento = request.form.get("forma_pagamento", "").strip()
-        outra_forma = request.form.get("outra_forma_pagamento", "").strip()
-        descricao = request.form.get("descricao", "").strip()
-
-        erros = []
-        if not cliente or not artista or not valor_str or not forma_pagamento:
-            erros.append("Preencha todos os campos obrigatórios.")
-
         try:
-            valor = float(valor_str)
-            if valor <= 0:
-                erros.append("O valor deve ser maior que zero.")
-        except ValueError:
-            erros.append("Valor inválido.")
+            pagamento.update({
+                "data": request.form.get("data"),
+                "cliente": request.form.get("cliente"),
+                "artista": request.form.get("artista"),
+                "valor": float(request.form.get("valor", 0)),
+                "forma_pagamento": request.form.get("forma_pagamento"),
+                "descricao": request.form.get("descricao", "")
+            })
+            
+            if salvar_pagamentos(pagamentos):
+                flash("Pagamento atualizado com sucesso!", "sucesso")
+                return redirect(url_for("financeiro_bp.listar_pagamentos"))
+            else:
+                flash("Erro ao atualizar pagamento.", "erro")
+        except Exception as e:
+            print(f"Erro na edição: {e}")
+            flash("Dados inválidos no formulário.", "erro")
 
-        # Validação específica para edição
-        if forma_pagamento == "Outros" and not outra_forma:
-            erros.append("Por favor especifique a forma de pagamento")
-        elif forma_pagamento not in FORMAS_PAGAMENTO:
-            erros.append("Forma de pagamento inválida")
-
-        if erros:
-            for erro in erros:
-                flash(erro, "erro")
-            return render_template(
-                "financeiro/editar_pagamento.html",
-                pagamento=pagamento,
-                indice=indice,
-                artistas=artistas,
-                formas_pagamento=FORMAS_PAGAMENTO
-            )
-
-        # Determina a forma de pagamento final
-        forma_final = outra_forma if forma_pagamento == "Outros" else forma_pagamento
-
-        pagamento.update({
-            "cliente": cliente,
-            "artista": artista,
-            "valor": valor,
-            "forma_pagamento": forma_final,
-            "descricao": descricao
-        })
-        salvar_pagamentos(pagamentos)
-        flash("Pagamento atualizado com sucesso!", "sucesso")
-        return redirect(url_for("financeiro_bp.listar_pagamentos"))
-
-    # Prepara os dados para edição
     forma_exibicao = pagamento['forma_pagamento']
     outra_forma = ""
     
