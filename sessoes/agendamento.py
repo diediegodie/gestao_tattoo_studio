@@ -37,10 +37,25 @@ def salvar_agendamentos(lista):
 
 # ... (mantenha o restante das funções existentes sem alterações)
 
-def gerar_novo_id(agendamentos):
-    if not agendamentos:
+def gerar_novo_id():
+
+    CAMINHO_ARQUIVO = "dados/sessoes.json"
+    if not os.path.exists(CAMINHO_ARQUIVO):
         return 1
-    return max(s["id"] for s in agendamentos) + 1
+
+    try:
+        with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+    except (json.JSONDecodeError, IOError):
+        return 1
+
+    sessoes_ativas = dados.get("sessoes_ativas", [])
+    historico = dados.get("historico", [])
+
+    todos_ids = [s.get("id", 0) for s in sessoes_ativas] + [h.get("id", 0) for h in historico]
+    if not todos_ids:
+        return 1
+    return max(int(i) for i in todos_ids) + 1
 
 
 def agendar_sessao(cliente, artista, data, hora, valor=None, observacoes=""):
@@ -53,7 +68,7 @@ def agendar_sessao(cliente, artista, data, hora, valor=None, observacoes=""):
 
     agendamentos = carregar_agendamentos()
     nova_sessao = {
-        "id": gerar_novo_id(agendamentos),
+        "id": gerar_novo_id(),
         "cliente": cliente,
         "artista": artista,
         "data": data,

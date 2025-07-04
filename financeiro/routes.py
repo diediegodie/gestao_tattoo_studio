@@ -85,12 +85,18 @@ def editar_pagamento(indice):
 
     if request.method == "POST":
         try:
+            # Determina a forma de pagamento final
+            forma_pagamento = request.form.get("forma_pagamento")
+            outra_forma = request.form.get("outra_forma_pagamento", "").strip()
+            
+            forma_final = outra_forma if forma_pagamento == "Outros" else forma_pagamento
+
             pagamento.update({
                 "data": request.form.get("data"),
                 "cliente": request.form.get("cliente"),
                 "artista": request.form.get("artista"),
                 "valor": float(request.form.get("valor", 0)),
-                "forma_pagamento": request.form.get("forma_pagamento"),
+                "forma_pagamento": forma_final,
                 "descricao": request.form.get("descricao", "")
             })
             
@@ -103,6 +109,7 @@ def editar_pagamento(indice):
             print(f"Erro na edição: {e}")
             flash("Dados inválidos no formulário.", "erro")
 
+    # Prepara os dados para exibição
     forma_exibicao = pagamento['forma_pagamento']
     outra_forma = ""
     

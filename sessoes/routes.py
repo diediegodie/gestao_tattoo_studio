@@ -42,10 +42,13 @@ def fechar_sessao(id):
     sessao = next((s for s in agendamentos if s["id"] == id), None)
     
     if sessao:
-        mover_para_historico(sessao)
+        print(f"Fechando sessão - Dados atuais: {sessao}")
+        if "valor" not in sessao:
+            sessao["valor"] = 0.0
+        mover_para_historico(sessao_id=sessao["id"], valor_final=float(sessao.get("valor", 0.0)))
         agendamentos = [s for s in agendamentos if s["id"] != id]
         salvar_agendamentos(agendamentos)
-        flash("Sessão finalizada e movida para o histórico!", "sucesso")
+        flash("Sessão finalizada com sucesso!", "sucesso")
     
     return redirect(url_for('sessoes_bp.listar_sessoes'))
 
@@ -114,6 +117,8 @@ def editar_agendamento(indice):
         artista = request.form.get("artista", "").strip()
         data = request.form.get("data", "").strip()
         hora = request.form.get("hora", "").strip()
+        # --- CORREÇÃO 1: Ler o valor do formulário ---
+        valor = request.form.get("valor", "").strip()
         observacoes = request.form.get("observacoes", "").strip()
 
         erros = []
@@ -141,6 +146,9 @@ def editar_agendamento(indice):
         sessao["artista"] = artista
         sessao["data"] = data
         sessao["hora"] = hora
+        # --- CORREÇÃO 2: Atualizar o valor na sessão ---
+        # Converte para float, ou define como 0.0 se estiver vazio
+        sessao["valor"] = float(valor) if valor else 0.0
         sessao["observacoes"] = observacoes
 
         salvar_agendamentos(agendamentos)
@@ -151,6 +159,7 @@ def editar_agendamento(indice):
         "sessoes/editar_sessao.html", sessao=sessao, indice=indice, artistas=artistas
     )
 
+
 @sessoes_bp.route("/historico")
 def listar_historico():
     try:
@@ -158,23 +167,22 @@ def listar_historico():
             dados = json.load(arquivo)
             historico = dados.get("historico", [])
             
+            # Processa os dados para garantir que o valor está presente
             sessoes_historico = []
             for sessao in historico:
-                if not any(s.get("id") == sessao.get("id") for s in sessoes_historico):
-                    sessoes_historico.append({
-                        "id": sessao.get("id"),
-                        "data": sessao.get("data", ""),
-                        "cliente": sessao.get("cliente", ""),
-                        "artista": sessao.get("artista", ""),
-                        "valor_pago": sessao.get("valor", 0),
-                        "comissao_artista": calcular_comissao(sessao.get("valor", 0)),
-                        "observacoes": sessao.get("observacoes", "")  # Adicione esta linha
-                    })
+                sessoes_historico.append({
+                    "data": sessao.get("data", ""),
+                    "cliente": sessao.get("cliente", ""),
+                    "artista": sessao.get("artista", ""),
+                    "valor": float(sessao.get("valor", 0)),  # Garante que o valor seja numérico
+                    "observacoes": sessao.get("observacoes", ""),
+                    "data_fechamento": sessao.get("data_fechamento", "")
+                })
             
     except (FileNotFoundError, json.JSONDecodeError):
         sessoes_historico = []
     
-    return render_template("historico/sessoes.html", sessoes=sessoes_historico)
+    return render_template("historico/historico.html", sessoes=sessoes_historico)
 
 def calcular_comissao(valor):
     # Exemplo: 30% de comissão - ajuste conforme sua regra de negócio
@@ -189,8 +197,11 @@ def excluir_historico(id):
     except (FileNotFoundError, json.JSONDecodeError):
         dados = {"sessoes_ativas": [], "historico": []}
     
-    # Filtra mantendo apenas os itens com ID diferente do que será excluído
-    dados["historico"] = [s for s in dados["historico"] if s.get("id") != id]
+    # Corrige a comparação para garantir que ambos são inteiros e o campo id existe
+    dados["historico"] = [
+        s for s in dados["historico"]
+        if int(s.get("id", -1)) != int(id)
+    ]
     
     # Salva as alterações
     with open("dados/sessoes.json", "w", encoding="utf-8") as arquivo:

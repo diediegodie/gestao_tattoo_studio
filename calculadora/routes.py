@@ -1,5 +1,6 @@
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, redirect, flash
 from calculadora import calculadora_bp
+from sessoes.historico import mover_para_historico
 
 @calculadora_bp.route("/")
 def calculadora():
@@ -24,10 +25,20 @@ def calcular():
 
 @calculadora_bp.route("/confirmar", methods=["POST"])
 def confirmar():
-    if request.form.get('sessao_id'):
-        mover_para_historico(
-            sessao_id=int(request.form.get('sessao_id')),
-            valor_pago=float(request.form.get('valor')),
-            porcentagem=float(request.form.get('porcentagem'))
-        )
-    return redirect(url_for('historico_bp.historico_sessoes'))
+    sessao_id_str = request.form.get('sessao_id')
+    valor_pago_str = request.form.get('valor')
+
+    if not sessao_id_str or not valor_pago_str:
+        flash("ID da sessão ou valor não fornecido.", "erro")
+        return redirect(url_for('sessoes_bp.listar_sessoes'))
+
+    sessao_id = int(sessao_id_str)
+    valor_pago = float(valor_pago_str)
+
+    if mover_para_historico(sessao_id=sessao_id, valor_final=valor_pago):
+        flash("Sessão movida para o histórico com sucesso!", "sucesso")
+    else:
+        flash("ERRO: Sessão não encontrada ou falha ao mover para o histórico.", "erro")
+    
+    # Redireciona para a página de histórico (ajuste o nome da rota se necessário)
+    return redirect(url_for('sessoes_bp.listar_sessoes'))

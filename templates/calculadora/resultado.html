@@ -25,7 +25,8 @@
 </div>
 
 {% if sessao_id %}
-<form action="{{ url_for('historico_bp.historico_sessoes') }}" method="POST">
+{# CORREÇÃO: A action do formulário foi alterada para a rota correta. #}
+<form action="{{ url_for('calculadora_bp.confirmar') }}" method="POST">
     <input type="hidden" name="sessao_id" value="{{ sessao_id }}">
     <input type="hidden" name="valor" value="{{ valor }}">
     <input type="hidden" name="porcentagem" value="{{ porcentagem }}">

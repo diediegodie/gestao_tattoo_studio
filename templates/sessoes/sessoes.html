@@ -39,6 +39,7 @@
             <th>Artista</th>
             <th>Data</th>
             <th>Hora</th>
+            <th>Valor</th>  <!-- Nova coluna -->
             <th>Observações</th>
             <th>Ações</th>
         </tr>
@@ -50,6 +51,7 @@
             <td>{{ sessao['artista'] }}</td>
             <td>{{ sessao['data'] | data_brasileira }}</td>
             <td>{{ sessao['hora'] }}</td>
+            <td>R$ {{ "%0.2f"|format(sessao['valor']|float) if sessao['valor'] else '0,00' }}</td>  <!-- Nova célula -->
             <td>{{ sessao['observacoes'] }}</td>
             <td>
                 <a href="#" onclick='return confirmDelete("{{ url_for("sessoes_bp.excluir_agendamento_route", indice=loop.index0) }}")'>Excluir</a> |

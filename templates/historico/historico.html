@@ -4,27 +4,28 @@
 
 {% block conteudo %}
 <h1>Histórico de Sessões Finalizadas</h1>
+<a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn-voltar-historico">Voltar para Histórico</a>
 
-<table border="1" cellpadding="5" cellspacing="0">
+<table class="tabela-historico">
     <thead>
         <tr>
+            <th>Data</th>
             <th>Cliente</th>
             <th>Artista</th>
-            <th>Data da Sessão</th>
-            <th>Data de Fechamento</th>
             <th>Valor</th>
-            <th>Status</th>
+            <th>Observações</th>
+            <th>Fechamento</th>
         </tr>
     </thead>
     <tbody>
         {% for sessao in sessoes %}
         <tr>
-            <td>{{ sessao.get('cliente', '') }}</td>
-            <td>{{ sessao.get('artista', '') }}</td>
-            <td>{{ sessao.get('data', '') | data_brasileira }}</td>
-            <td>{{ sessao.get('data_fechamento', '') }}</td>
-            <td>R$ {{ "%.2f"|format(sessao.get('valor', 0)) }}</td>
-            <td>{{ 'Pago' if sessao.get('paga', False) else 'Pendente' }}</td>
+            <td>{{ sessao.data|data_brasileira }}</td>
+            <td>{{ sessao.cliente }}</td>
+            <td>{{ sessao.artista }}</td>
+            <td class="valor">R$ {{ "%0.2f"|format(sessao.valor|float) }}</td>
+            <td>{{ sessao.observacoes }}</td>
+            <td>{{ sessao.data_fechamento }}</td>
         </tr>
         {% else %}
         <tr>
