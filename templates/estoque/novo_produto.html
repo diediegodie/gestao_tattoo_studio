@@ -5,20 +5,22 @@
 {% block conteudo %}
     <h1>Cadastrar Novo Produto</h1>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <ul>
-              {% for category, message in messages %}
-                <li class="mensagem-{{ category }}">{{ message }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="mensagem-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-    <form method="POST" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
-        <label>Nome: <input type="text" name="nome" value="{{ nome|default('') }}" required></label><br>
-        <label>Descrição: <input type="text" name="descricao" value="{{ descricao|default('') }}"></label><br>
-        <label>Quantidade: <input type="number" name="quantidade" value="{{ quantidade|default('') }}" required></label><br>
-        <button type="submit">Cadastrar</button>
+    <form method="POST">
+        <label>Nome: <input type="text" name="nome" value="{{ nome|default('') }}" required placeholder="Nome do produto"></label>
+        <label>Descrição: <input type="text" name="descricao" value="{{ descricao|default('') }}" placeholder="Descrição do produto"></label>
+        <label>Quantidade: <input type="number" name="quantidade" value="{{ quantidade|default('') }}" required placeholder="0"></label>
+        
+        <div class="d-flex justify-between">
+            <button type="submit" class="btn btn-success">✅ Cadastrar Produto</button>
+            <a href="{{ url_for('estoque_bp.listar_produtos') }}" class="btn btn-warning">❌ Cancelar</a>
+        </div>
     </form>
 {% endblock %}

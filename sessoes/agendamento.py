@@ -66,6 +66,14 @@ def agendar_sessao(cliente, artista, data, hora, valor=None, observacoes=""):
         print("Data ou hora em formato inválido.")
         return
 
+    # Processa o valor corretamente
+    valor_processado = 0.0
+    if valor:
+        try:
+            valor_processado = float(valor)
+        except (ValueError, TypeError):
+            valor_processado = 0.0
+
     agendamentos = carregar_agendamentos()
     nova_sessao = {
         "id": gerar_novo_id(),
@@ -73,13 +81,13 @@ def agendar_sessao(cliente, artista, data, hora, valor=None, observacoes=""):
         "artista": artista,
         "data": data,
         "hora": hora,
-        "valor": float(valor) if valor else None,
+        "valor": valor_processado,
         "observacoes": observacoes,
-        "paga": False  # Adicione esta linha
+        "paga": False
     }
     agendamentos.append(nova_sessao)
     salvar_agendamentos(agendamentos)
-    print("Sessão agendada com sucesso.")
+    print(f"Sessão agendada com sucesso. Valor: R$ {valor_processado:.2f}")
 
 def excluir_agendamento(indice):
     agendamentos = carregar_agendamentos()

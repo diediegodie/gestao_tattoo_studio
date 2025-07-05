@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from datetime import datetime  # Necessário para o filtro de data
 from calculadora import calculadora_bp
 from historico import historico_bp
-from historico.routes import historico_bp
 from sessoes.routes import sessoes_bp
 
 # Configuração inicial
@@ -44,5 +43,5 @@ def index():
     return render_template("index.html")
 
 if __name__ == "__main__":
-    app.run(debug=os.getenv('DEBUG', False))
+    app.run(debug=os.getenv('DEBUG', 'False').lower() in ('true', '1', 't'))
     

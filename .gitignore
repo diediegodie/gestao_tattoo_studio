@@ -50,3 +50,4 @@ Thumbs.db
 .env.local
 .env.development
 .env.test
+.qodo/

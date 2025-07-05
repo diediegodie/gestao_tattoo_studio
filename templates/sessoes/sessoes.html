@@ -7,39 +7,105 @@
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <ul>
-      {% for category, message in messages %}
-        <li class="mensagem-{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
+    {% for category, message in messages %}
+      <div class="mensagem-{{ category }}">{{ message }}</div>
+    {% endfor %}
   {% endif %}
 {% endwith %}
 
-<a href="{{ url_for('sessoes_bp.nova_sessao') }}">Agendar nova sessão</a>
+<div class="d-flex justify-between align-center mb-2">
+    <a href="{{ url_for('sessoes_bp.nova_sessao') }}" class="btn btn-success">➕ Agendar nova sessão</a>
+</div>
 
-<form method="GET" action="{{ url_for('sessoes_bp.listar_sessoes') }}">
-    <input type="text" name="busca" placeholder="Buscar cliente..." value="{{ termo }}">
-    <button type="submit">Buscar</button>
+<!-- Botões de busca e filtro expansíveis -->
+<div class="search-toggle" onclick="toggleSearch()">
+    🔍 Buscar Clientes
+</div>
+
+<div class="search-toggle" onclick="toggleFilter()">
+    📅 Filtrar por Data
+</div>
+
+<!-- Painel de busca -->
+<div class="search-panel" id="searchPanel">
+    <form method="GET" action="{{ url_for('sessoes_bp.listar_sessoes') }}">
+        <div class="d-flex">
+            <input type="text" name="busca" placeholder="Buscar cliente..." value="{{ termo }}">
+            <button type="submit" class="btn">🔍 Buscar</button>
+            {% if termo %}
+                <a href="{{ url_for('sessoes_bp.listar_sessoes') }}" class="btn btn-warning">❌ Limpar</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Painel de filtro por data -->
+<div class="search-panel" id="filterPanel">
+    <form method="GET">
+        <div class="d-flex">
+            <label>Data Inicial: <input type="date" name="data_inicio" value="{{ request.args.get('data_inicio', '') }}"></label>
+            <label>Data Final: <input type="date" name="data_fim" value="{{ request.args.get('data_fim', '') }}"></label>
+            <button type="submit" class="btn">📅 Filtrar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleSearch() {
+    const panel = document.getElementById('searchPanel');
+    const toggle = document.querySelector('.search-toggle');
+    
+    if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+        toggle.classList.remove('active');
+    } else {
+        panel.classList.add('show');
+        toggle.classList.add('active');
+        // Fecha o painel de filtro se estiver aberto
+        document.getElementById('filterPanel').classList.remove('show');
+        document.querySelectorAll('.search-toggle')[1].classList.remove('active');
+    }
+}
+
+function toggleFilter() {
+    const panel = document.getElementById('filterPanel');
+    const toggle = document.querySelectorAll('.search-toggle')[1];
+    
+    if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+        toggle.classList.remove('active');
+    } else {
+        panel.classList.add('show');
+        toggle.classList.add('active');
+        // Fecha o painel de busca se estiver aberto
+        document.getElementById('searchPanel').classList.remove('show');
+        document.querySelectorAll('.search-toggle')[0].classList.remove('active');
+    }
+}
+
+// Mostrar painéis se há filtros ativos
+document.addEventListener('DOMContentLoaded', function() {
     {% if termo %}
-        <a href="{{ url_for('sessoes_bp.listar_sessoes') }}">Limpar</a>
+        document.getElementById('searchPanel').classList.add('show');
+        document.querySelectorAll('.search-toggle')[0].classList.add('active');
     {% endif %}
-</form>
-
-<form method="GET">
-  <label>Data Inicial: <input type="date" name="data_inicio" value="{{ request.args.get('data_inicio', '') }}"></label>
-  <label>Data Final: <input type="date" name="data_fim" value="{{ request.args.get('data_fim', '') }}"></label>
-  <button type="submit">Filtrar</button>
-</form>
+    
+    {% if request.args.get('data_inicio') or request.args.get('data_fim') %}
+        document.getElementById('filterPanel').classList.add('show');
+        document.querySelectorAll('.search-toggle')[1].classList.add('active');
+    {% endif %}
+});
+</script>
 
 {% if sessoes %}
-<table border="1" cellpadding="5" cellspacing="0">
+<table>
     <thead>
         <tr>
             <th>Cliente</th>
             <th>Artista</th>
             <th>Data</th>
             <th>Hora</th>
-            <th>Valor</th>  <!-- Nova coluna -->
+            <th>Valor</th>
             <th>Observações</th>
             <th>Ações</th>
         </tr>
@@ -51,15 +117,15 @@
             <td>{{ sessao['artista'] }}</td>
             <td>{{ sessao['data'] | data_brasileira }}</td>
             <td>{{ sessao['hora'] }}</td>
-            <td>R$ {{ "%0.2f"|format(sessao['valor']|float) if sessao['valor'] else '0,00' }}</td>  <!-- Nova célula -->
+            <td>R$ {{ "%0.2f"|format(sessao['valor']|float) if sessao['valor'] else '0,00' }}</td>
             <td>{{ sessao['observacoes'] }}</td>
             <td>
-                <a href="#" onclick='return confirmDelete("{{ url_for("sessoes_bp.excluir_agendamento_route", indice=loop.index0) }}")'>Excluir</a> |
-                <a href="{{ url_for('sessoes_bp.editar_agendamento', indice=loop.index0) }}">Editar</a>
+                <a href="#" onclick='return confirmDelete("{{ url_for("sessoes_bp.excluir_agendamento_route", indice=loop.index0) }}")' class="btn btn-danger">🗑️ Excluir</a>
+                <a href="{{ url_for('sessoes_bp.editar_agendamento', indice=loop.index0) }}" class="btn btn-warning">✏️ Editar</a>
                 {% if not sessao.get('paga', False) %}
-                | <form action="{{ url_for('sessoes_bp.fechar_sessao', id=sessao['id']) }}" method="POST" style="display: inline;">
-                    <button type="submit" class="btn-link">Fechar</button>
-                  </form>
+                <form action="{{ url_for('sessoes_bp.fechar_sessao', id=sessao['id']) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-success">✅ Fechar</button>
+                </form>
                 {% endif %}
             </td>
         </tr>
@@ -67,6 +133,8 @@
     </tbody>
 </table>
 {% else %}
-    <p>Nenhuma sessão agendada.</p>
+    <div class="card text-center">
+        <p>📋 Nenhuma sessão agendada.</p>
+    </div>
 {% endif %}
 {% endblock %}

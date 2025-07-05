@@ -43,12 +43,32 @@ def fechar_sessao(id):
     
     if sessao:
         print(f"Fechando sessão - Dados atuais: {sessao}")
-        if "valor" not in sessao:
-            sessao["valor"] = 0.0
-        mover_para_historico(sessao_id=sessao["id"], valor_final=float(sessao.get("valor", 0.0)))
-        agendamentos = [s for s in agendamentos if s["id"] != id]
-        salvar_agendamentos(agendamentos)
-        flash("Sessão finalizada com sucesso!", "sucesso")
+        print(f"Tipo do valor na sessão: {type(sessao.get('valor'))}")
+        print(f"Valor bruto na sessão: {sessao.get('valor')}")
+        
+        # Obtém o valor da sessão, garantindo que seja um número
+        valor_sessao = sessao.get("valor")
+        if valor_sessao is None or valor_sessao == "":
+            valor_sessao = 0.0
+        else:
+            try:
+                valor_sessao = float(valor_sessao)
+            except (ValueError, TypeError):
+                valor_sessao = 0.0
+        
+        print(f"Valor processado que será movido para histórico: {valor_sessao}")
+        print(f"Tipo do valor processado: {type(valor_sessao)}")
+        
+        # Move para histórico com o valor correto
+        if mover_para_historico(sessao_id=sessao["id"], valor_final=valor_sessao):
+            # Remove da lista de agendamentos ativos
+            agendamentos = [s for s in agendamentos if s["id"] != id]
+            salvar_agendamentos(agendamentos)
+            flash("Sessão finalizada com sucesso!", "sucesso")
+        else:
+            flash("Erro ao finalizar sessão.", "erro")
+    else:
+        flash("Sessão não encontrada.", "erro")
     
     return redirect(url_for('sessoes_bp.listar_sessoes'))
 
@@ -170,23 +190,35 @@ def listar_historico():
             # Processa os dados para garantir que o valor está presente
             sessoes_historico = []
             for sessao in historico:
+                # Garante que o valor seja numérico e não seja None
+                valor = sessao.get("valor")
+                if valor is None or valor == "":
+                    valor = 0.0
+                else:
+                    try:
+                        valor = float(valor)
+                    except (ValueError, TypeError):
+                        valor = 0.0
+                
                 sessoes_historico.append({
+                    "id": sessao.get("id", 0),
                     "data": sessao.get("data", ""),
                     "cliente": sessao.get("cliente", ""),
                     "artista": sessao.get("artista", ""),
-                    "valor": float(sessao.get("valor", 0)),  # Garante que o valor seja numérico
+                    "valor": valor,
                     "observacoes": sessao.get("observacoes", ""),
                     "data_fechamento": sessao.get("data_fechamento", "")
                 })
             
-    except (FileNotFoundError, json.JSONDecodeError):
+            print(f"Dados do histórico processados: {sessoes_historico}")
+            
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Erro ao carregar histórico: {e}")
         sessoes_historico = []
     
-    return render_template("historico/historico.html", sessoes=sessoes_historico)
+    return render_template("historico/sessoes.html", sessoes=sessoes_historico)
 
-def calcular_comissao(valor):
-    # Exemplo: 30% de comissão - ajuste conforme sua regra de negócio
-    return valor * 0.3 if valor else 0
+
 
 
 @sessoes_bp.route("/historico/excluir/<int:id>", methods=["POST"])

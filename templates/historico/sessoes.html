@@ -3,29 +3,26 @@
 {% block titulo %}Histórico de Sessões{% endblock %}
 
 {% block conteudo %}
-<h1>Histórico</h1>
+<h1>Histórico de Sessões Finalizadas</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <ul>
-      {% for category, message in messages %}
-        <li class="mensagem-{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
+    {% for category, message in messages %}
+      <div class="mensagem-{{ category }}">{{ message }}</div>
+    {% endfor %}
   {% endif %}
 {% endwith %}
 
 {% if sessoes %}
-
-<table border="1" cellpadding="5" cellspacing="0">
+<table>
     <thead>
         <tr>
             <th>Data</th>
             <th>Cliente</th>
             <th>Artista</th>
             <th>Valor</th>
-            <th>Comissão</th>
-            <th>Observações</th>  <!-- Nova coluna -->
+            <th>Observações</th>
+            <th>Data de Fechamento</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -35,13 +32,13 @@
             <td>{{ sessao.data | data_brasileira if sessao.data else '' }}</td>
             <td>{{ sessao.cliente }}</td>
             <td>{{ sessao.artista }}</td>
-            <td>R$ {{ "%.2f"|format(sessao.valor_pago) if sessao.valor_pago else '0,00' }}</td>
-            <td>R$ {{ "%.2f"|format(sessao.comissao_artista) if sessao.comissao_artista else '0,00' }}</td>
-            <td>{{ sessao.observacoes }}</td>  <!-- Nova célula -->
+            <td>R$ {{ "%.2f"|format(sessao.valor|float) if sessao.valor else '0,00' }}</td>
+            <td>{{ sessao.observacoes }}</td>
+            <td>{{ sessao.data_fechamento }}</td>
             <td>
-                <a href="{{ url_for('sessoes_bp.editar_historico', id=sessao.id) }}">Editar</a>
+                <a href="{{ url_for('sessoes_bp.editar_historico', id=sessao.id) }}" class="btn btn-warning">✏️ Editar</a>
                 <form action="{{ url_for('sessoes_bp.excluir_historico', id=sessao.id) }}" method="POST" style="display: inline;">
-                    <button type="submit" onclick="return confirm('Tem certeza?')">Excluir</button>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta sessão do histórico?')">🗑️ Excluir</button>
                 </form>
             </td>
         </tr>
@@ -49,6 +46,8 @@
     </tbody>
 </table>
 {% else %}
-    <p>Nenhuma sessão finalizada ainda.</p>
+    <div class="card text-center">
+        <p>📋 Nenhuma sessão finalizada ainda.</p>
+    </div>
 {% endif %}
 {% endblock %}

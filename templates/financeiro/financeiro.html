@@ -7,26 +7,57 @@
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <ul>
-      {% for category, message in messages %}
-        <li class="mensagem-{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
+    {% for category, message in messages %}
+      <div class="mensagem-{{ category }}">{{ message }}</div>
+    {% endfor %}
   {% endif %}
 {% endwith %}
 
-<a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}">Registrar novo pagamento</a>
+<div class="d-flex justify-between align-center mb-2">
+    <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="btn btn-success">💳 Registrar novo pagamento</a>
+</div>
+
+<!-- Botão de filtro expansível -->
+<div class="search-toggle" onclick="toggleFilter()">
+    📅 Filtrar por Data
+</div>
+
+<!-- Painel de filtro por data -->
+<div class="search-panel" id="filterPanel">
+    <form method="GET">
+        <div class="d-flex">
+            <label>Data Inicial: <input type="date" name="data_inicio" value="{{ request.args.get('data_inicio', '') }}"></label>
+            <label>Data Final: <input type="date" name="data_fim" value="{{ request.args.get('data_fim', '') }}"></label>
+            <button type="submit" class="btn">📅 Filtrar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleFilter() {
+    const panel = document.getElementById('filterPanel');
+    const toggle = document.querySelector('.search-toggle');
+    
+    if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+        toggle.classList.remove('active');
+    } else {
+        panel.classList.add('show');
+        toggle.classList.add('active');
+    }
+}
+
+// Mostrar painel se há filtros ativos
+{% if request.args.get('data_inicio') or request.args.get('data_fim') %}
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('filterPanel').classList.add('show');
+    document.querySelector('.search-toggle').classList.add('active');
+});
+{% endif %}
+</script>
 
 {% if pagamentos %}
-
-<form method="GET">
-  <label>Data Inicial: <input type="date" name="data_inicio" value="{{ request.args.get('data_inicio', '') }}"></label>
-  <label>Data Final: <input type="date" name="data_fim" value="{{ request.args.get('data_fim', '') }}"></label>
-  <button type="submit">Filtrar</button>
-</form>
-
-
-<table border="1" cellpadding="5" cellspacing="0">
+<table>
     <thead>
         <tr>
             <th>Data</th>
@@ -48,14 +79,16 @@
             <td>{{ p.forma_pagamento }}</td>
             <td>{{ p.descricao }}</td>
             <td>
-                <a href="#" onclick='return confirmDelete("{{ url_for("financeiro_bp.excluir_pagamento_route", indice=loop.index0) }}")'>Excluir</a> |
-                <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}">Editar</a>
+                <a href="#" onclick='return confirmDelete("{{ url_for("financeiro_bp.excluir_pagamento_route", indice=loop.index0) }}")' class="btn btn-danger">🗑️ Excluir</a>
+                <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">✏️ Editar</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% else %}
-    <p>Nenhum pagamento registrado.</p>
+    <div class="card text-center">
+        <p>💰 Nenhum pagamento registrado.</p>
+    </div>
 {% endif %}
 {% endblock %}

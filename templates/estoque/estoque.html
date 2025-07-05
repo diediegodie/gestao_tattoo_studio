@@ -3,31 +3,63 @@
 {% block titulo %}Estoque{% endblock %}
 
 {% block conteudo %}
-<h1>Controle de estoque</h1>
+<h1>Controle de Estoque</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <ul>
-      {% for category, message in messages %}
-        <li class="mensagem-{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
+    {% for category, message in messages %}
+      <div class="mensagem-{{ category }}">{{ message }}</div>
+    {% endfor %}
   {% endif %}
 {% endwith %}
 
-<a href="{{ url_for('estoque_bp.novo_produto') }}">Cadastrar novo produto</a>
+<div class="d-flex justify-between align-center mb-2">
+    <a href="{{ url_for('estoque_bp.novo_produto') }}" class="btn btn-success">➕ Cadastrar novo produto</a>
+</div>
 
-<!-- Formulário de busca -->
-<form method="GET" action="{{ url_for('estoque_bp.listar_produtos') }}" style="margin-top: 10px; margin-bottom: 15px;">
-    <input type="text" name="busca" placeholder="Buscar produto por nome..." value="{{ termo or '' }}">
-    <button type="submit">Buscar</button>
-    {% if termo %}
-        <a href="{{ url_for('estoque_bp.listar_produtos') }}">Limpar</a>
-    {% endif %}
-</form>
+<!-- Botão de busca expansível -->
+<div class="search-toggle" onclick="toggleSearch()">
+    🔍 Buscar Produtos
+</div>
+
+<!-- Painel de busca -->
+<div class="search-panel" id="searchPanel">
+    <form method="GET" action="{{ url_for('estoque_bp.listar_produtos') }}">
+        <div class="d-flex">
+            <input type="text" name="busca" placeholder="Buscar produto por nome..." value="{{ termo or '' }}">
+            <button type="submit" class="btn">🔍 Buscar</button>
+            {% if termo %}
+                <a href="{{ url_for('estoque_bp.listar_produtos') }}" class="btn btn-warning">❌ Limpar</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleSearch() {
+    const panel = document.getElementById('searchPanel');
+    const toggle = document.querySelector('.search-toggle');
+    
+    if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+        toggle.classList.remove('active');
+    } else {
+        panel.classList.add('show');
+        toggle.classList.add('active');
+    }
+}
+
+// Mostrar painel se há termo de busca
+{% if termo %}
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('searchPanel').classList.add('show');
+    document.querySelector('.search-toggle').classList.add('active');
+});
+{% endif %}
+</script>
 
 {% if produtos %}
-<table border="1" cellpadding="5" cellspacing="0">
+<table>
     <thead>
         <tr>
             <th>Nome</th>
@@ -41,18 +73,22 @@
         <tr>
             <td>{{ produto.get("nome", "") }}</td>
             <td>{{ produto.get("descricao", "") }}</td>
-            <td style="color: {% if produto.get('quantidade', 0) < 5 %}red{% else %}black{% endif %};">
-                {{ produto.get("quantidade", 0) }}
+            <td>
+                <span class="badge {% if produto.get('quantidade', 0) < 5 %}badge-danger{% else %}badge-success{% endif %}">
+                    {{ produto.get("quantidade", 0) }}
+                </span>
             </td>
             <td>
-                <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')">Excluir</a> |
-                <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}">Editar</a>
+                <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')" class="btn btn-danger">🗑️ Excluir</a>
+                <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}" class="btn btn-warning">✏️ Editar</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% else %}
-    <p>Nenhum produto cadastrado.</p>
+    <div class="card text-center">
+        <p>📦 Nenhum produto cadastrado.</p>
+    </div>
 {% endif %}
 {% endblock %}

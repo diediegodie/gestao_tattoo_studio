@@ -3,26 +3,28 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>{% block titulo %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}{% endblock %} - Sistema de Gestão</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
     <!-- MENU FIXO -->
     <nav>
-        <a href="{{ url_for('index') }}">Início</a> |
-        <a href="{{ url_for('estoque_bp.listar_produtos') }}">Estoque</a> |
-        <a href="{{ url_for('sessoes_bp.listar_sessoes') }}">Sessões</a> |
-        <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}">Financeiro</a> |
-        <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}">Registrar Pagamento</a> |
-        <a href="{{ url_for('extrato_bp.extrato_mensal') }}">Extrato Mensal</a> |
-        <a href="{{ url_for('cadastro_bp.gerenciar_artistas') }}">Cadastro Interno</a> |
-        <a href="{{ url_for('calculadora_bp.calculadora') }}">Calculadora</a> |
-        <a href="{{ url_for('historico_bp.historico_sessoes') }}">Histórico</a>
+        <a href="{{ url_for('index') }}">🏠 Início</a>
+        <a href="{{ url_for('estoque_bp.listar_produtos') }}">📦 Estoque</a>
+        <a href="{{ url_for('sessoes_bp.listar_sessoes') }}">📅 Sessões</a>
+        <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}">💰 Financeiro</a>
+        <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}">💳 Registrar Pagamento</a>
+        <a href="{{ url_for('extrato_bp.extrato_mensal') }}">📊 Extrato Mensal</a>
+        <a href="{{ url_for('cadastro_bp.gerenciar_artistas') }}">👥 Cadastro Interno</a>
+        <a href="{{ url_for('calculadora_bp.calculadora') }}">🧮 Calculadora</a>
+        <a href="{{ url_for('historico_bp.historico_sessoes') }}">📋 Histórico</a>
     </nav>
-    <hr>
 
-    {% block conteudo %}{% endblock %}
+    <div class="container">
+        {% block conteudo %}{% endblock %}
+    </div>
 <!-- Modal de Confirmação -->
 <div id="confirmModal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5); text-align:center;">
     <div style="margin: 10% auto; background: white; padding: 20px; width: 300px; border-radius: 10px;">
@@ -49,6 +51,39 @@
     function closeModal() {
         document.getElementById("confirmModal").style.display = "none";
     }
+
+    // Função para preencher data e hora atual
+    function preencherDataHoraAtual() {
+        const agora = new Date();
+        
+        // Formata a data para YYYY-MM-DD
+        const data = agora.toISOString().split('T')[0];
+        
+        // Formata a hora para HH:MM
+        const hora = agora.getHours().toString().padStart(2, '0') + ':' + 
+                    agora.getMinutes().toString().padStart(2, '0');
+        
+        // Preenche campos de data
+        const camposData = document.querySelectorAll('input[type="date"]');
+        camposData.forEach(campo => {
+            if (!campo.value) {
+                campo.value = data;
+            }
+        });
+        
+        // Preenche campos de hora
+        const camposHora = document.querySelectorAll('input[type="time"]');
+        camposHora.forEach(campo => {
+            if (!campo.value) {
+                campo.value = hora;
+            }
+        });
+    }
+
+    // Executa quando a página carrega
+    document.addEventListener('DOMContentLoaded', function() {
+        preencherDataHoraAtual();
+    });
 </script>
 
 </body>

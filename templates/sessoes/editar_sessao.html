@@ -7,18 +7,14 @@
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <ul>
-      {% for category, message in messages %}
-        <li style="color: {% if category == 'erro' %}red{% else %}green{% endif %};">
-          {{ message }}
-        </li>
-      {% endfor %}
-    </ul>
+    {% for category, message in messages %}
+      <div class="mensagem-{{ category }}">{{ message }}</div>
+    {% endfor %}
   {% endif %}
 {% endwith %}
 
 <form method="POST">
-  <label>Cliente: <input type="text" name="cliente" value="{{ sessao.cliente }}" required></label><br>
+  <label>Cliente: <input type="text" name="cliente" value="{{ sessao.cliente }}" required></label>
 
   <label>Artista:
     <select name="artista" required>
@@ -27,12 +23,16 @@
         <option value="{{ a }}" {% if sessao.artista == a %}selected{% endif %}>{{ a }}</option>
       {% endfor %}
     </select>
-  </label><br>
+  </label>
 
-  <label>Data: <input type="date" name="data" value="{{ sessao.data }}" required></label><br>
-  <label>Hora: <input type="time" name="hora" value="{{ sessao.hora }}" required></label><br>
-  <label>Valor (R$): <input type="number" step="0.01" name="valor" value="{{ sessao.valor or '' }}"></label><br>
-  <label>Observações: <input type="text" name="observacoes" value="{{ sessao.observacoes }}"></label><br>
-  <button type="submit">Salvar Alterações</button>
+  <label>Data: <input type="date" name="data" value="{{ sessao.data }}" required placeholder="Data da sessão"></label>
+  <label>Hora: <input type="time" name="hora" value="{{ sessao.hora }}" required placeholder="Hora da sessão"></label>
+  <label>Valor (R$): <input type="number" step="0.01" name="valor" value="{{ sessao.valor or '' }}" placeholder="0.00"></label>
+  <label>Observações: <input type="text" name="observacoes" value="{{ sessao.observacoes }}" placeholder="Observações sobre a sessão"></label>
+  
+  <div class="d-flex justify-between">
+    <button type="submit" class="btn btn-success">💾 Salvar Alterações</button>
+    <a href="{{ url_for('sessoes_bp.listar_sessoes') }}" class="btn btn-warning">❌ Cancelar</a>
+  </div>
 </form>
 {% endblock %}

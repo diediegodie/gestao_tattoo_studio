@@ -52,16 +52,6 @@ def novo_produto():
                 quantidade=quantidade_str,
             )
 
-        if erros:
-            for erro in erros:
-                flash(erro, "erro")
-            return render_template(
-                "estoque/novo_produto.html",
-                nome=nome,
-                descricao=descricao,
-                quantidade=quantidade_str,
-            )
-
         # VERIFICA DUPLICAÇÃO
         produtos = carregar_produtos()
         if any(p["nome"].lower() == nome.lower() for p in produtos):
@@ -72,8 +62,6 @@ def novo_produto():
                 descricao=descricao,
                 quantidade=quantidade_str,
             )
-
-        cadastrar_produto(nome, descricao, quantidade)
 
         cadastrar_produto(nome, descricao, quantidade)
         flash("Produto cadastrado com sucesso!", "sucesso")
@@ -101,19 +89,12 @@ def editar_produto(nome):
     if request.method == "POST":
         novo_nome = request.form.get("nome", "").strip()
         descricao = request.form.get("descricao", "").strip()
-        valor_unitario_str = request.form.get("valor_unitario", "").strip()
         quantidade_str = request.form.get("quantidade", "").strip()
 
         erros = []
 
         if not novo_nome:
             erros.append("Nome é obrigatório.")
-        try:
-            valor_unitario = float(valor_unitario_str)
-            if valor_unitario <= 0:
-                erros.append("Valor unitário deve ser maior que zero.")
-        except ValueError:
-            erros.append("Valor unitário inválido.")
 
         try:
             quantidade = int(quantidade_str)
@@ -137,9 +118,7 @@ def editar_produto(nome):
         # Atualiza produto
         produto["nome"] = novo_nome
         produto["descricao"] = descricao
-        produto["valor_unitario"] = valor_unitario
         produto["quantidade"] = quantidade
-        produto["total"] = valor_unitario * quantidade
 
         salvar_produtos(produtos)
         flash("Produto atualizado com sucesso!", "sucesso")

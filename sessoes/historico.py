@@ -65,6 +65,9 @@ def mover_para_historico(sessao_id: int, valor_final: float):
         "paga": True
     }
     
+    print(f"Sessão que será salva no histórico: {sessao_historico}")
+    print(f"Valor final que será salvo: {valor_final} (tipo: {type(valor_final)})")
+    
     historico.append(sessao_historico)
     
     # Prepara os dados para salvar de volta no arquivo
@@ -77,4 +80,3 @@ def mover_para_historico(sessao_id: int, valor_final: float):
         json.dump(dados_atualizados, arquivo, indent=4, ensure_ascii=False)
         
     return True
-
