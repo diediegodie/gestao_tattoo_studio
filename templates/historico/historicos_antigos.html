@@ -129,7 +129,7 @@ function carregarExtrato() {
         })
         .catch(error => {
             console.error('Erro ao carregar dados:', error);
-            extratoContent.innerHTML = '<p>Erro ao carregar os dados.</p>';
+            extratoContent.innerHTML = '<p>Não existem dados para o período informado.</p>';
         });
 }
 

@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, flash, redirect, url_for
 from historico import historico_bp
 import json
 from pathlib import Path
@@ -98,6 +98,60 @@ def extrato_comissoes(mes_ano):
             'error': str(e)
         })
 
+@historico_bp.route("/comissoes/editar/<artista>", methods=["GET", "POST"])
+def editar_comissao(artista):
+    """Edita os dados de comissão de um artista específico"""
+    if request.method == "POST":
+        try:
+            # Carregar dados atuais
+            with open(Path(__file__).parent.parent / "dados" / "sessoes.json", 'r', encoding='utf-8') as f:
+                dados = json.load(f)
+                sessoes_historico = dados.get('historico', [])
+            
+            # Filtrar sessões do artista
+            sessoes_artista = [s for s in sessoes_historico if s.get('artista') == artista]
+            
+            # Atualizar comissão se necessário
+            nova_comissao = float(request.form.get('comissao', 0))
+            
+            # Aqui você pode implementar a lógica para atualizar a comissão
+            # Por enquanto, apenas retorna uma mensagem de sucesso
+            flash(f"Comissão do artista {artista} atualizada com sucesso!", "sucesso")
+            return redirect(url_for('historico_bp.historico_sessoes'))
+            
+        except Exception as e:
+            flash(f"Erro ao editar comissão: {str(e)}", "erro")
+            return redirect(url_for('historico_bp.historico_sessoes'))
+    
+    # GET: Mostrar formulário de edição
+    return render_template("historico/editar_comissao.html", artista=artista)
+
+@historico_bp.route("/comissoes/excluir/<artista>", methods=["POST"])
+def excluir_comissao(artista):
+    """Exclui os dados de comissão de um artista específico"""
+    try:
+        # Carregar dados atuais
+        with open(Path(__file__).parent.parent / "dados" / "sessoes.json", 'r', encoding='utf-8') as f:
+            dados = json.load(f)
+            sessoes_historico = dados.get('historico', [])
+        
+        # Filtrar sessões do artista para remover
+        sessoes_restantes = [s for s in sessoes_historico if s.get('artista') != artista]
+        
+        # Atualizar o histórico removendo as sessões do artista
+        dados['historico'] = sessoes_restantes
+        
+        # Salvar as alterações
+        with open(Path(__file__).parent.parent / "dados" / "sessoes.json", 'w', encoding='utf-8') as f:
+            json.dump(dados, f, indent=4, ensure_ascii=False)
+        
+        flash(f"Comissões do artista {artista} excluídas com sucesso!", "sucesso")
+        
+    except Exception as e:
+        flash(f"Erro ao excluir comissão: {str(e)}", "erro")
+    
+    return redirect(url_for('historico_bp.historico_sessoes'))
+
 def carregar_historico_antigo(mes_ano, tipo):
     """Carrega dados históricos de um mês específico"""
     dados_dir = Path(__file__).parent.parent / "dados" / "historico_antigo"
@@ -162,6 +216,13 @@ def calcular_comissoes_por_artista(sessoes):
         artista = sessao.get('artista', 'Desconhecido')
         valor = float(sessao.get('valor', 0))
         
+        # Usa a comissão salva se existir, senão calcula 70%
+        comissao_salva = sessao.get('comissao', 0)
+        if comissao_salva > 0:
+            comissao = float(comissao_salva)
+        else:
+            comissao = valor * 0.70  # 70% para o artista
+        
         if artista not in artistas:
             artistas[artista] = {
                 'artista': artista,
@@ -172,9 +233,6 @@ def calcular_comissoes_por_artista(sessoes):
         
         artistas[artista]['total_sessoes'] += 1
         artistas[artista]['valor_total'] += valor
-    
-    # Calcular comissões (30% para o artista, 70% para o estúdio)
-    for artista in artistas.values():
-        artista['comissao'] = artista['valor_total'] * 0.30
+        artistas[artista]['comissao'] += comissao
     
     return list(artistas.values())

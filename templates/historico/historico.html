@@ -26,8 +26,8 @@
                         <th>Data</th>
                         <th>Cliente</th>
                         <th>Artista</th>
-                        <th>Valor</th>
-                        <th>Ações</th>
+                                            <th>Valor</th>
+                    <th>Opções</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@
                         <td class="valor">R$ {{ "%0.2f"|format(pagamento.valor|float) }}</td>
                         <td>
                             <div class="btn-acoes-historico">
-                                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">AÇÕES</button>
+                                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">OPÇÕES</button>
                                 <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
                                     <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
                                     <a href="#" onclick='return confirmDelete("{{ url_for("financeiro_bp.excluir_pagamento_route", indice=loop.index0) }}")' class="btn btn-danger">EXCLUIR</a>
@@ -67,8 +67,9 @@
                         <th>Artista</th>
                         <th>Total de Sessões</th>
                         <th>Valor Total</th>
-                        <th>Comissão (30%)</th>
-                        <th>Valor Estúdio</th>
+                        <th>Comissão (70%)</th>
+                        <th>Valor Estúdio (30%)</th>
+                        <th>Opções</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,7 +79,18 @@
                         <td>{{ artista.total_sessoes }}</td>
                         <td class="valor">R$ {{ "%0.2f"|format(artista.valor_total|float) }}</td>
                         <td class="valor">R$ {{ "%0.2f"|format(artista.comissao|float) }}</td>
-                        <td class="valor">R$ {{ "%0.2f"|format((artista.valor_total|float) * 0.7) }}</td>
+                        <td class="valor">R$ {{ "%0.2f"|format((artista.valor_total|float) * 0.3) }}</td>
+                        <td>
+                            <div class="btn-acoes-historico">
+                                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'comissao')">OPÇÕES</button>
+                                <div class="btn-acoes-hidden" id="acoes-comissao-{{ loop.index0 }}">
+                                    <a href="{{ url_for('historico_bp.editar_comissao', artista=artista.artista) }}" class="btn btn-warning">EDITAR</a>
+                                    <form action="{{ url_for('historico_bp.excluir_comissao', artista=artista.artista) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger" onclick="console.log('Botão EXCLUIR comissão clicado para artista: {{ artista.artista }}'); return confirm('Tem certeza que deseja excluir as comissões deste artista?')">EXCLUIR</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -104,7 +116,7 @@
                     <th>Valor</th>
                     <th>Observações</th>
                     <th>Fechamento</th>
-                    <th>Ações</th>
+                    <th>Opções</th>
                 </tr>
             </thead>
             <tbody>
@@ -118,10 +130,12 @@
                     <td>{{ sessao.data_fechamento }}</td>
                     <td>
                         <div class="btn-acoes-historico">
-                            <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'sessao')">AÇÕES</button>
+                            <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'sessao')">OPÇÕES</button>
                             <div class="btn-acoes-hidden" id="acoes-sessao-{{ loop.index0 }}">
                                 <a href="{{ url_for('sessoes_bp.editar_historico', id=sessao.id) }}" class="btn btn-warning">EDITAR</a>
-                                <a href="#" onclick='return confirmDelete("{{ url_for("sessoes_bp.excluir_historico", id=sessao.id) }}")' class="btn btn-danger">EXCLUIR</a>
+                                <form action="{{ url_for('sessoes_bp.excluir_historico', id=sessao.id) }}" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="console.log('Botão EXCLUIR sessão clicado para ID: {{ sessao.id }}'); return confirm('Tem certeza que deseja excluir esta sessão do histórico?')">EXCLUIR</button>
+                                </form>
                             </div>
                         </div>
                     </td>

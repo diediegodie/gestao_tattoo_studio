@@ -44,13 +44,21 @@ def registrar_pagamento_route():
     
     if request.method == "POST":
         try:
+            valor = float(request.form.get("valor", 0))
+            porcentagem_comissao = float(request.form.get("porcentagem_comissao", 30))
+            
+            # Calcula automaticamente o valor da comissão
+            valor_comissao = round(valor * (porcentagem_comissao / 100), 2)
+            
             novo_pagamento = {
                 "data": request.form.get("data"),
                 "cliente": request.form.get("cliente"),
                 "artista": request.form.get("artista"),
-                "valor": float(request.form.get("valor", 0)),
+                "valor": valor,
                 "forma_pagamento": request.form.get("forma_pagamento"),
-                "descricao": request.form.get("descricao", "")
+                "descricao": request.form.get("descricao", ""),
+                "porcentagem_comissao": porcentagem_comissao,
+                "valor_comissao": valor_comissao
             }
             
             if registrar_pagamento(novo_pagamento):
@@ -59,11 +67,11 @@ def registrar_pagamento_route():
                 sessao_pendente = session.get('sessao_para_pagamento')
                 
                 if sessao_pendente:
-                    # Move a sessão para o histórico
+                    # Move a sessão para o histórico com dados de comissão
                     from sessoes.historico import mover_para_historico
                     from sessoes.agendamento import carregar_agendamentos, salvar_agendamentos
                     
-                    if mover_para_historico(sessao_id=sessao_pendente['id'], valor_final=novo_pagamento['valor']):
+                    if mover_para_historico(sessao_id=sessao_pendente['id'], valor_final=valor, comissao=valor_comissao):
                         # Remove da lista de agendamentos ativos
                         agendamentos = carregar_agendamentos()
                         agendamentos = [s for s in agendamentos if s["id"] != sessao_pendente['id']]
@@ -72,12 +80,12 @@ def registrar_pagamento_route():
                         # Limpa a sessão pendente
                         session.pop('sessao_para_pagamento', None)
                         
-                        flash("Pagamento registrado e sessão finalizada com sucesso!", "sucesso")
+                        flash(f"Pagamento registrado e sessão finalizada com sucesso! Comissão: R$ {valor_comissao:.2f}", "sucesso")
                         return redirect(url_for("historico_bp.historico_sessoes"))
                     else:
                         flash("Pagamento registrado, mas erro ao finalizar sessão.", "erro")
                 else:
-                    flash("Pagamento registrado com sucesso!", "sucesso")
+                    flash(f"Pagamento registrado com sucesso! Comissão: R$ {valor_comissao:.2f}", "sucesso")
                 
                 return redirect(url_for("financeiro_bp.listar_pagamentos"))
             else:

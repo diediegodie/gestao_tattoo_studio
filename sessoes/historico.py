@@ -12,7 +12,7 @@ def gerar_novo_id_historico(historico):
         return 1
     return max(int(s.get("id", 0)) for s in historico) + 1
 
-def mover_para_historico(sessao_id: int, valor_final: float):
+def mover_para_historico(sessao_id: int, valor_final: float, comissao: float = 0.0):
     """
     Move uma sessão da lista de ativas para o histórico e a remove da lista de ativas,
     garantindo que o ID no histórico seja único.
@@ -20,6 +20,7 @@ def mover_para_historico(sessao_id: int, valor_final: float):
     Args:
         sessao_id (int): O ID da sessão a ser movida.
         valor_final (float): O valor final a ser registrado no histórico.
+        comissao (float): O valor da comissão do artista.
 
     Returns:
         bool: True se a operação foi bem-sucedida, False caso contrário.
@@ -62,11 +63,13 @@ def mover_para_historico(sessao_id: int, valor_final: float):
         "valor": valor_final,
         "observacoes": sessao_para_mover.get("observacoes", ""),
         "data_fechamento": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "paga": True
+        "paga": True,
+        "comissao": comissao
     }
     
     print(f"Sessão que será salva no histórico: {sessao_historico}")
     print(f"Valor final que será salvo: {valor_final} (tipo: {type(valor_final)})")
+    print(f"Comissão que será salva: {comissao} (tipo: {type(comissao)})")
     
     historico.append(sessao_historico)
     

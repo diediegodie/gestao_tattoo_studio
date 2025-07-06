@@ -1,4 +1,26 @@
-/* Reset e configurações básicas */
+/* ========================================
+   SISTEMA DE GESTÃO PARA ESTÚDIO TATTOO
+   ========================================
+   
+   Estrutura organizada por módulos:
+   1. RESET E CONFIGURAÇÕES BÁSICAS
+   2. LAYOUT E NAVEGAÇÃO
+   3. TIPOGRAFIA E TÍTULOS
+   4. FORMULÁRIOS E CAMPOS
+   5. BOTÕES E INTERAÇÕES
+   6. TABELAS E DADOS
+   7. CARDS E CONTAINERS
+   8. MENSAGENS E FEEDBACK
+   9. COMPONENTES ESPECÍFICOS
+   10. UTILITÁRIOS E HELPERS
+   11. RESPONSIVIDADE
+   12. ANIMAÇÕES E TRANSITIONS
+*/
+
+/* ========================================
+   1. RESET E CONFIGURAÇÕES BÁSICAS
+   ======================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -13,6 +35,10 @@ body {
     font-size: 18px;
     display: flex;
 }
+
+/* ========================================
+   2. LAYOUT E NAVEGAÇÃO
+   ======================================== */
 
 /* Menu lateral */
 nav {
@@ -51,14 +77,13 @@ nav a:hover {
     transform: translateX(5px);
 }
 
-/* Menu ativo */
 nav a.active {
     background-color: #00C7B4;
     color: #F2F2F2;
     border: 2px solid #00C7B4;
 }
 
-/* Container principal - centralizado com base na coluna de navegação */
+/* Container principal */
 .container {
     margin-left: 250px;
     padding: 2rem;
@@ -69,7 +94,11 @@ nav a.active {
     flex-direction: column;
 }
 
-/* Título principal - Ajustado conforme solicitado */
+/* ========================================
+   3. TIPOGRAFIA E TÍTULOS
+   ======================================== */
+
+/* Título principal da página inicial */
 .titulo-principal {
     text-align: center;
     margin: 3rem 0 4rem 0;
@@ -99,7 +128,7 @@ nav a.active {
     text-shadow: 0 0 20px rgba(242, 242, 242, 0.3);
 }
 
-/* Títulos */
+/* Títulos gerais */
 h1, h2, h3 {
     color: #00C7B4;
     margin-bottom: 1.5rem;
@@ -126,17 +155,20 @@ h3 {
     color: #F2F2F2;
 }
 
-/* Cards */
-.card {
-    background: #545454;
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    border: 1px solid #666666;
-    position: relative;
-    overflow: visible;
+/* Links */
+a {
+    color: #00C7B4;
+    text-decoration: none;
+    transition: all 0.3s ease;
 }
+
+a:hover {
+    color: #F2F2F2;
+}
+
+/* ========================================
+   4. FORMULÁRIOS E CAMPOS
+   ======================================== */
 
 /* Formulários */
 form {
@@ -148,6 +180,7 @@ form {
     border: 1px solid #666666;
 }
 
+/* Labels */
 label {
     display: block;
     margin-bottom: 0.5rem;
@@ -159,6 +192,7 @@ label {
     text-align: center;
 }
 
+/* Campos de entrada */
 input[type="text"], 
 input[type="number"], 
 input[type="date"], 
@@ -189,26 +223,24 @@ textarea:focus {
     background-color: #545454;
 }
 
-/* Campos obrigatórios vazios */
+/* Validação de campos obrigatórios */
 input[required]:placeholder-shown,
 textarea[required]:placeholder-shown {
     border-color: #FF445A;
     box-shadow: 0 0 0 3px rgba(255, 68, 90, 0.2);
 }
 
-/* Select obrigatório vazio */
 select[required] {
     border-color: #FF445A;
     box-shadow: 0 0 0 3px rgba(255, 68, 90, 0.2);
 }
 
-/* Quando o select tem valor selecionado, remove a borda vermelha */
 select[required]:valid {
     border-color: #666666;
     box-shadow: none;
 }
 
-/* Spinner buttons maiores */
+/* Spinner buttons maiores para campos numéricos */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     height: 2em;
@@ -225,7 +257,36 @@ input[type="number"]::-moz-number-spin-box {
     width: 1.5em;
 }
 
-/* Botões */
+/* Formulário centralizado */
+.form-centralizado {
+    max-width: 400px;
+    margin: 0 auto;
+    background: #545454;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 1px solid #666666;
+}
+
+.form-centralizado label {
+    text-align: left;
+    margin-bottom: 0.5rem;
+}
+
+.form-centralizado input {
+    margin-bottom: 1.5rem;
+}
+
+.form-centralizado .btn {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* ========================================
+   5. BOTÕES E INTERAÇÕES
+   ======================================== */
+
+/* Botões base */
 button, .btn {
     background-color: #00C7B4;
     color: #F2F2F2;
@@ -243,25 +304,12 @@ button, .btn {
     text-align: center;
 }
 
-/* Botões de ações - Padronizados para todo o sistema */
-.btn-acoes {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    align-items: center;
-}
-
-.btn-acoes .btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 12px;
-    min-width: 80px;
-}
-
 button:hover, .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
+/* Variantes de botões */
 .btn-danger {
     background-color: #FF445A;
 }
@@ -275,7 +323,124 @@ button:hover, .btn:hover {
     color: #333333;
 }
 
-/* Tabelas */
+/* Botão voltar */
+.btn-voltar {
+    top: 1rem;
+    left: 1rem;
+    background-color: #545454;
+    color: #F2F2F2;
+    border: 1px solid #666666;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    width: auto;
+    display: inline-block;
+}
+
+.btn-voltar:hover {
+    background-color: #666666;
+    border-color: #00C7B4;
+    color: #F2F2F2;
+}
+
+/* Botões de ações em tabelas - CORRIGIDO */
+.btn-acoes .btn,
+.btn-acoes-historico .btn-acoes-toggle {
+    padding: 0.3rem 0.7rem !important;
+    font-size: 11px !important;
+    min-width: 60px !important;
+    border-radius: 6px !important;
+    height: 28px !important;
+    line-height: 1.2 !important;
+}
+
+.btn-acoes .btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 12px;
+    min-width: 80px;
+}
+
+/* Botões de ações toggle */
+.btn-acoes-toggle {
+    background-color: #545454;
+    color: #F2F2F2;
+    border: 1px solid #666666;
+    padding: 0.4rem 0.8rem;
+    font-size: 12px;
+    min-width: 80px;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    z-index: 1001;
+}
+
+.btn-acoes-toggle:hover {
+    background-color: #666666;
+    border-color: #00C7B4;
+}
+
+/* Dropdown de ações - CORRIGIDO para não expandir linha */
+.btn-acoes-hidden {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #545454;
+    border: 1px solid #666666;
+    border-radius: 8px;
+    padding: 0.3rem;
+    z-index: 999999;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    flex-direction: row;
+    gap: 0.2rem;
+    min-width: 200px;
+    margin-top: 5px;
+    white-space: nowrap;
+}
+
+.btn-acoes-hidden .btn {
+    padding: 0.2rem 0.4rem;
+    font-size: 9px;
+    min-width: 60px;
+    margin: 0;
+    letter-spacing: 0.1px;
+    flex-shrink: 0;
+}
+
+/* Ajuste específico para botões com texto longo */
+.btn-acoes-hidden .btn[onclick*="enviarParaLimbo"] {
+    font-size: 8px;
+    letter-spacing: 0.05px;
+    padding: 0.2rem 0.3rem;
+    min-width: 70px;
+    white-space: nowrap;
+}
+
+/* Botões do topo */
+.botoes-topo {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.botoes-topo .btn,
+.botoes-topo .search-toggle {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   6. TABELAS E DADOS
+   ======================================== */
+
+/* Tabelas base */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -286,6 +451,8 @@ table {
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     border: 1px solid #666666;
     position: relative;
+    margin-bottom: 0;
+    overflow: hidden;
 }
 
 th, td {
@@ -317,268 +484,6 @@ tr:nth-child(even):hover {
     background-color: #666666;
 }
 
-/* Mensagens */
-.mensagem-sucesso {
-    background-color: #00C7B4;
-    color: #F2F2F2;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.mensagem-erro {
-    background-color: #FF445A;
-    color: #F2F2F2;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Links */
-a {
-    color: #00C7B4;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-a:hover {
-    color: #F2F2F2;
-}
-
-/* Modal de confirmação */
-#confirmModal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.8);
-    backdrop-filter: blur(5px);
-}
-
-#confirmModal > div {
-    background-color: #545454;
-    margin: 15% auto;
-    padding: 2rem;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 500px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    border: 1px solid #666666;
-}
-
-#confirmModal p {
-    margin-bottom: 1.5rem;
-    font-size: 18px;
-    color: #F2F2F2;
-}
-
-/* Utilitários */
-.text-center {
-    text-align: center;
-}
-
-.mb-2 {
-    margin-bottom: 1rem;
-}
-
-.mt-2 {
-    margin-top: 1rem;
-}
-
-.d-flex {
-    display: flex;
-}
-
-.justify-between {
-    justify-content: space-between;
-}
-
-.align-center {
-    align-items: center;
-}
-
-/* Badges */
-.badge {
-    padding: 0.3rem 0.6rem;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.badge-success {
-    background-color: #00C7B4;
-    color: #F2F2F2;
-}
-
-.badge-warning {
-    background-color: #EDAE4C;
-    color: #333333;
-}
-
-.badge-danger {
-    background-color: #FF445A;
-    color: #F2F2F2;
-}
-
-/* Botões do topo organizados horizontalmente */
-.botoes-topo {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.botoes-topo .btn,
-.botoes-topo .search-toggle {
-    margin: 0;
-    flex-shrink: 0;
-}
-
-/* Barra de busca - Reduzida e mais discreta */
-.search-toggle {
-    background-color: #545454;
-    color: #F2F2F2;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 1px solid #666666;
-    transition: all 0.3s ease;
-    display: inline-block;
-    margin-bottom: 0;
-    width: auto;
-    max-width: 200px;
-}
-
-.search-toggle:hover {
-    background-color: #666666;
-    border-color: #00C7B4;
-}
-
-.search-toggle.active {
-    background-color: #00C7B4;
-    color: #F2F2F2;
-}
-
-/* Painéis de busca otimizados */
-.search-panel {
-    background: #545454;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    border: 1px solid #666666;
-    display: none;
-    transition: all 0.2s ease-in-out;
-}
-
-.search-panel.show {
-    display: block;
-    animation: slideDown 0.2s ease-in-out;
-}
-
-.search-panel form {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.search-panel input[type="text"],
-.search-panel input[type="date"] {
-    flex: 1;
-    min-width: 150px;
-    padding: 0.5rem;
-    background: #333333;
-    border: 1px solid #666666;
-    border-radius: 4px;
-    color: #F2F2F2;
-    font-size: 14px;
-}
-
-.search-panel input:focus {
-    outline: none;
-    border-color: #00C7B4;
-    box-shadow: 0 0 0 2px rgba(0, 199, 180, 0.2);
-}
-
-.search-panel label {
-    color: #F2F2F2;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 120px;
-}
-
-.search-panel .btn {
-    padding: 0.5rem 1rem;
-    font-size: 12px;
-    min-width: 80px;
-    transition: all 0.2s ease-in-out;
-}
-
-/* Responsividade para painéis de busca */
-@media (max-width: 768px) {
-    .search-panel form {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .search-panel input[type="text"],
-    .search-panel input[type="date"],
-    .search-panel label {
-        width: 100%;
-        min-width: auto;
-    }
-    
-    .search-panel .btn {
-        width: 100%;
-    }
-}
-
-/* Melhorar o posicionamento dos campos de data */
-.search-panel input[type="date"] {
-    position: relative;
-    z-index: 1001;
-}
-
-/* Garantir que o calendário apareça acima de outros elementos */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    z-index: 1002;
-    position: relative;
-}
-
-/* Tabelas com scroll interno */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 0;
-    background: #545454;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    border: 1px solid #666666;
-    position: relative;
-}
-
 /* Container de tabela com scroll */
 .table-container {
     max-height: 400px;
@@ -587,6 +492,7 @@ table {
     border: 1px solid #666666;
     background: #545454;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    position: relative;
 }
 
 .table-container table {
@@ -596,7 +502,67 @@ table {
     box-shadow: none;
 }
 
-/* Seções específicas com scroll */
+/* Tabela de comissões */
+.comissoes-table {
+    background: #545454;
+    border: 1px solid #666666;
+}
+
+.comissoes-table th {
+    background-color: #666666;
+    color: #F2F2F2;
+}
+
+.comissoes-table td {
+    color: #F2F2F2;
+}
+
+/* ========================================
+   7. CARDS E CONTAINERS
+   ======================================== */
+
+/* Cards base */
+.card {
+    background: #545454;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border: 1px solid #666666;
+    position: relative;
+    overflow: visible;
+}
+
+/* Calculadora compacta */
+.calculadora-compacta {
+    max-width: 400px;
+    margin: 0 auto;
+    background: #545454;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 1px solid #666666;
+}
+
+.calculadora-compacta h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.calculadora-compacta form {
+    background: none;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+
+.calculadora-compacta .btn {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Seções específicas */
 .analise-section {
     background: #545454;
     padding: 1.5rem;
@@ -655,13 +621,6 @@ table {
     margin-bottom: 2rem;
 }
 
-@media (min-width: 768px) {
-    .historico-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-    }
-}
-
 .historico-grid .historico-section {
     margin-bottom: 0;
 }
@@ -694,18 +653,57 @@ table {
     font-size: 14px;
 }
 
-/* Tabela de comissões - Corrigida para seguir a paleta */
-.comissoes-table {
-    background: #545454;
-    border: 1px solid #666666;
+/* ========================================
+   8. MENSAGENS E FEEDBACK
+   ======================================== */
+
+/* Mensagens de sucesso e erro */
+.mensagem-sucesso {
+    background-color: #00C7B4;
+    color: #F2F2F2;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.comissoes-table th {
-    background-color: #666666;
+.mensagem-erro {
+    background-color: #FF445A;
+    color: #F2F2F2;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Badges de status */
+.badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-success {
+    background-color: #00C7B4;
     color: #F2F2F2;
 }
 
-.comissoes-table td {
+.badge-warning {
+    background-color: #EDAE4C;
+    color: #333333;
+}
+
+.badge-danger {
+    background-color: #FF445A;
     color: #F2F2F2;
 }
 
@@ -725,146 +723,142 @@ table {
     color: #F2F2F2;
 }
 
-/* Formulário centralizado */
-.form-centralizado {
-    max-width: 400px;
-    margin: 0 auto;
-    background: #545454;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    border: 1px solid #666666;
-}
+/* ========================================
+   9. COMPONENTES ESPECÍFICOS
+   ======================================== */
 
-.form-centralizado label {
-    text-align: left;
-    margin-bottom: 0.5rem;
-}
-
-.form-centralizado input {
-    margin-bottom: 1.5rem;
-}
-
-.form-centralizado .btn {
-    width: 100%;
-    margin-top: 1rem;
-}
-
-/* Botões de ações padronizados para todo o sistema - CORRIGIDO */
-.btn-acoes-historico {
-    position: relative;
-    z-index: 1000;
-}
-
-.btn-acoes-toggle {
-    background-color: #545454;
-    color: #F2F2F2;
-    border: 1px solid #666666;
-    padding: 0.4rem 0.8rem;
-    font-size: 12px;
-    min-width: 80px;
-    transition: all 0.2s ease-in-out;
-    position: relative;
-    z-index: 1001;
-}
-
-.btn-acoes-toggle:hover {
-    background-color: #666666;
-    border-color: #00C7B4;
-}
-
-/* CORREÇÃO CRÍTICA: Botões de ações sempre visíveis e alinhados verticalmente */
-.btn-acoes-hidden {
+/* Modal de confirmação */
+#confirmModal {
     display: none;
-    position: absolute !important;
-    top: 100% !important;
-    left: 0 !important;
-    transform: none !important;
-    background: #545454;
-    border: 1px solid #666666;
-    border-radius: 8px;
-    padding: 0.3rem;
-    z-index: 999999 !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 100px;
-    margin-top: 2px;
-    max-width: 120px;
-}
-
-.btn-acoes-hidden .btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 10px;
-    min-width: 60px;
-    margin: 0;
-    letter-spacing: 0.1px;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
     width: 100%;
-    text-align: center;
-    transition: all 0.2s ease-in-out;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
 }
 
-/* Ajuste específico para botões com texto longo */
-.btn-acoes-hidden .btn[onclick*="enviarParaLimbo"] {
-    font-size: 9px;
-    letter-spacing: 0.05px;
-    padding: 0.25rem 0.4rem;
-    min-width: 80px;
-    white-space: nowrap;
-}
-
-/* Calculadora compacta */
-.calculadora-compacta {
-    max-width: 400px;
-    margin: 0 auto;
-    background: #545454;
+#confirmModal > div {
+    background-color: #545454;
+    margin: 15% auto;
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     border: 1px solid #666666;
 }
 
-.calculadora-compacta h1 {
-    font-size: 1.8rem;
+#confirmModal p {
     margin-bottom: 1.5rem;
+    font-size: 18px;
+    color: #F2F2F2;
 }
 
-.calculadora-compacta form {
-    background: none;
-    padding: 0;
-    border: none;
-    box-shadow: none;
-    margin-bottom: 0;
-}
-
-.calculadora-compacta .btn {
-    width: 100%;
-    margin-top: 1rem;
-}
-
-/* Botão voltar */
-.btn-voltar {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
+/* Barra de busca */
+.search-toggle {
     background-color: #545454;
     color: #F2F2F2;
-    border: 1px solid #666666;
     padding: 0.5rem 1rem;
     border-radius: 6px;
-    text-decoration: none;
+    cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    border: 1px solid #666666;
     transition: all 0.3s ease;
-    z-index: 1000;
+    display: inline-block;
+    margin-bottom: 0;
+    width: auto;
+    max-width: 200px;
 }
 
-.btn-voltar:hover {
+.search-toggle:hover {
     background-color: #666666;
     border-color: #00C7B4;
+}
+
+.search-toggle.active {
+    background-color: #00C7B4;
     color: #F2F2F2;
+}
+
+/* Painéis de busca */
+.search-panel {
+    background: #545454;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #666666;
+    display: none;
+    transition: all 0.2s ease-in-out;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 18px !important;
+}
+
+.search-panel.show {
+    display: block;
+    animation: slideDown 0.2s ease-in-out;
+}
+
+.search-panel form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-panel input[type="text"],
+.search-panel input[type="date"] {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.5rem;
+    background: #333333;
+    border: 1px solid #666666;
+    border-radius: 4px;
+    color: #F2F2F2;
+    font-size: 14px;
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    color: #333 !important;
+    border-radius: 4px !important;
+    padding: 6px 10px !important;
+    font-size: 1rem !important;
+    margin-right: 8px !important;
+    box-shadow: none !important;
+}
+
+.search-panel input:focus {
+    outline: none;
+    border-color: #00C7B4;
+    box-shadow: 0 0 0 2px rgba(0, 199, 180, 0.2);
+}
+
+.search-panel label {
+    color: #F2F2F2;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+    margin-right: 6px !important;
+    font-weight: 500 !important;
+    color: #333 !important;
+    background: none !important;
+}
+
+.search-panel .btn {
+    padding: 0.5rem 1rem;
+    font-size: 12px;
+    min-width: 80px;
+    transition: all 0.2s ease-in-out;
 }
 
 /* Seletor de mês */
@@ -872,15 +866,42 @@ table {
     max-width: 300px;
     margin: 2rem auto;
     text-align: center;
+    background: #545454;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border: 1px solid #666666;
 }
 
 .seletor-mes select {
     width: 100%;
     margin-bottom: 1rem;
+    width: 100%;
+    padding: 0.8rem;
+    background: #333333;
+    border: 1px solid #666666;
+    border-radius: 8px;
+    color: #F2F2F2;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.seletor-mes select:focus {
+    outline: none;
+    border-color: #00C7B4;
+    box-shadow: 0 0 0 2px rgba(0, 199, 180, 0.2);
 }
 
 .seletor-mes .btn {
     width: 100%;
+}
+
+.seletor-mes label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #F2F2F2;
+    font-weight: 600;
+    font-size: 14px;
 }
 
 /* Seletor de tipo de histórico */
@@ -917,41 +938,7 @@ table {
     box-shadow: 0 0 0 2px rgba(0, 199, 180, 0.2);
 }
 
-/* Melhorias no seletor de mês */
-.seletor-mes {
-    background: #545454;
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    border: 1px solid #666666;
-}
-
-.seletor-mes label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #F2F2F2;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.seletor-mes select {
-    width: 100%;
-    padding: 0.8rem;
-    background: #333333;
-    border: 1px solid #666666;
-    border-radius: 8px;
-    color: #F2F2F2;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.seletor-mes select:focus {
-    outline: none;
-    border-color: #00C7B4;
-    box-shadow: 0 0 0 2px rgba(0, 199, 180, 0.2);
-}
-
-/* Resumo financeiro destacado */
+/* Resumo financeiro */
 .resumo-financeiro {
     background: linear-gradient(135deg, #545454 0%, #666666 100%);
     padding: 1.5rem;
@@ -994,7 +981,125 @@ table {
     box-shadow: 0 4px 15px rgba(0, 199, 180, 0.3);
 }
 
-/* Responsividade */
+/* Centralização do botão Buscar Extrato */
+.btn-buscar-extrato {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.btn-buscar-extrato .btn {
+    min-width: 200px;
+    padding: 0.8rem 1.5rem;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-buscar-extrato .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 199, 180, 0.3);
+}
+
+/* Container voltar */
+.voltar-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.voltar-container .btn,
+.voltar-container .btn-voltar {
+    position: static !important;
+    margin: 0 auto !important;
+    left: unset !important;
+    top: unset !important;
+    display: inline-block;
+}
+
+/* Busca container */
+.busca-container {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 18px !important;
+}
+
+.busca-container input,
+.busca-container select {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    color: #333 !important;
+    border-radius: 4px !important;
+    padding: 6px 10px !important;
+    font-size: 1rem !important;
+    margin-right: 8px !important;
+    box-shadow: none !important;
+}
+
+.busca-container label {
+    margin-right: 6px !important;
+    font-weight: 500 !important;
+    color: #333 !important;
+    background: none !important;
+}
+
+/* Filtro de data minimalista */
+.search-panel input[type="date"],
+.busca-container .filtro-data {
+    min-width: 120px !important;
+    max-width: 180px !important;
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+    padding: 6px 10px !important;
+    color: #333 !important;
+}
+
+/* Correção específica para página financeiro */
+.search-panel input[type="date"] {
+    color: #F2F2F2 !important;
+    background: #666666 !important;
+    border: 1px solid #666666 !important;
+}
+
+/* ========================================
+   10. UTILITÁRIOS E HELPERS
+   ======================================== */
+
+/* Classes utilitárias */
+.text-center {
+    text-align: center;
+}
+
+.mb-2 {
+    margin-bottom: 1rem;
+}
+
+.mt-2 {
+    margin-top: 1rem;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.align-center {
+    align-items: center;
+}
+
+/* ========================================
+   11. RESPONSIVIDADE
+   ======================================== */
+
+/* Responsividade geral */
 @media (max-width: 768px) {
     body {
         font-size: 16px;
@@ -1087,8 +1192,37 @@ table {
     .table-container {
         max-height: 300px;
     }
+    
+    .search-panel input[type="text"],
+    .search-panel input[type="date"],
+    .search-panel select,
+    .busca-container input,
+    .busca-container select {
+        width: 100% !important;
+        margin-bottom: 8px !important;
+    }
 }
 
+/* Responsividade para painéis de busca */
+@media (max-width: 768px) {
+    .search-panel form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-panel input[type="text"],
+    .search-panel input[type="date"],
+    .search-panel label {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .search-panel .btn {
+        width: 100%;
+    }
+}
+
+/* Responsividade para tablets */
 @media (min-width: 769px) and (max-width: 1199px) {
     .container {
         max-width: 1000px;
@@ -1101,6 +1235,7 @@ table {
     }
 }
 
+/* Responsividade para desktop */
 @media (min-width: 1200px) {
     .container {
         max-width: 1200px;
@@ -1113,56 +1248,17 @@ table {
     }
 }
 
-/* Garantir que botões de ações sempre apareçam acima */
-.table-container {
-    position: relative;
-}
+/* ========================================
+   12. ANIMAÇÕES E TRANSITIONS
+   ======================================== */
 
-/* Ajuste para botões de ações em tabelas com scroll */
-.table-container .btn-acoes-historico {
-    position: relative;
-    z-index: 1000;
-}
-
-.table-container .btn-acoes-toggle {
-    position: relative;
-    z-index: 1001;
-}
-
-/* Garantir que o dropdown de ações apareça acima de tudo */
-.btn-acoes-hidden {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #545454;
-    border: 1px solid #666666;
-    border-radius: 8px;
-    padding: 0.5rem;
-    z-index: 999999;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    flex-direction: column;
-    gap: 0.3rem;
-    min-width: 120px;
-    margin-top: 5px;
-}
-
-.btn-acoes-hidden .btn {
-    padding: 0.3rem 0.6rem;
-    font-size: 11px;
-    min-width: 70px;
-    margin: 0;
-    letter-spacing: 0.2px;
-}
-
-/* Animações mais suaves para toda a interface */
+/* Transições suaves para toda a interface */
 * {
     transition: all 0.2s ease-in-out;
 }
 
 /* Transições específicas para elementos interativos */
-.btn, .card, .table-container, .seletor-mes, .seletor-tipo {
+.btn, .card, .table-container, .search-panel, .btn-acoes-hidden {
     transition: all 0.2s ease-in-out;
 }
 
@@ -1170,6 +1266,11 @@ table {
 .btn:hover, .card:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
 /* Animações para dropdowns e menus */
@@ -1188,32 +1289,7 @@ table {
     }
 }
 
-/* Centralização do botão Buscar Extrato */
-.btn-buscar-extrato {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.5rem;
-}
-
-.btn-buscar-extrato .btn {
-    min-width: 200px;
-    padding: 0.8rem 1.5rem;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.2s ease-in-out;
-}
-
-.btn-buscar-extrato .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 199, 180, 0.3);
-}
-
-/* Melhorias nas animações */
-.search-panel {
-    transition: all 0.2s ease-in-out;
-    overflow: hidden;
-}
-
+/* Animações para painéis de busca */
 .search-panel.show {
     animation: slideDown 0.2s ease-in-out;
 }
@@ -1231,18 +1307,389 @@ table {
     }
 }
 
-/* Transições suaves para todos os elementos interativos */
-.btn, .card, .table-container, .search-panel, .btn-acoes-hidden {
-    transition: all 0.2s ease-in-out;
+/* Melhorar o posicionamento dos campos de data */
+.search-panel input[type="date"] {
+    position: relative;
+    z-index: 1001;
 }
 
-/* Hover effects mais suaves */
-.btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+/* Garantir que o calendário apareça acima de outros elementos */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    z-index: 1002;
+    position: relative;
 }
 
-.card:hover {
+/* Garantir que botões de ações sempre apareçam acima */
+.table-container .btn-acoes-historico {
+    position: relative;
+    z-index: 1000;
+}
+
+.table-container .btn-acoes-toggle {
+    position: relative;
+    z-index: 1001;
+}
+
+/* ========================================
+   CORREÇÃO DOS BOTÕES DE AÇÕES
+   ======================================== */
+
+/* Container dos botões de ações */
+.btn-acoes-historico {
+    position: relative;
+    display: inline-block;
+}
+
+/* Botão principal "OPÇÕES" */
+.btn-acoes-toggle {
+    background: #545454;
+    color: #F2F2F2;
+    border: 2px solid #666666;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    min-width: 80px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-acoes-toggle:hover {
+    background: #00C7B4;
+    border-color: #00C7B4;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* Container dos botões que aparecem */
+.btn-acoes-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    flex-direction: row;
+    gap: 5px;
+    z-index: 999999;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+}
+
+/* Botões individuais (Editar, Excluir, etc.) */
+.btn-acoes-hidden .btn {
+    background: #545454;
+    color: #F2F2F2;
+    border: 2px solid #666666;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    height: 40px;
+    flex: 1;
+}
+
+.btn-acoes-hidden .btn:hover {
+    background: #00C7B4;
+    border-color: #00C7B4;
+    transform: translateY(-2px);
+}
+
+/* Estilos específicos para botões de ação */
+.btn-acoes-hidden .btn-warning {
+    background: #FFA500;
+    border-color: #FFA500;
+}
+
+.btn-acoes-hidden .btn-warning:hover {
+    background: #FF8C00;
+    border-color: #FF8C00;
+}
+
+.btn-acoes-hidden .btn-danger {
+    background: #DC3545;
+    border-color: #DC3545;
+}
+
+.btn-acoes-hidden .btn-danger:hover {
+    background: #C82333;
+    border-color: #C82333;
+}
+
+.btn-acoes-hidden .btn-success {
+    background: #28A745;
+    border-color: #28A745;
+}
+
+.btn-acoes-hidden .btn-success:hover {
+    background: #218838;
+    border-color: #218838;
+}
+
+/* Estado ativo quando os botões estão visíveis */
+.btn-acoes-historico.active .btn-acoes-toggle {
+    display: none;
+}
+
+.btn-acoes-historico.active .btn-acoes-hidden {
+    display: flex;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    .btn-acoes-hidden {
+        flex-direction: column;
+        gap: 3px;
+    }
+    
+    .btn-acoes-hidden .btn {
+        min-width: 70px;
+        height: 35px;
+        font-size: 12px;
+    }
+    
+    .btn-acoes-toggle {
+        min-width: 70px;
+        height: 35px;
+        font-size: 12px;
+    }
+}
+
+/* ========================================
+   CORREÇÃO DOS BOTÕES DE AÇÕES - REGRAS ESPECÍFICAS
+   ======================================== */
+
+/* Sobrescrever estilos antigos com regras mais específicas */
+.table-container .btn-acoes-historico {
+    position: relative !important;
+    display: inline-block !important;
+    min-height: 40px !important;
+    height: 40px !important;
+}
+
+.table-container .btn-acoes-toggle {
+    background: #545454 !important;
+    color: #F2F2F2 !important;
+    border: 2px solid #666666 !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 14px !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    min-width: auto !important;
+    width: auto !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+}
+
+.table-container .btn-acoes-toggle:hover {
+    background: #00C7B4 !important;
+    border-color: #00C7B4 !important;
+    transform: translateY(-2px) !important;
+}
+
+.table-container .btn-acoes-hidden {
+    position: absolute !important;
+    top: 0 !important;
+    right: 100% !important;
+    left: auto !important;
+    display: none !important;
+    flex-direction: row !important;
+    gap: 5px !important;
+    z-index: 999999 !important;
+    background: transparent !important;
+    width: auto !important;
+    height: 100% !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    min-width: auto !important;
+    margin-right: 5px !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+}
+
+.table-container .btn-acoes-hidden .btn {
+    background: #545454 !important;
+    color: #F2F2F2 !important;
+    border: 2px solid #666666 !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 14px !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: auto !important;
+    width: auto !important;
+    height: 40px !important;
+    flex: 0 1 auto !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    z-index: 1000000 !important;
+    pointer-events: auto !important;
+}
+
+.table-container .btn-acoes-hidden .btn:hover {
+    background: #00C7B4 !important;
+    border-color: #00C7B4 !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Estado ativo */
+.table-container .btn-acoes-historico.active .btn-acoes-toggle {
+    display: none !important;
+}
+
+.table-container .btn-acoes-historico.active .btn-acoes-hidden {
+    display: flex !important;
+}
+
+/* Estilos específicos para botões coloridos */
+.table-container .btn-acoes-hidden .btn-warning {
+    background: #FFA500 !important;
+    border-color: #FFA500 !important;
+}
+
+.table-container .btn-acoes-hidden .btn-warning:hover {
+    background: #FF8C00 !important;
+    border-color: #FF8C00 !important;
+}
+
+.table-container .btn-acoes-hidden .btn-danger {
+    background: #DC3545 !important;
+    border-color: #DC3545 !important;
+}
+
+.table-container .btn-acoes-hidden .btn-danger:hover {
+    background: #C82333 !important;
+    border-color: #C82333 !important;
+}
+
+.table-container .btn-acoes-hidden .btn-success {
+    background: #28A745 !important;
+    border-color: #28A745 !important;
+}
+
+.table-container .btn-acoes-hidden .btn-success:hover {
+    background: #218838 !important;
+    border-color: #218838 !important;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    .table-container .btn-acoes-hidden {
+        flex-direction: column !important;
+        gap: 3px !important;
+        right: 100% !important;
+        left: auto !important;
+        margin-right: 5px !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+    }
+    
+    .table-container .btn-acoes-hidden .btn {
+        min-width: auto !important;
+        width: auto !important;
+        height: 35px !important;
+        font-size: 12px !important;
+        padding: 0.4rem 0.8rem !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+    
+    .table-container .btn-acoes-toggle {
+        min-width: auto !important;
+        width: auto !important;
+        height: 35px !important;
+        font-size: 12px !important;
+        padding: 0.4rem 0.8rem !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+}
+
+/* Garantir altura mínima para células com botões de ações */
+.table-container td:last-child {
+    min-height: 40px !important;
+    height: 40px !important;
+    vertical-align: middle !important;
+}
+
+@media (max-width: 768px) {
+    .table-container td:last-child {
+        min-height: 35px !important;
+        height: 35px !important;
+    }
+}
+
+/* Estilos para formulários dentro dos botões de ações */
+.table-container .btn-acoes-hidden form {
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.table-container .btn-acoes-hidden form button {
+    background: #DC3545 !important;
+    border-color: #DC3545 !important;
+    color: #F2F2F2 !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 14px !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: auto !important;
+    width: auto !important;
+    height: 40px !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    z-index: 1000000 !important;
+    pointer-events: auto !important;
+    border: 2px solid #DC3545 !important;
+}
+
+.table-container .btn-acoes-hidden form button:hover {
+    background: #C82333 !important;
+    border-color: #C82333 !important;
+    transform: translateY(-2px) !important;
 }

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block titulo %}Editar Comissão{% endblock %}
+
+{% block conteudo %}
+<h1>Editar Comissão - {{ artista }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="mensagem-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<form method="POST" class="form-centralizado">
+    <label>Artista: <input type="text" name="artista" value="{{ artista }}" readonly></label>
+    
+    <label>Porcentagem de Comissão (%): <input type="number" step="0.1" name="comissao" value="70" min="0" max="100" required></label>
+    
+    <div class="d-flex justify-between">
+        <button type="submit" class="btn btn-success">SALVAR ALTERAÇÕES</button>
+        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-warning">CANCELAR</a>
+    </div>
+</form>
+{% endblock %} 

@@ -42,16 +42,20 @@ def gerar_extrato_mensal(mes, ano):
         try:
             data_pagamento = datetime.strptime(pagamento["data"], "%Y-%m-%d").date()
             if data_pagamento.month == mes and data_pagamento.year == ano:
+                valor = float(pagamento.get("valor", 0))
+                comissao = valor * 0.7  # 70% para o artista
+                
                 pagamento_formatado = {
                     "data": pagamento.get("data", ""),
                     "cliente": pagamento.get("cliente", ""),
                     "artista": pagamento.get("artista", ""),
-                    "valor": float(pagamento.get("valor", 0)),
+                    "valor": valor,
+                    "comissao": comissao,
                     "forma_pagamento": pagamento.get("forma_pagamento", "Não informado"),
                     "descricao": pagamento.get("descricao", "")
                 }
                 extrato.append(pagamento_formatado)
-                total_mes += pagamento_formatado["valor"]
+                total_mes += valor
         except (KeyError, ValueError):
             continue
 
@@ -87,7 +91,12 @@ def gerar_relatorio(tipo="mensal"):
 
             if incluir:
                 valor = float(pagamento.get("valor", 0))
-                comissao = valor * 0.3
+                # Usa a comissão salva se existir, senão calcula 30%
+                comissao_salva = pagamento.get("valor_comissao", 0)
+                if comissao_salva > 0:
+                    comissao = float(comissao_salva)
+                else:
+                    comissao = valor * 0.7
                 
                 relatorio["detalhes"].append({
                     "data": pagamento.get("data", ""),

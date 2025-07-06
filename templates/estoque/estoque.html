@@ -64,9 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <thead>
             <tr>
                 <th>Nome</th>
-                <th>Descrição</th>
+                <th>Observação</th>
                 <th>Quantidade</th>
-                <th>Ações</th>
+                <th>Opções</th>
             </tr>
         </thead>
         <tbody>
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
                 <td>
                     <div class="btn-acoes-historico">
-                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'produto')">AÇÕES</button>
+                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'produto')">OPÇÕES</button>
                         <div class="btn-acoes-hidden" id="acoes-produto-{{ loop.index0 }}">
                             <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}" class="btn btn-warning">EDITAR</a>
                             <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')" class="btn btn-danger">EXCLUIR</a>

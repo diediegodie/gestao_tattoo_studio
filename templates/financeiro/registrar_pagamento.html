@@ -44,11 +44,13 @@
     </select>
   </label>
 
-  <label>Descrição: <textarea name="descricao" placeholder="Descrição do pagamento">{{ sessao_pendente.observacoes if sessao_pendente else '' }}</textarea></label>
+  <label>Porcentagem de Comissão (%): <input type="number" step="0.1" name="porcentagem_comissao" value="70" min="0" max="100" placeholder="70" required></label>
+
+  <label>Observação: <textarea name="descricao" placeholder="Observação do pagamento">{{ sessao_pendente.observacoes if sessao_pendente else '' }}</textarea></label>
   
   <div class="d-flex justify-between">
-    <button type="submit" class="btn btn-success">REGISTRAR PAGAMENTO</button>
     <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-warning">CANCELAR</a>
+    <button type="submit" class="btn btn-success">REGISTRAR PAGAMENTO</button>
   </div>
 </form>
 

@@ -64,8 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <th>Artista</th>
                 <th>Valor (R$)</th>
                 <th>Forma Pagamento</th>
-                <th>Descrição</th>
-                <th>Ações</th>
+                <th>Observação</th>
+                <th>Opções</th>
             </tr>
         </thead>
         <tbody>
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>{{ p.descricao }}</td>
                 <td>
                     <div class="btn-acoes-historico">
-                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">AÇÕES</button>
+                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">OPÇÕES</button>
                         <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
                             <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
                             <a href="#" onclick="return confirmDelete('{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}')" class="btn btn-danger">EXCLUIR</a>

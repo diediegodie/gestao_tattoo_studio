@@ -16,14 +16,14 @@
 <!-- Botões do topo organizados horizontalmente -->
 <div class="botoes-topo">
     <a href="{{ url_for('sessoes_bp.nova_sessao') }}" class="btn btn-success">NOVA SESSÃO</a>
-    <div class="search-toggle" onclick="toggleSearch()">BUSCAR CLIENTE</div>
+    <div class="search-toggle" onclick="toggleSearch()">DIGITE UM NOME</div>
     <div class="search-toggle" onclick="toggleFilter()">FILTRAR POR DATA</div>
 </div>
 
 <!-- Painel de busca -->
 <div class="search-panel" id="searchPanel">
     <form method="GET" action="{{ url_for('sessoes_bp.listar_sessoes') }}">
-        <input type="text" name="busca" placeholder="Buscar cliente..." value="{{ termo }}">
+        <input type="text" name="busca" placeholder="Digite um nome..." value="{{ termo }}">
         <button type="submit" class="btn">BUSCAR</button>
         {% if termo %}
             <a href="{{ url_for('sessoes_bp.listar_sessoes') }}" class="btn btn-warning">LIMPAR</a>
@@ -139,7 +139,7 @@ function excluirDoLimbo(id) {
                 <th>Hora</th>
                 <th>Valor</th>
                 <th>Observações</th>
-                <th>Ações</th>
+                <th>Opções</th>
             </tr>
         </thead>
         <tbody>
@@ -153,7 +153,7 @@ function excluirDoLimbo(id) {
                 <td>{{ sessao['observacoes'] }}</td>
                 <td>
                     <div class="btn-acoes-historico">
-                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'sessao')">AÇÕES</button>
+                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'sessao')">OPÇÕES</button>
                         <div class="btn-acoes-hidden" id="acoes-sessao-{{ loop.index0 }}">
                             {% if not sessao.get('paga', False) %}
                                 <a href="#" onclick="concluirSessao({{ sessao['id'] }})" class="btn btn-success">CONCLUÍDO</a>
@@ -189,7 +189,7 @@ function excluirDoLimbo(id) {
                     <th>Hora</th>
                     <th>Valor</th>
                     <th>Observações</th>
-                    <th>Ações</th>
+                    <th>Opções</th>
                 </tr>
             </thead>
             <tbody>
@@ -203,7 +203,7 @@ function excluirDoLimbo(id) {
                     <td>{{ sessao['observacoes'] }}</td>
                     <td>
                         <div class="btn-acoes-historico">
-                            <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'limbo')">AÇÕES</button>
+                            <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'limbo')">OPÇÕES</button>
                             <div class="btn-acoes-hidden" id="acoes-limbo-{{ loop.index0 }}">
                                 <a href="#" onclick="retornarDoLimbo({{ sessao['id'] }})" class="btn btn-success">RETORNAR</a>
                                 <a href="#" onclick="excluirDoLimbo({{ sessao['id'] }})" class="btn btn-danger">EXCLUIR</a>

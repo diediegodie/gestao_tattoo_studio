@@ -22,7 +22,7 @@
             <thead>
                 <tr>
                     <th>Nome do Artista</th>
-                    <th>Ações</th>
+                    <th>Opções</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,7 +31,7 @@
                     <td>{{ artista }}</td>
                     <td>
                         <div class="btn-acoes-historico">
-                            <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'artista')">AÇÕES</button>
+                            <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'artista')">OPÇÕES</button>
                             <div class="btn-acoes-hidden" id="acoes-artista-{{ loop.index0 }}">
                                 <a href="{{ url_for('cadastro_bp.editar_artista', nome_antigo=artista) }}" class="btn btn-warning">EDITAR</a>
                                 <a href="{{ url_for('cadastro_bp.excluir_artista', nome=artista) }}" 

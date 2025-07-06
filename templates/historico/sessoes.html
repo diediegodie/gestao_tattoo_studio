@@ -23,7 +23,7 @@
             <th>Valor</th>
             <th>Observações</th>
             <th>Data de Fechamento</th>
-            <th>Ações</th>
+            <th>Opções</th>
         </tr>
     </thead>
     <tbody>
@@ -37,7 +37,7 @@
             <td>{{ sessao.data_fechamento }}</td>
             <td>
                 <div class="btn-acoes-historico">
-                    <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'historico')">AÇÕES</button>
+                    <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'historico')">OPÇÕES</button>
                     <div class="btn-acoes-hidden" id="acoes-historico-{{ loop.index0 }}">
                         <a href="{{ url_for('sessoes_bp.editar_historico', id=sessao.id) }}" class="btn btn-warning">EDITAR</a>
                         <form action="{{ url_for('sessoes_bp.excluir_historico', id=sessao.id) }}" method="POST" style="display: inline;">

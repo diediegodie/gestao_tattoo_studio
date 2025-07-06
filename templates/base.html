@@ -86,40 +86,55 @@
         
         // Função global para toggle de ações - CORRIGIDA
         window.toggleAcoes = function(index, tipo) {
+            console.log('toggleAcoes chamada:', index, tipo);
             const acoesDiv = document.getElementById('acoes-' + tipo + '-' + index);
-            const toggleBtn = event.target;
+            const container = event.target.closest('.btn-acoes-historico');
+            
+            console.log('Container encontrado:', container);
+            console.log('Div de ações encontrada:', acoesDiv);
             
             // Fecha todos os outros painéis de ações
-            document.querySelectorAll('.btn-acoes-hidden').forEach(function(div) {
-                if (div !== acoesDiv) {
-                    div.classList.add('btn-acoes-hidden');
+            document.querySelectorAll('.btn-acoes-historico').forEach(function(cont) {
+                if (cont !== container) {
+                    cont.classList.remove('active');
                 }
             });
             
-            // Posiciona o dropdown corretamente
-            if (!acoesDiv.classList.contains('btn-acoes-hidden')) {
+            // Toggle do estado ativo
+            if (container.classList.contains('active')) {
                 // Fechar
-                acoesDiv.classList.add('btn-acoes-hidden');
-                toggleBtn.textContent = 'AÇÕES';
+                container.classList.remove('active');
+                console.log('Fechando painel de ações');
             } else {
                 // Abrir
-                acoesDiv.classList.remove('btn-acoes-hidden');
-                toggleBtn.textContent = 'FECHAR';
-                
-                // Posicionamento absoluto já configurado no CSS
-                // O dropdown aparecerá diretamente abaixo do botão
+                container.classList.add('active');
+                console.log('Abrindo painel de ações');
             }
         };
         
         // Fecha os painéis de ações quando clicar fora
         document.addEventListener('click', function(event) {
             if (!event.target.closest('.btn-acoes-historico')) {
-                document.querySelectorAll('.btn-acoes-hidden').forEach(function(div) {
-                    div.classList.add('btn-acoes-hidden');
+                document.querySelectorAll('.btn-acoes-historico').forEach(function(container) {
+                    container.classList.remove('active');
                 });
-                document.querySelectorAll('.btn-acoes-toggle').forEach(function(btn) {
-                    btn.textContent = 'AÇÕES';
-                });
+            }
+        });
+        
+        // Debug para formulários de exclusão
+        document.addEventListener('submit', function(event) {
+            if (event.target.tagName === 'FORM' && event.target.action.includes('excluir')) {
+                console.log('Formulário de exclusão enviado:', event.target.action);
+                console.log('Método:', event.target.method);
+                console.log('Dados do formulário:', new FormData(event.target));
+            }
+        });
+        
+        // Debug para cliques em botões de exclusão
+        document.addEventListener('click', function(event) {
+            if (event.target.type === 'submit' && event.target.closest('form') && event.target.closest('form').action.includes('excluir')) {
+                console.log('Botão de exclusão clicado:', event.target);
+                console.log('Formulário:', event.target.closest('form'));
             }
         });
     });
