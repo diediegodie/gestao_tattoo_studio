@@ -478,7 +478,7 @@ a:hover {
     color: #F2F2F2;
 }
 
-/* Painel de filtro por data */
+/* Painéis de busca otimizados */
 .search-panel {
     background: #545454;
     padding: 1rem;
@@ -486,34 +486,72 @@ a:hover {
     margin-bottom: 1rem;
     border: 1px solid #666666;
     display: none;
-    max-width: 400px;
-    position: relative;
-    z-index: 1000;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.2s ease-in-out;
 }
 
 .search-panel.show {
     display: block;
+    animation: slideDown 0.2s ease-in-out;
 }
 
-.search-panel .d-flex {
+.search-panel form {
+    display: flex;
     gap: 0.5rem;
-    flex-wrap: wrap;
     align-items: center;
+    flex-wrap: wrap;
 }
 
-.search-panel input,
-.search-panel select {
+.search-panel input[type="text"],
+.search-panel input[type="date"] {
     flex: 1;
-    margin-bottom: 0;
+    min-width: 150px;
+    padding: 0.5rem;
+    background: #333333;
+    border: 1px solid #666666;
+    border-radius: 4px;
+    color: #F2F2F2;
+    font-size: 14px;
+}
+
+.search-panel input:focus {
+    outline: none;
+    border-color: #00C7B4;
+    box-shadow: 0 0 0 2px rgba(0, 199, 180, 0.2);
+}
+
+.search-panel label {
+    color: #F2F2F2;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     min-width: 120px;
 }
 
 .search-panel .btn {
     padding: 0.5rem 1rem;
     font-size: 12px;
-    white-space: nowrap;
-    margin: 0;
+    min-width: 80px;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Responsividade para painéis de busca */
+@media (max-width: 768px) {
+    .search-panel form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-panel input[type="text"],
+    .search-panel input[type="date"],
+    .search-panel label {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .search-panel .btn {
+        width: 100%;
+    }
 }
 
 /* Melhorar o posicionamento dos campos de data */
@@ -1148,4 +1186,63 @@ table {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Centralização do botão Buscar Extrato */
+.btn-buscar-extrato {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.btn-buscar-extrato .btn {
+    min-width: 200px;
+    padding: 0.8rem 1.5rem;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-buscar-extrato .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 199, 180, 0.3);
+}
+
+/* Melhorias nas animações */
+.search-panel {
+    transition: all 0.2s ease-in-out;
+    overflow: hidden;
+}
+
+.search-panel.show {
+    animation: slideDown 0.2s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        max-height: 100px;
+        transform: translateY(0);
+    }
+}
+
+/* Transições suaves para todos os elementos interativos */
+.btn, .card, .table-container, .search-panel, .btn-acoes-hidden {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover effects mais suaves */
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
