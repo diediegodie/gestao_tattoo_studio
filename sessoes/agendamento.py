@@ -93,5 +93,77 @@ def excluir_agendamento(indice):
     agendamentos = carregar_agendamentos()
     if 0 <= indice < len(agendamentos):
         agendamentos.pop(indice)
-        with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as f:
-            json.dump(agendamentos, f, indent=4, ensure_ascii=False)
+        salvar_agendamentos(agendamentos)
+
+def carregar_sessoes_limbo():
+    """Carrega as sessões que estão no limbo"""
+    if not os.path.exists(CAMINHO_ARQUIVO):
+        return []
+    
+    try:
+        with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+            
+            if isinstance(dados, list):  # Compatibilidade com versão antiga
+                return []
+            
+            return dados.get("limbo", [])
+            
+    except (json.JSONDecodeError, IOError):
+        return []
+
+def salvar_sessoes_limbo(lista):
+    """Salva as sessões do limbo"""
+    try:
+        with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+    except (FileNotFoundError, json.JSONDecodeError):
+        dados = {"sessoes_ativas": [], "historico": [], "limbo": []}
+    
+    dados["limbo"] = lista
+    
+    with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
+        json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+
+def enviar_para_limbo(id_sessao):
+    """Move uma sessão para o limbo"""
+    agendamentos = carregar_agendamentos()
+    sessao = next((s for s in agendamentos if s["id"] == id_sessao), None)
+    
+    if sessao:
+        # Remove da lista de agendamentos
+        agendamentos = [s for s in agendamentos if s["id"] != id_sessao]
+        salvar_agendamentos(agendamentos)
+        
+        # Adiciona ao limbo
+        sessao["no_limbo"] = True
+        sessoes_limbo = carregar_sessoes_limbo()
+        sessoes_limbo.append(sessao)
+        salvar_sessoes_limbo(sessoes_limbo)
+        return True
+    return False
+
+def retornar_do_limbo(id_sessao):
+    """Retorna uma sessão do limbo para os agendamentos normais"""
+    sessoes_limbo = carregar_sessoes_limbo()
+    sessao = next((s for s in sessoes_limbo if s["id"] == id_sessao), None)
+    
+    if sessao:
+        # Remove do limbo
+        sessoes_limbo = [s for s in sessoes_limbo if s["id"] != id_sessao]
+        salvar_sessoes_limbo(sessoes_limbo)
+        
+        # Adiciona aos agendamentos normais
+        sessao.pop("no_limbo", None)
+        agendamentos = carregar_agendamentos()
+        agendamentos.append(sessao)
+        salvar_agendamentos(agendamentos)
+        return True
+    return False
+
+def excluir_do_limbo(id_sessao):
+    """Remove uma sessão definitivamente do limbo"""
+    sessoes_limbo = carregar_sessoes_limbo()
+    sessoes_limbo = [s for s in sessoes_limbo if s["id"] != id_sessao]
+    salvar_sessoes_limbo(sessoes_limbo)
+    return True

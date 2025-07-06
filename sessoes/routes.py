@@ -4,6 +4,10 @@ from sessoes.agendamento import (
     salvar_agendamentos,
     agendar_sessao,
     excluir_agendamento,
+    carregar_sessoes_limbo,
+    enviar_para_limbo,
+    retornar_do_limbo,
+    excluir_do_limbo,
 )
 from datetime import datetime
 from cadastro_interno.artistas import carregar_artistas
@@ -34,7 +38,13 @@ def listar_sessoes():
         except ValueError:
             flash("Formato de data inválido.", "erro")
     
-    return render_template("sessoes/sessoes.html", sessoes=sessoes)
+    # Filtrar sessões normais (não no limbo)
+    sessoes_normais = [s for s in sessoes if not s.get('no_limbo', False)]
+    
+    # Carregar sessões do limbo
+    sessoes_limbo = carregar_sessoes_limbo()
+    
+    return render_template("sessoes/sessoes.html", sessoes=sessoes_normais, sessoes_limbo=sessoes_limbo)
 
 @sessoes_bp.route("/fechar/<int:id>", methods=["POST"])
 def fechar_sessao(id):
@@ -42,35 +52,22 @@ def fechar_sessao(id):
     sessao = next((s for s in agendamentos if s["id"] == id), None)
     
     if sessao:
-        print(f"Fechando sessão - Dados atuais: {sessao}")
-        print(f"Tipo do valor na sessão: {type(sessao.get('valor'))}")
-        print(f"Valor bruto na sessão: {sessao.get('valor')}")
+        # Armazena os dados da sessão na sessão Flask para uso no formulário de pagamento
+        from flask import session
+        session['sessao_para_pagamento'] = {
+            'id': sessao['id'],
+            'cliente': sessao['cliente'],
+            'artista': sessao['artista'],
+            'valor': sessao.get('valor', 0.0),
+            'data': sessao['data'],
+            'observacoes': sessao.get('observacoes', '')
+        }
         
-        # Obtém o valor da sessão, garantindo que seja um número
-        valor_sessao = sessao.get("valor")
-        if valor_sessao is None or valor_sessao == "":
-            valor_sessao = 0.0
-        else:
-            try:
-                valor_sessao = float(valor_sessao)
-            except (ValueError, TypeError):
-                valor_sessao = 0.0
-        
-        print(f"Valor processado que será movido para histórico: {valor_sessao}")
-        print(f"Tipo do valor processado: {type(valor_sessao)}")
-        
-        # Move para histórico com o valor correto
-        if mover_para_historico(sessao_id=sessao["id"], valor_final=valor_sessao):
-            # Remove da lista de agendamentos ativos
-            agendamentos = [s for s in agendamentos if s["id"] != id]
-            salvar_agendamentos(agendamentos)
-            flash("Sessão finalizada com sucesso!", "sucesso")
-        else:
-            flash("Erro ao finalizar sessão.", "erro")
+        flash("Sessão pronta para pagamento!", "sucesso")
+        return redirect(url_for('financeiro_bp.registrar_pagamento_route'))
     else:
         flash("Sessão não encontrada.", "erro")
-    
-    return redirect(url_for('sessoes_bp.listar_sessoes'))
+        return redirect(url_for('sessoes_bp.listar_sessoes'))
 
 @sessoes_bp.route("/nova", methods=["GET", "POST"])
 def nova_sessao():
@@ -179,6 +176,30 @@ def editar_agendamento(indice):
         "sessoes/editar_sessao.html", sessao=sessao, indice=indice, artistas=artistas
     )
 
+@sessoes_bp.route("/enviar-para-limbo/<int:id>", methods=["POST"])
+def enviar_para_limbo_route(id):
+    if enviar_para_limbo(id):
+        flash("Sessão enviada para o limbo!", "sucesso")
+    else:
+        flash("Sessão não encontrada.", "erro")
+    return redirect(url_for("sessoes_bp.listar_sessoes"))
+
+@sessoes_bp.route("/retornar-do-limbo/<int:id>", methods=["POST"])
+def retornar_do_limbo_route(id):
+    if retornar_do_limbo(id):
+        flash("Sessão retornada dos agendamentos!", "sucesso")
+    else:
+        flash("Sessão não encontrada no limbo.", "erro")
+    return redirect(url_for("sessoes_bp.listar_sessoes"))
+
+@sessoes_bp.route("/excluir-do-limbo/<int:id>", methods=["POST"])
+def excluir_do_limbo_route(id):
+    if excluir_do_limbo(id):
+        flash("Sessão removida definitivamente do limbo!", "sucesso")
+    else:
+        flash("Sessão não encontrada no limbo.", "erro")
+    return redirect(url_for("sessoes_bp.listar_sessoes"))
+
 
 @sessoes_bp.route("/historico")
 def listar_historico():
@@ -209,6 +230,9 @@ def listar_historico():
                     "observacoes": sessao.get("observacoes", ""),
                     "data_fechamento": sessao.get("data_fechamento", "")
                 })
+            
+            # Inverter a ordem para mostrar os mais recentes no topo
+            sessoes_historico.reverse()
             
             print(f"Dados do histórico processados: {sessoes_historico}")
             

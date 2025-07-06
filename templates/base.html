@@ -11,15 +11,15 @@
 
     <!-- MENU FIXO -->
     <nav>
-        <a href="{{ url_for('index') }}">🏠 Início</a>
-        <a href="{{ url_for('estoque_bp.listar_produtos') }}">📦 Estoque</a>
-        <a href="{{ url_for('sessoes_bp.listar_sessoes') }}">📅 Sessões</a>
-        <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}">💰 Financeiro</a>
-        <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}">💳 Registrar Pagamento</a>
-        <a href="{{ url_for('extrato_bp.extrato_mensal') }}">📊 Extrato Mensal</a>
-        <a href="{{ url_for('cadastro_bp.gerenciar_artistas') }}">👥 Cadastro Interno</a>
-        <a href="{{ url_for('calculadora_bp.calculadora') }}">🧮 Calculadora</a>
-        <a href="{{ url_for('historico_bp.historico_sessoes') }}">📋 Histórico</a>
+        <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">INÍCIO</a>
+        <a href="{{ url_for('estoque_bp.listar_produtos') }}" class="{{ 'active' if 'estoque' in request.endpoint else '' }}">ESTOQUE</a>
+        <a href="{{ url_for('sessoes_bp.listar_sessoes') }}" class="{{ 'active' if 'sessoes' in request.endpoint else '' }}">SESSÕES</a>
+        <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="{{ 'active' if 'financeiro' in request.endpoint and 'extrato' not in request.endpoint else '' }}">FINANCEIRO</a>
+        <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="{{ 'active' if 'registrar_pagamento' in request.endpoint else '' }}">REGISTRAR PAGAMENTO</a>
+        <a href="{{ url_for('extrato_bp.extrato_mensal') }}" class="{{ 'active' if 'extrato' in request.endpoint else '' }}">EXTRATO MENSAL</a>
+        <a href="{{ url_for('cadastro_bp.gerenciar_artistas') }}" class="{{ 'active' if 'cadastro' in request.endpoint else '' }}">CADASTRO INTERNO</a>
+        <a href="{{ url_for('calculadora_bp.calculadora') }}" class="{{ 'active' if 'calculadora' in request.endpoint else '' }}">CALCULADORA</a>
+        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="{{ 'active' if 'historico' in request.endpoint else '' }}">HISTÓRICO</a>
     </nav>
 
     <div class="container">
@@ -83,6 +83,45 @@
     // Executa quando a página carrega
     document.addEventListener('DOMContentLoaded', function() {
         preencherDataHoraAtual();
+        
+        // Função global para toggle de ações - CORRIGIDA
+        window.toggleAcoes = function(index, tipo) {
+            const acoesDiv = document.getElementById('acoes-' + tipo + '-' + index);
+            const toggleBtn = event.target;
+            
+            // Fecha todos os outros painéis de ações
+            document.querySelectorAll('.btn-acoes-hidden').forEach(function(div) {
+                if (div !== acoesDiv) {
+                    div.classList.add('btn-acoes-hidden');
+                }
+            });
+            
+            // Posiciona o dropdown corretamente
+            if (!acoesDiv.classList.contains('btn-acoes-hidden')) {
+                // Fechar
+                acoesDiv.classList.add('btn-acoes-hidden');
+                toggleBtn.textContent = 'AÇÕES';
+            } else {
+                // Abrir
+                acoesDiv.classList.remove('btn-acoes-hidden');
+                toggleBtn.textContent = 'FECHAR';
+                
+                // Posicionamento absoluto já configurado no CSS
+                // O dropdown aparecerá diretamente abaixo do botão
+            }
+        };
+        
+        // Fecha os painéis de ações quando clicar fora
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.btn-acoes-historico')) {
+                document.querySelectorAll('.btn-acoes-hidden').forEach(function(div) {
+                    div.classList.add('btn-acoes-hidden');
+                });
+                document.querySelectorAll('.btn-acoes-toggle').forEach(function(btn) {
+                    btn.textContent = 'AÇÕES';
+                });
+            }
+        });
     });
 </script>
 

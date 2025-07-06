@@ -14,9 +14,9 @@
 {% endwith %}
 
 <form method="POST">
-  <label>Data: <input type="date" name="data" required placeholder="Data do pagamento"></label>
+  <label>Data: <input type="date" name="data" required placeholder="Data do pagamento" value="{{ sessao_pendente.data if sessao_pendente else '' }}"></label>
   
-  <label>Valor (R$): <input type="number" step="0.01" name="valor" required placeholder="0.00"></label>
+  <label>Valor (R$): <input type="number" step="0.01" name="valor" required placeholder="0.00" value="{{ sessao_pendente.valor if sessao_pendente else '' }}"></label>
 
   <label>Forma de Pagamento:
     <select name="forma_pagamento" id="formaPagamento" required>
@@ -33,22 +33,22 @@
     </label>
   </div>
 
-  <label>Cliente: <input type="text" name="cliente" required placeholder="Nome do cliente"></label>
+  <label>Cliente: <input type="text" name="cliente" required placeholder="Nome do cliente" value="{{ sessao_pendente.cliente if sessao_pendente else '' }}"></label>
 
   <label>Artista:
     <select name="artista" required>
       <option value="">Selecione o artista</option>
       {% for nome in artistas %}
-        <option value="{{ nome }}">{{ nome }}</option>
+        <option value="{{ nome }}" {% if sessao_pendente and sessao_pendente.artista == nome %}selected{% endif %}>{{ nome }}</option>
       {% endfor %}
     </select>
   </label>
 
-  <label>Descrição: <textarea name="descricao" placeholder="Descrição do pagamento"></textarea></label>
+  <label>Descrição: <textarea name="descricao" placeholder="Descrição do pagamento">{{ sessao_pendente.observacoes if sessao_pendente else '' }}</textarea></label>
   
   <div class="d-flex justify-between">
-    <button type="submit" class="btn btn-success">💳 Registrar Pagamento</button>
-    <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-warning">❌ Cancelar</a>
+    <button type="submit" class="btn btn-success">REGISTRAR PAGAMENTO</button>
+    <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-warning">CANCELAR</a>
   </div>
 </form>
 

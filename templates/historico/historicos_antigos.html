@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block titulo %}Históricos Antigos{% endblock %}
+
+{% block conteudo %}
+<!-- Botão Voltar -->
+<a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn-voltar">VOLTAR</a>
+
+<div class="container" style="padding-top: 4rem;">
+    <h1>Históricos Antigos</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="mensagem-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Seletor de Tipo de Histórico -->
+    <div class="seletor-tipo">
+        <label for="tipo_historico">Tipo de Histórico:</label>
+        <select id="tipo_historico" onchange="alterarTipoHistorico()">
+            <option value="pagamentos">Histórico de Pagamentos</option>
+            <option value="comissoes">Histórico de Comissões por Artista</option>
+        </select>
+    </div>
+
+    <!-- Seletor de Mês -->
+    <div class="seletor-mes">
+        <label for="mes_ano">Selecione o Mês:</label>
+        <select id="mes_ano">
+            <option value="">Escolha um mês...</option>
+            <option value="2025-07">Julho 2025</option>
+            <option value="2025-06">Junho 2025</option>
+            <option value="2025-05">Maio 2025</option>
+            <option value="2025-04">Abril 2025</option>
+            <option value="2025-03">Março 2025</option>
+            <option value="2025-02">Fevereiro 2025</option>
+            <option value="2025-01">Janeiro 2025</option>
+            <option value="2024-12">Dezembro 2024</option>
+            <option value="2024-11">Novembro 2024</option>
+            <option value="2024-10">Outubro 2024</option>
+            <option value="2024-09">Setembro 2024</option>
+            <option value="2024-08">Agosto 2024</option>
+            <option value="2024-07">Julho 2024</option>
+            <option value="2024-06">Junho 2024</option>
+            <option value="2024-05">Maio 2024</option>
+            <option value="2024-04">Abril 2024</option>
+            <option value="2024-03">Março 2024</option>
+            <option value="2024-02">Fevereiro 2024</option>
+            <option value="2024-01">Janeiro 2024</option>
+        </select>
+        
+        <!-- Botão Buscar Extrato Centralizado -->
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <button onclick="carregarExtrato()" class="btn btn-primary" style="min-width: 200px; padding: 0.8rem 1.5rem; font-size: 14px; font-weight: 600;">BUSCAR EXTRATO</button>
+        </div>
+    </div>
+
+    <!-- Área de Exibição do Extrato -->
+    <div id="extrato-container" style="display: none;">
+        <div class="historico-section">
+            <h3 id="titulo-extrato">Extrato Mensal</h3>
+            <div id="extrato-content">
+                <!-- Conteúdo do extrato será carregado aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensagem inicial -->
+    <div id="mensagem-inicial" class="card text-center">
+        <p>Selecione um tipo de histórico e um mês para visualizar os dados.</p>
+    </div>
+</div>
+
+<script>
+let tipoAtual = 'pagamentos';
+
+function alterarTipoHistorico() {
+    tipoAtual = document.getElementById('tipo_historico').value;
+    const tituloExtrato = document.getElementById('titulo-extrato');
+    
+    if (tipoAtual === 'pagamentos') {
+        tituloExtrato.textContent = 'Histórico de Pagamentos';
+    } else {
+        tituloExtrato.textContent = 'Histórico de Comissões por Artista';
+    }
+    
+    // Limpar dados anteriores
+    document.getElementById('extrato-container').style.display = 'none';
+    document.getElementById('mensagem-inicial').style.display = 'block';
+}
+
+function carregarExtrato() {
+    const mesAno = document.getElementById('mes_ano').value;
+    const extratoContainer = document.getElementById('extrato-container');
+    const mensagemInicial = document.getElementById('mensagem-inicial');
+    const extratoContent = document.getElementById('extrato-content');
+    
+    if (!mesAno) {
+        extratoContainer.style.display = 'none';
+        mensagemInicial.style.display = 'block';
+        return;
+    }
+    
+    // Mostrar loading
+    extratoContent.innerHTML = '<p>Carregando dados...</p>';
+    extratoContainer.style.display = 'block';
+    mensagemInicial.style.display = 'none';
+    
+    // Fazer requisição AJAX baseada no tipo
+    const endpoint = tipoAtual === 'pagamentos' ? 
+        `/extrato/dados/${mesAno}` : 
+        `/extrato/comissoes/${mesAno}`;
+    
+    fetch(endpoint)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (tipoAtual === 'pagamentos') {
+                    extratoContent.innerHTML = formatarExtratoPagamentos(data.extrato);
+                } else {
+                    extratoContent.innerHTML = formatarExtratoComissoes(data.extrato);
+                }
+            } else {
+                extratoContent.innerHTML = '<p>Nenhum dado encontrado para este mês.</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados:', error);
+            extratoContent.innerHTML = '<p>Erro ao carregar os dados.</p>';
+        });
+}
+
+function formatarExtratoPagamentos(extrato) {
+    if (!extrato || extrato.length === 0) {
+        return '<p>Nenhum pagamento encontrado para este mês.</p>';
+    }
+    
+    let html = '<div class="table-container"><table><thead><tr><th>Data</th><th>Cliente</th><th>Artista</th><th>Valor</th><th>Forma Pagamento</th></tr></thead><tbody>';
+    
+    extrato.forEach(item => {
+        html += `<tr>
+            <td>${item.data}</td>
+            <td>${item.cliente}</td>
+            <td>${item.artista}</td>
+            <td>R$ ${parseFloat(item.valor).toFixed(2)}</td>
+            <td>${item.forma_pagamento}</td>
+        </tr>`;
+    });
+    
+    html += '</tbody></table></div>';
+    
+    // Adicionar resumo financeiro
+    const total = extrato.reduce((sum, item) => sum + parseFloat(item.valor), 0);
+    const totalComissoes = extrato.reduce((sum, item) => sum + parseFloat(item.comissao || 0), 0);
+    const valorLiquido = total - totalComissoes;
+    
+    html += `<div class="resumo-financeiro">
+        <h3>Resumo Financeiro do Mês</h3>
+        <p><strong>Valor Total Recebido:</strong> R$ ${total.toFixed(2)}</p>
+        <p><strong>Total de Comissões:</strong> R$ ${totalComissoes.toFixed(2)}</p>
+        <div class="valor-liquido">
+            <strong>Valor Líquido do Estúdio:</strong> R$ ${valorLiquido.toFixed(2)}
+        </div>
+    </div>`;
+    
+    return html;
+}
+
+function formatarExtratoComissoes(extrato) {
+    if (!extrato || extrato.length === 0) {
+        return '<p>Nenhuma comissão encontrada para este mês.</p>';
+    }
+    
+    let html = '<div class="table-container"><table><thead><tr><th>Artista</th><th>Total de Sessões</th><th>Valor Total</th><th>Comissão (30%)</th></tr></thead><tbody>';
+    
+    extrato.forEach(item => {
+        html += `<tr>
+            <td>${item.artista}</td>
+            <td>${item.total_sessoes}</td>
+            <td>R$ ${parseFloat(item.valor_total).toFixed(2)}</td>
+            <td>R$ ${parseFloat(item.comissao).toFixed(2)}</td>
+        </tr>`;
+    });
+    
+    html += '</tbody></table></div>';
+    
+    // Adicionar resumo
+    const totalComissoes = extrato.reduce((sum, item) => sum + parseFloat(item.comissao), 0);
+    html += `<div class="card text-center" style="margin-top: 1rem;">
+        <h3>Total de Comissões: R$ ${totalComissoes.toFixed(2)}</h3>
+    </div>`;
+    
+    return html;
+}
+</script>
+{% endblock %} 

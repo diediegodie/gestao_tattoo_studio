@@ -14,12 +14,12 @@
 {% endwith %}
 
 <div class="d-flex justify-between align-center mb-2">
-    <a href="{{ url_for('estoque_bp.novo_produto') }}" class="btn btn-success">➕ Cadastrar novo produto</a>
+    <a href="{{ url_for('estoque_bp.novo_produto') }}" class="btn btn-success">CADASTRAR NOVO PRODUTO</a>
 </div>
 
 <!-- Botão de busca expansível -->
 <div class="search-toggle" onclick="toggleSearch()">
-    🔍 Buscar Produtos
+    BUSCAR PRODUTOS
 </div>
 
 <!-- Painel de busca -->
@@ -27,9 +27,9 @@
     <form method="GET" action="{{ url_for('estoque_bp.listar_produtos') }}">
         <div class="d-flex">
             <input type="text" name="busca" placeholder="Buscar produto por nome..." value="{{ termo or '' }}">
-            <button type="submit" class="btn">🔍 Buscar</button>
+            <button type="submit" class="btn">BUSCAR</button>
             {% if termo %}
-                <a href="{{ url_for('estoque_bp.listar_produtos') }}" class="btn btn-warning">❌ Limpar</a>
+                <a href="{{ url_for('estoque_bp.listar_produtos') }}" class="btn btn-warning">LIMPAR</a>
             {% endif %}
         </div>
     </form>
@@ -59,36 +59,44 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 {% if produtos %}
-<table>
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Quantidade</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for produto in produtos %}
-        <tr>
-            <td>{{ produto.get("nome", "") }}</td>
-            <td>{{ produto.get("descricao", "") }}</td>
-            <td>
-                <span class="badge {% if produto.get('quantidade', 0) < 5 %}badge-danger{% else %}badge-success{% endif %}">
-                    {{ produto.get("quantidade", 0) }}
-                </span>
-            </td>
-            <td>
-                <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')" class="btn btn-danger">🗑️ Excluir</a>
-                <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}" class="btn btn-warning">✏️ Editar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto.get("nome", "") }}</td>
+                <td>{{ produto.get("descricao", "") }}</td>
+                <td>
+                    <span class="badge {% if produto.get('quantidade', 0) < 5 %}badge-danger{% else %}badge-success{% endif %}">
+                        {{ produto.get("quantidade", 0) }}
+                    </span>
+                </td>
+                <td>
+                    <div class="btn-acoes-historico">
+                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'produto')">AÇÕES</button>
+                        <div class="btn-acoes-hidden" id="acoes-produto-{{ loop.index0 }}">
+                            <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}" class="btn btn-warning">EDITAR</a>
+                            <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')" class="btn btn-danger">EXCLUIR</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
     <div class="card text-center">
-        <p>📦 Nenhum produto cadastrado.</p>
+        <p>Nenhum produto cadastrado.</p>
     </div>
 {% endif %}
+
 {% endblock %}

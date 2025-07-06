@@ -31,6 +31,9 @@ def listar_pagamentos():
         except ValueError:
             flash("Formato de data inválido.", "erro")
 
+    # Inverter a ordem para mostrar os mais recentes no topo
+    pagamentos.reverse()
+
     return render_template("financeiro/financeiro.html", 
                          pagamentos=pagamentos,
                          formas_pagamento=FORMAS_PAGAMENTO)
@@ -51,7 +54,31 @@ def registrar_pagamento_route():
             }
             
             if registrar_pagamento(novo_pagamento):
-                flash("Pagamento registrado com sucesso!", "sucesso")
+                # Verifica se há uma sessão pendente para finalizar
+                from flask import session
+                sessao_pendente = session.get('sessao_para_pagamento')
+                
+                if sessao_pendente:
+                    # Move a sessão para o histórico
+                    from sessoes.historico import mover_para_historico
+                    from sessoes.agendamento import carregar_agendamentos, salvar_agendamentos
+                    
+                    if mover_para_historico(sessao_id=sessao_pendente['id'], valor_final=novo_pagamento['valor']):
+                        # Remove da lista de agendamentos ativos
+                        agendamentos = carregar_agendamentos()
+                        agendamentos = [s for s in agendamentos if s["id"] != sessao_pendente['id']]
+                        salvar_agendamentos(agendamentos)
+                        
+                        # Limpa a sessão pendente
+                        session.pop('sessao_para_pagamento', None)
+                        
+                        flash("Pagamento registrado e sessão finalizada com sucesso!", "sucesso")
+                        return redirect(url_for("historico_bp.historico_sessoes"))
+                    else:
+                        flash("Pagamento registrado, mas erro ao finalizar sessão.", "erro")
+                else:
+                    flash("Pagamento registrado com sucesso!", "sucesso")
+                
                 return redirect(url_for("financeiro_bp.listar_pagamentos"))
             else:
                 flash("Erro ao registrar pagamento.", "erro")
@@ -59,10 +86,14 @@ def registrar_pagamento_route():
             print(f"Erro no registro: {e}")
             flash("Dados inválidos no formulário.", "erro")
     
-    # Corrigindo o nome do template aqui:
+    # Pré-preenche os dados se há uma sessão pendente
+    from flask import session
+    sessao_pendente = session.get('sessao_para_pagamento', {})
+    
     return render_template("financeiro/registrar_pagamento.html",
                          artistas=artistas,
-                         formas_pagamento=FORMAS_PAGAMENTO)
+                         formas_pagamento=FORMAS_PAGAMENTO,
+                         sessao_pendente=sessao_pendente)
 
 @financeiro_bp.route("/excluir/<int:indice>")
 def excluir_pagamento_route(indice):

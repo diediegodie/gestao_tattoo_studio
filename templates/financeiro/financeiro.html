@@ -14,12 +14,12 @@
 {% endwith %}
 
 <div class="d-flex justify-between align-center mb-2">
-    <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="btn btn-success">💳 Registrar novo pagamento</a>
+    <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="btn btn-success">REGISTRAR NOVO PAGAMENTO</a>
 </div>
 
 <!-- Botão de filtro expansível -->
 <div class="search-toggle" onclick="toggleFilter()">
-    📅 Filtrar por Data
+    FILTRAR POR DATA
 </div>
 
 <!-- Painel de filtro por data -->
@@ -28,7 +28,7 @@
         <div class="d-flex">
             <label>Data Inicial: <input type="date" name="data_inicio" value="{{ request.args.get('data_inicio', '') }}"></label>
             <label>Data Final: <input type="date" name="data_fim" value="{{ request.args.get('data_fim', '') }}"></label>
-            <button type="submit" class="btn">📅 Filtrar</button>
+            <button type="submit" class="btn">FILTRAR</button>
         </div>
     </form>
 </div>
@@ -57,38 +57,46 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 {% if pagamentos %}
-<table>
-    <thead>
-        <tr>
-            <th>Data</th>
-            <th>Cliente</th>
-            <th>Artista</th>
-            <th>Valor (R$)</th>
-            <th>Forma Pagamento</th>
-            <th>Descrição</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for p in pagamentos %}
-        <tr>
-            <td>{{ p.data | data_brasileira }}</td>
-            <td>{{ p.cliente }}</td>
-            <td>{{ p.artista }}</td>
-            <td>R$ {{ "%.2f"|format(p.valor) }}</td>
-            <td>{{ p.forma_pagamento }}</td>
-            <td>{{ p.descricao }}</td>
-            <td>
-                <a href="#" onclick='return confirmDelete("{{ url_for("financeiro_bp.excluir_pagamento_route", indice=loop.index0) }}")' class="btn btn-danger">🗑️ Excluir</a>
-                <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">✏️ Editar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Artista</th>
+                <th>Valor (R$)</th>
+                <th>Forma Pagamento</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in pagamentos %}
+            <tr>
+                <td>{{ p.data | data_brasileira }}</td>
+                <td>{{ p.cliente }}</td>
+                <td>{{ p.artista }}</td>
+                <td>R$ {{ "%.2f"|format(p.valor) }}</td>
+                <td>{{ p.forma_pagamento }}</td>
+                <td>{{ p.descricao }}</td>
+                <td>
+                    <div class="btn-acoes-historico">
+                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">AÇÕES</button>
+                        <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
+                            <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
+                            <a href="#" onclick="return confirmDelete('{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}')" class="btn btn-danger">EXCLUIR</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
     <div class="card text-center">
-        <p>💰 Nenhum pagamento registrado.</p>
+        <p>Nenhum pagamento registrado.</p>
     </div>
 {% endif %}
+
 {% endblock %}

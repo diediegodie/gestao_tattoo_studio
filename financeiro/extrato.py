@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, jsonify
 from financeiro.caixa import gerar_extrato_mensal
 from datetime import datetime  # Adicione esta importação
 
@@ -38,3 +38,27 @@ def extrato_mensal():
         completo=dados_extrato["completo"],
         datetime=datetime  # Adicione esta linha para passar o datetime para o template
     )
+
+@extrato_bp.route("/dados/<mes_ano>")
+def dados_extrato(mes_ano):
+    try:
+        # Parse do formato YYYY-MM
+        ano, mes = mes_ano.split('-')
+        mes = int(mes)
+        ano = int(ano)
+        
+        if not (1 <= mes <= 12) or not (2000 <= ano <= 2100):
+            return jsonify({"success": False, "error": "Período inválido"})
+        
+        resultado = gerar_extrato_mensal(mes, ano)
+        if resultado is None:
+            return jsonify({"success": False, "error": "Erro ao gerar extrato"})
+        
+        return jsonify({
+            "success": True,
+            "extrato": resultado["extrato"],
+            "total": resultado["total"]
+        })
+        
+    except (ValueError, AttributeError):
+        return jsonify({"success": False, "error": "Formato de data inválido"})

@@ -3,18 +3,18 @@
 {% block titulo %}Calculadora de Comissões{% endblock %}
 
 {% block conteudo %}
-<h1>Calculadora</h1>
-<form method="POST" action="{{ url_for('calculadora_bp.calcular') }}">
-    <input type="hidden" name="sessao_id" value="{{ sessao_id or '' }}">
-    
-    <label>Valor Total: 
-        <input type="number" step="0.01" name="valor" required>
-    </label><br>
-    
-    <label>% para Artista: 
-        <input type="number" step="0.1" name="porcentagem" value="70" required>
-    </label><br>
-    
-    <button type="submit">Calcular</button>
-</form>
+<div class="calculadora-compacta">
+    <h1>Calculadora</h1>
+    <form method="POST" action="{{ url_for('calculadora_bp.calcular') }}">
+        <input type="hidden" name="sessao_id" value="{{ sessao_id or '' }}">
+        
+        <label>Valor Total:</label>
+        <input type="number" step="0.01" name="valor" required placeholder="Digite o valor total">
+        
+        <label>% para Artista:</label>
+        <input type="number" step="0.1" name="porcentagem" value="70" required placeholder="Digite a porcentagem">
+        
+        <button type="submit" class="btn btn-success">CALCULAR</button>
+    </form>
+</div>
 {% endblock %}

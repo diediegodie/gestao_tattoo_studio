@@ -19,8 +19,8 @@
         <label>Quantidade: <input type="number" name="quantidade" value="{{ quantidade|default('') }}" required placeholder="0"></label>
         
         <div class="d-flex justify-between">
-            <button type="submit" class="btn btn-success">✅ Cadastrar Produto</button>
-            <a href="{{ url_for('estoque_bp.listar_produtos') }}" class="btn btn-warning">❌ Cancelar</a>
+                <button type="submit" class="btn btn-success">CADASTRAR PRODUTO</button>
+    <a href="{{ url_for('estoque_bp.listar_produtos') }}" class="btn btn-warning">CANCELAR</a>
         </div>
     </form>
 {% endblock %}

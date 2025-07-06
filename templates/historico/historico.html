@@ -1,37 +1,142 @@
 {% extends "base.html" %}
 
-{% block titulo %}Histórico de Sessões{% endblock %}
+{% block titulo %}Histórico Completo{% endblock %}
 
 {% block conteudo %}
-<h1>Histórico de Sessões Finalizadas</h1>
-<a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn-voltar-historico">Voltar para Histórico</a>
+<h1>HISTÓRICO COMPLETO</h1>
 
-<table class="tabela-historico">
-    <thead>
-        <tr>
-            <th>Data</th>
-            <th>Cliente</th>
-            <th>Artista</th>
-            <th>Valor</th>
-            <th>Observações</th>
-            <th>Fechamento</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for sessao in sessoes %}
-        <tr>
-            <td>{{ sessao.data|data_brasileira }}</td>
-            <td>{{ sessao.cliente }}</td>
-            <td>{{ sessao.artista }}</td>
-            <td class="valor">R$ {{ "%0.2f"|format(sessao.valor|float) }}</td>
-            <td>{{ sessao.observacoes }}</td>
-            <td>{{ sessao.data_fechamento }}</td>
-        </tr>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="mensagem-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<!-- Primeira linha: Pagamentos e Comissões lado a lado -->
+<div class="historico-grid">
+    <!-- Histórico de Pagamentos -->
+    <div class="historico-section">
+        <h3>HISTÓRICO DE PAGAMENTOS</h3>
+        {% if pagamentos %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Cliente</th>
+                        <th>Artista</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pagamento in pagamentos %}
+                    <tr>
+                        <td>{{ pagamento.data|data_brasileira }}</td>
+                        <td>{{ pagamento.cliente }}</td>
+                        <td>{{ pagamento.artista }}</td>
+                        <td class="valor">R$ {{ "%0.2f"|format(pagamento.valor|float) }}</td>
+                        <td>
+                            <div class="btn-acoes-historico">
+                                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">AÇÕES</button>
+                                <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
+                                    <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
+                                    <a href="#" onclick='return confirmDelete("{{ url_for("financeiro_bp.excluir_pagamento_route", indice=loop.index0) }}")' class="btn btn-danger">EXCLUIR</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
-        <tr>
-            <td colspan="6">Nenhuma sessão no histórico</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <p>Nenhum pagamento registrado.</p>
+        {% endif %}
+    </div>
+
+    <!-- Histórico de Comissões por Artista -->
+    <div class="historico-section">
+        <h3>HISTÓRICO DE COMISSÕES POR ARTISTA</h3>
+        {% if comissoes_artistas %}
+        <div class="table-container">
+            <table class="comissoes-table">
+                <thead>
+                    <tr>
+                        <th>Artista</th>
+                        <th>Total de Sessões</th>
+                        <th>Valor Total</th>
+                        <th>Comissão (30%)</th>
+                        <th>Valor Estúdio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for artista in comissoes_artistas %}
+                    <tr>
+                        <td>{{ artista.artista }}</td>
+                        <td>{{ artista.total_sessoes }}</td>
+                        <td class="valor">R$ {{ "%0.2f"|format(artista.valor_total|float) }}</td>
+                        <td class="valor">R$ {{ "%0.2f"|format(artista.comissao|float) }}</td>
+                        <td class="valor">R$ {{ "%0.2f"|format((artista.valor_total|float) * 0.7) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>Nenhuma comissão calculada.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Segunda linha: Agendamentos em largura total -->
+<div class="historico-section agendamentos-section">
+    <h3>HISTÓRICO DE AGENDAMENTOS</h3>
+    {% if sessoes_historico %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th>Artista</th>
+                    <th>Valor</th>
+                    <th>Observações</th>
+                    <th>Fechamento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sessao in sessoes_historico %}
+                <tr>
+                    <td>{{ sessao.data|data_brasileira }}</td>
+                    <td>{{ sessao.cliente }}</td>
+                    <td>{{ sessao.artista }}</td>
+                    <td class="valor">R$ {{ "%0.2f"|format(sessao.valor|float) }}</td>
+                    <td>{{ sessao.observacoes }}</td>
+                    <td>{{ sessao.data_fechamento }}</td>
+                    <td>
+                        <div class="btn-acoes-historico">
+                            <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'sessao')">AÇÕES</button>
+                            <div class="btn-acoes-hidden" id="acoes-sessao-{{ loop.index0 }}">
+                                <a href="{{ url_for('sessoes_bp.editar_historico', id=sessao.id) }}" class="btn btn-warning">EDITAR</a>
+                                <a href="#" onclick='return confirmDelete("{{ url_for("sessoes_bp.excluir_historico", id=sessao.id) }}")' class="btn btn-danger">EXCLUIR</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Nenhuma sessão no histórico.</p>
+    {% endif %}
+</div>
+
+<!-- Botão para Históricos Antigos -->
+<div class="text-center" style="margin-top: 3rem;">
+    <a href="{{ url_for('historico_bp.historicos_antigos') }}" class="btn btn-warning">HISTÓRICOS ANTIGOS</a>
+</div>
 {% endblock %}
