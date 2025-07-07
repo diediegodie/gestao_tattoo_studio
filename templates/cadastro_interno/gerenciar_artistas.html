@@ -33,10 +33,10 @@
                         <div class="btn-acoes-historico">
                             <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'artista')">OPÇÕES</button>
                             <div class="btn-acoes-hidden" id="acoes-artista-{{ loop.index0 }}">
-                                <a href="{{ url_for('cadastro_bp.editar_artista', nome_antigo=artista) }}" class="btn btn-warning">EDITAR</a>
                                 <a href="{{ url_for('cadastro_bp.excluir_artista', nome=artista) }}" 
                                    onclick="return confirm('Tem certeza que deseja excluir este artista?')" 
                                    class="btn btn-danger">EXCLUIR</a>
+                                <a href="{{ url_for('cadastro_bp.editar_artista', nome_antigo=artista) }}" class="btn btn-warning">EDITAR</a>
                             </div>
                         </div>
                     </td>
@@ -58,8 +58,13 @@
     <form method="POST" action="{{ url_for('cadastro_bp.novo_artista') }}" class="form-centralizado">
         <label for="nome">Nome do Artista:</label>
         <input type="text" name="nome" required placeholder="Digite o nome do artista">
-        <button type="submit" class="btn btn-success">ADICIONAR ARTISTA</button>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-success">ADICIONAR ARTISTA</button>
+        </div>
     </form>
+    <div class="botoes-centralizados">
+        <a href="{{ url_for('cadastro_bp.novo_artista') }}" class="btn btn-success">Novo Artista</a>
+    </div>
 </div>
 
 {% endblock %}

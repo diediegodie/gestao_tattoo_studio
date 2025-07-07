@@ -13,9 +13,9 @@
   {% endif %}
 {% endwith %}
 
-<div class="d-flex justify-between align-center mb-2">
-    <a href="{{ url_for('estoque_bp.novo_produto') }}" class="btn btn-success">CADASTRAR NOVO PRODUTO</a>
-</div>
+    <div class="botoes-centralizados">
+        <a href="{{ url_for('estoque_bp.novo_produto') }}" class="btn btn-success">Novo Produto</a>
+    </div>
 
 <!-- Botão de busca expansível -->
 <div class="search-toggle" onclick="toggleSearch()">
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>{{ produto.get("nome", "") }}</td>
                 <td>{{ produto.get("descricao", "") }}</td>
                 <td>
-                    <span class="badge {% if produto.get('quantidade', 0) < 5 %}badge-danger{% else %}badge-success{% endif %}">
+                    <span class="badge {% if produto.get('quantidade', 0) < 6 %}badge-danger{% else %}badge-success{% endif %}">
                         {{ produto.get("quantidade", 0) }}
                     </span>
                 </td>
@@ -83,8 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="btn-acoes-historico">
                         <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'produto')">OPÇÕES</button>
                         <div class="btn-acoes-hidden" id="acoes-produto-{{ loop.index0 }}">
-                            <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}" class="btn btn-warning">EDITAR</a>
                             <a href="#" onclick="return confirmDelete('{{ url_for('estoque_bp.excluir_produto_route', nome=produto.nome) }}')" class="btn btn-danger">EXCLUIR</a>
+                            <a href="{{ url_for('estoque_bp.editar_produto', nome=produto.nome) }}" class="btn btn-warning">EDITAR</a>
                         </div>
                     </div>
                 </td>

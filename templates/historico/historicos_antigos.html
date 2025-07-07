@@ -3,10 +3,7 @@
 {% block titulo %}Históricos Antigos{% endblock %}
 
 {% block conteudo %}
-<!-- Botão Voltar -->
-<a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn-voltar">VOLTAR</a>
-
-<div class="container" style="padding-top: 4rem;">
+<div class="container">
     <h1>Históricos Antigos</h1>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -53,7 +50,7 @@
         </select>
         
         <!-- Botão Buscar Extrato Centralizado -->
-        <div class="btn-buscar-extrato">
+        <div class="d-flex justify-content-center">
             <button onclick="carregarExtrato()" class="btn btn-primary">BUSCAR EXTRATO</button>
         </div>
     </div>
@@ -71,6 +68,11 @@
     <!-- Mensagem inicial -->
     <div id="mensagem-inicial" class="card text-center">
         <p>Selecione um tipo de histórico e um mês para visualizar os dados.</p>
+    </div>
+
+    <!-- Botão Voltar centralizado no final -->
+    <div class="voltar-container">
+        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn-voltar">VOLTAR</a>
     </div>
 </div>
 

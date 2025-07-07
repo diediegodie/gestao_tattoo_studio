@@ -325,8 +325,6 @@ button:hover, .btn:hover {
 
 /* Botão voltar */
 .btn-voltar {
-    top: 1rem;
-    left: 1rem;
     background-color: #545454;
     color: #F2F2F2;
     border: 1px solid #666666;
@@ -338,9 +336,10 @@ button:hover, .btn:hover {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
-    z-index: 1000;
-    width: auto;
     display: inline-block;
+    width: fit-content;
+    min-width: auto;
+    text-align: center;
 }
 
 .btn-voltar:hover {
@@ -790,17 +789,15 @@ tr:nth-child(even):hover {
 /* Painéis de busca */
 .search-panel {
     background: #545454;
-    padding: 1rem;
-    border-radius: 8px;
+    padding: 0.75rem;
+    border-radius: 6px;
     margin-bottom: 1rem;
     border: 1px solid #666666;
     display: none;
     transition: all 0.2s ease-in-out;
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin-bottom: 18px !important;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .search-panel.show {
@@ -813,26 +810,21 @@ tr:nth-child(even):hover {
     gap: 0.5rem;
     align-items: center;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .search-panel input[type="text"],
 .search-panel input[type="date"] {
-    flex: 1;
-    min-width: 150px;
-    padding: 0.5rem;
+    flex: 0 1 auto;
+    min-width: 120px;
+    max-width: 200px;
+    padding: 0.4rem 0.6rem;
     background: #333333;
     border: 1px solid #666666;
     border-radius: 4px;
     color: #F2F2F2;
-    font-size: 14px;
-    background: #fff !important;
-    border: 1px solid #ccc !important;
-    color: #333 !important;
-    border-radius: 4px !important;
-    padding: 6px 10px !important;
-    font-size: 1rem !important;
-    margin-right: 8px !important;
-    box-shadow: none !important;
+    font-size: 13px;
+    transition: all 0.2s ease-in-out;
 }
 
 .search-panel input:focus {
@@ -843,33 +835,31 @@ tr:nth-child(even):hover {
 
 .search-panel label {
     color: #F2F2F2;
-    font-size: 14px;
+    font-size: 13px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    min-width: 120px;
-    margin-right: 6px !important;
-    font-weight: 500 !important;
-    color: #333 !important;
-    background: none !important;
+    gap: 0.3rem;
+    min-width: 80px;
+    font-weight: 500;
 }
 
 .search-panel .btn {
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
     font-size: 12px;
-    min-width: 80px;
+    min-width: 70px;
+    max-width: 100px;
     transition: all 0.2s ease-in-out;
 }
 
 /* Seletor de mês */
 .seletor-mes {
-    max-width: 300px;
-    margin: 2rem auto;
+    max-width: 400px;
+    margin: 1.5rem auto;
     text-align: center;
     background: #545454;
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
     border: 1px solid #666666;
 }
 
@@ -907,10 +897,13 @@ tr:nth-child(even):hover {
 /* Seletor de tipo de histórico */
 .seletor-tipo {
     background: #545454;
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
     border: 1px solid #666666;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .seletor-tipo label {
@@ -1005,18 +998,21 @@ tr:nth-child(even):hover {
 .voltar-container {
     display: flex;
     justify-content: center;
-    margin-top: 32px;
-    margin-bottom: 16px;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
     width: 100%;
 }
 
 .voltar-container .btn,
 .voltar-container .btn-voltar {
     position: static !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
     left: unset !important;
     top: unset !important;
     display: inline-block;
+    width: fit-content !important;
+    min-width: auto !important;
 }
 
 /* Busca container */
@@ -1093,6 +1089,55 @@ tr:nth-child(even):hover {
 
 .align-center {
     align-items: center;
+}
+
+/* Centralização e espaçamento de botões */
+.botoes-centralizados {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.botao-unico {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.botoes-grupo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+/* Espaçamento adicional para botões em formulários */
+.form-botoes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+/* Responsividade para botões */
+@media (max-width: 768px) {
+    .botoes-centralizados,
+    .botoes-grupo,
+    .form-botoes {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .botoes-centralizados .btn,
+    .botoes-grupo .btn,
+    .form-botoes .btn {
+        width: 100%;
+        max-width: 300px;
+    }
 }
 
 /* ========================================
@@ -1193,6 +1238,11 @@ tr:nth-child(even):hover {
         max-height: 300px;
     }
     
+    .search-panel {
+        max-width: 100%;
+        margin: 0 1rem 1rem 1rem;
+    }
+    
     .search-panel input[type="text"],
     .search-panel input[type="date"],
     .search-panel select,
@@ -1200,6 +1250,7 @@ tr:nth-child(even):hover {
     .busca-container select {
         width: 100% !important;
         margin-bottom: 8px !important;
+        max-width: none !important;
     }
 }
 

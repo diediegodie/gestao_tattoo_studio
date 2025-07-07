@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico de Comissões Avulsas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h1>Histórico de Comissões Avulsas</h1>
+        <p>Comissões registradas de pagamentos sem vínculo com sessões</p>
+    </div>
+
+    {% if comissoes_avulsas %}
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Artista</th>
+                    <th>Cliente</th>
+                    <th>Valor Total</th>
+                    <th>Comissão</th>
+                    <th>Descrição</th>
+                    <th>Data Registro</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comissao in comissoes_avulsas %}
+                <tr>
+                    <td>{{ comissao.data }}</td>
+                    <td>{{ comissao.artista }}</td>
+                    <td>{{ comissao.cliente }}</td>
+                    <td>R$ {{ "%.2f"|format(comissao.valor_total) }}</td>
+                    <td class="comissao">R$ {{ "%.2f"|format(comissao.valor_comissao) }}</td>
+                    <td>{{ comissao.descricao or "-" }}</td>
+                    <td>{{ comissao.data_registro }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="summary">
+        <h3>Resumo</h3>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <span class="label">Total de Comissões:</span>
+                <span class="value">{{ comissoes_avulsas|length }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Valor Total:</span>
+                <span class="value">R$ {{ "%.2f"|format(comissoes_avulsas|sum(attribute='valor_total')) }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Total Comissões:</span>
+                <span class="value">R$ {{ "%.2f"|format(comissoes_avulsas|sum(attribute='valor_comissao')) }}</span>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>Nenhuma comissão avulsa registrada ainda.</p>
+        <p>As comissões avulsas são criadas automaticamente quando você registra um pagamento sem vínculo com sessão.</p>
+    </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-center gap-2">
+        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-secondary">Voltar ao Histórico</a>
+        <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="btn btn-primary">Registrar Pagamento</a>
+    </div>
+</div>
+
+<style>
+.comissao {
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.summary {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #1a1a1a;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.summary h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #2a2a2a;
+    border-radius: 6px;
+    border: 1px solid #444;
+}
+
+.summary-item .label {
+    color: #ccc;
+    font-weight: 500;
+}
+
+.summary-item .value {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #888;
+}
+
+.empty-state p {
+    margin: 0.5rem 0;
+    font-size: 1.1em;
+}
+
+.actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+</style>
+{% endblock %} 

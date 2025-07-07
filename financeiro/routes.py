@@ -6,6 +6,7 @@ from financeiro.caixa import (
     salvar_pagamentos,
     CAMINHO_PAGAMENTOS,
 )
+from financeiro.comissoes import registrar_comissao_avulsa
 from datetime import datetime
 from cadastro_interno.artistas import carregar_artistas
 
@@ -45,11 +46,15 @@ def registrar_pagamento_route():
     if request.method == "POST":
         try:
             valor = float(request.form.get("valor", 0))
-            porcentagem_comissao = float(request.form.get("porcentagem_comissao", 30))
-            
-            # Calcula automaticamente o valor da comissão
-            valor_comissao = round(valor * (porcentagem_comissao / 100), 2)
-            
+            porcentagem_comissao_str = request.form.get("porcentagem_comissao", "")
+            try:
+                porcentagem_comissao = float(porcentagem_comissao_str)
+            except (ValueError, TypeError):
+                porcentagem_comissao = 0
+            if porcentagem_comissao <= 0:
+                valor_comissao = 0
+            else:
+                valor_comissao = round(valor * (porcentagem_comissao / 100), 2)
             novo_pagamento = {
                 "data": request.form.get("data"),
                 "cliente": request.form.get("cliente"),
@@ -60,33 +65,37 @@ def registrar_pagamento_route():
                 "porcentagem_comissao": porcentagem_comissao,
                 "valor_comissao": valor_comissao
             }
-            
             if registrar_pagamento(novo_pagamento):
-                # Verifica se há uma sessão pendente para finalizar
                 from flask import session
                 sessao_pendente = session.get('sessao_para_pagamento')
-                
                 if sessao_pendente:
-                    # Move a sessão para o histórico com dados de comissão
                     from sessoes.historico import mover_para_historico
                     from sessoes.agendamento import carregar_agendamentos, salvar_agendamentos
-                    
                     if mover_para_historico(sessao_id=sessao_pendente['id'], valor_final=valor, comissao=valor_comissao):
-                        # Remove da lista de agendamentos ativos
                         agendamentos = carregar_agendamentos()
                         agendamentos = [s for s in agendamentos if s["id"] != sessao_pendente['id']]
                         salvar_agendamentos(agendamentos)
-                        
-                        # Limpa a sessão pendente
                         session.pop('sessao_para_pagamento', None)
-                        
-                        flash(f"Pagamento registrado e sessão finalizada com sucesso! Comissão: R$ {valor_comissao:.2f}", "sucesso")
+                        flash(f"Pagamento registrado e sessão finalizada com sucesso! Comissão: R$ {valor_comissao:.2f} ({porcentagem_comissao:.0f}%)", "sucesso")
                         return redirect(url_for("historico_bp.historico_sessoes"))
                     else:
                         flash("Pagamento registrado, mas erro ao finalizar sessão.", "erro")
                 else:
-                    flash(f"Pagamento registrado com sucesso! Comissão: R$ {valor_comissao:.2f}", "sucesso")
-                
+                    artista = request.form.get("artista")
+                    if artista and valor_comissao > 0 and porcentagem_comissao > 0:
+                        if registrar_comissao_avulsa(
+                            artista=artista,
+                            valor_comissao=valor_comissao,
+                            valor_total=valor,
+                            cliente=request.form.get("cliente"),
+                            data=request.form.get("data"),
+                            descricao=request.form.get("descricao", "")
+                        ):
+                            flash(f"Pagamento e comissão registrados com sucesso! Comissão: R$ {valor_comissao:.2f} ({porcentagem_comissao:.0f}%)", "sucesso")
+                        else:
+                            flash(f"Pagamento registrado, mas erro ao registrar comissão. Comissão: R$ {valor_comissao:.2f}", "erro")
+                    else:
+                        flash(f"Pagamento registrado com sucesso!", "sucesso")
                 return redirect(url_for("financeiro_bp.listar_pagamentos"))
             else:
                 flash("Erro ao registrar pagamento.", "erro")

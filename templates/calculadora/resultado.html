@@ -34,5 +34,8 @@
 </form>
 {% endif %}
 
-<a href="{{ url_for('calculadora_bp.calculadora') }}" class="btn-novo-calculo">Novo Cálculo</a>
+<div class="botoes-centralizados">
+    <a href="{{ url_for('calculadora_bp.calculadora') }}" class="btn btn-primary">Nova Cálculo</a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Voltar ao Início</a>
+</div>
 {% endblock %}

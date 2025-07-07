@@ -85,4 +85,7 @@
 {% elif mes and ano %}
     <p class="sem-dados">Nenhum pagamento registrado para {{ mes }}/{{ ano }}</p>
 {% endif %}
+    <div class="botoes-centralizados">
+        <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-secondary">Voltar ao Financeiro</a>
+    </div>
 {% endblock %}

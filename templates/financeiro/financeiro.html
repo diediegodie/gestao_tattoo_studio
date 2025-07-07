@@ -13,9 +13,11 @@
   {% endif %}
 {% endwith %}
 
-<div class="d-flex justify-between align-center mb-2">
-    <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="btn btn-success">REGISTRAR NOVO PAGAMENTO</a>
-</div>
+    <div class="botoes-centralizados">
+        <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="btn btn-success">Registrar Pagamento</a>
+        <a href="{{ url_for('extrato_bp.extrato_mensal') }}" class="btn btn-info">Extrato Mensal</a>
+        <a href="{{ url_for('historico_bp.historico_comissoes_avulsas') }}" class="btn btn-warning">Comissões Avulsas</a>
+    </div>
 
 <!-- Botão de filtro expansível -->
 <div class="search-toggle" onclick="toggleFilter()">
@@ -81,8 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="btn-acoes-historico">
                         <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">OPÇÕES</button>
                         <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
-                            <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
                             <a href="#" onclick="return confirmDelete('{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}')" class="btn btn-danger">EXCLUIR</a>
+                            <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
                         </div>
                     </div>
                 </td>

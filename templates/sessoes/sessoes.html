@@ -5,6 +5,22 @@
 {% block conteudo %}
 <h1>Sessões Agendadas</h1>
 
+    <div class="botoes-centralizados">
+        <a href="{{ url_for('sessoes_bp.nova_sessao') }}" class="btn btn-success">Nova Sessão</a>
+        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-info">Ver Histórico</a>
+    </div>
+
+<div class="search-panel">
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Digite um nome...">
+        </div>
+        <div class="col-md-6">
+            <input type="date" id="dateFilter" class="form-control">
+        </div>
+    </div>
+</div>
+
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
@@ -16,7 +32,7 @@
 <!-- Botões do topo organizados horizontalmente -->
 <div class="botoes-topo">
     <a href="{{ url_for('sessoes_bp.nova_sessao') }}" class="btn btn-success">NOVA SESSÃO</a>
-    <div class="search-toggle" onclick="toggleSearch()">DIGITE UM NOME</div>
+    <div class="search-toggle" onclick="toggleSearch()">BUSCAR</div>
     <div class="search-toggle" onclick="toggleFilter()">FILTRAR POR DATA</div>
 </div>
 
@@ -155,12 +171,12 @@ function excluirDoLimbo(id) {
                     <div class="btn-acoes-historico">
                         <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'sessao')">OPÇÕES</button>
                         <div class="btn-acoes-hidden" id="acoes-sessao-{{ loop.index0 }}">
-                            {% if not sessao.get('paga', False) %}
-                                <a href="#" onclick="concluirSessao({{ sessao['id'] }})" class="btn btn-success">CONCLUÍDO</a>
-                            {% endif %}
                             <a href="#" onclick="enviarParaLimbo({{ sessao['id'] }})" class="btn btn-warning">ENVIAR PARA LIMBO</a>
                             <a href="{{ url_for('sessoes_bp.editar_agendamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
                             <a href="#" onclick="return confirmDelete('{{ url_for('sessoes_bp.excluir_agendamento_route', indice=loop.index0) }}')" class="btn btn-danger">EXCLUIR</a>
+                            {% if not sessao.get('paga', False) %}
+                                <a href="#" onclick="concluirSessao({{ sessao['id'] }})" class="btn btn-success">CONCLUÍDO</a>
+                            {% endif %}
                         </div>
                     </div>
                 </td>
@@ -205,8 +221,8 @@ function excluirDoLimbo(id) {
                         <div class="btn-acoes-historico">
                             <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'limbo')">OPÇÕES</button>
                             <div class="btn-acoes-hidden" id="acoes-limbo-{{ loop.index0 }}">
-                                <a href="#" onclick="retornarDoLimbo({{ sessao['id'] }})" class="btn btn-success">RETORNAR</a>
                                 <a href="#" onclick="excluirDoLimbo({{ sessao['id'] }})" class="btn btn-danger">EXCLUIR</a>
+                                <a href="#" onclick="retornarDoLimbo({{ sessao['id'] }})" class="btn btn-success">RETORNAR</a>
                             </div>
                         </div>
                     </td>

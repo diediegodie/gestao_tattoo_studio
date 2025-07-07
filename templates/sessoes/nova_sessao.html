@@ -30,9 +30,9 @@
   <label>Valor (R$): <input type="number" step="0.01" name="valor" value="{{ valor or '' }}" placeholder="0.00"></label>
   <label>Observações: <input type="text" name="observacoes" value="{{ observacoes or '' }}" placeholder="Observações sobre a sessão"></label>
   
-  <div class="d-flex justify-between">
-    <a href="{{ url_for('sessoes_bp.listar_sessoes') }}" class="btn btn-warning">CANCELAR</a>
-    <button type="submit" class="btn btn-success">AGENDAR SESSÃO</button>
-  </div>
-</form>
+        <div class="form-botoes">
+            <button type="submit" class="btn btn-success">Agendar Sessão</button>
+            <a href="{{ url_for('sessoes_bp.listar_sessoes') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
 {% endblock %}

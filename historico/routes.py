@@ -42,6 +42,22 @@ def historicos_antigos():
 def historico_pagamentos():
     return render_template("historico/pagamentos.html")
 
+@historico_bp.route("/comissoes-avulsas")
+def historico_comissoes_avulsas():
+    """Exibe o histórico de comissões avulsas"""
+    try:
+        from financeiro.comissoes import carregar_comissoes
+        comissoes_avulsas = carregar_comissoes()
+        
+        # Inverter a ordem para mostrar os mais recentes no topo
+        comissoes_avulsas.reverse()
+        
+        return render_template("historico/comissoes_avulsas.html", 
+                             comissoes_avulsas=comissoes_avulsas)
+    except Exception as e:
+        flash(f"Erro ao carregar comissões avulsas: {str(e)}", "erro")
+        return redirect(url_for('historico_bp.historico_sessoes'))
+
 @historico_bp.route("/extrato/dados/<mes_ano>")
 def extrato_dados(mes_ano):
     """Retorna dados de pagamentos de um mês específico"""
@@ -84,6 +100,38 @@ def extrato_comissoes(mes_ano):
             
             sessoes_mes = [s for s in sessoes if s.get('data', '').startswith(mes_ano)]
             comissoes = calcular_comissoes_por_artista(sessoes_mes)
+            
+            # Incluir comissões avulsas do mês
+            try:
+                from financeiro.comissoes import obter_comissoes_por_artista
+                mes, ano = mes_ano.split('-')
+                comissoes_avulsas = obter_comissoes_por_artista(mes=int(mes), ano=int(ano))
+                
+                # Adicionar comissões avulsas ao resultado
+                for comissao_avulsa in comissoes_avulsas:
+                    artista = comissao_avulsa.get('artista')
+                    valor_comissao = comissao_avulsa.get('valor_comissao', 0)
+                    
+                    # Encontrar ou criar entrada para o artista
+                    artista_encontrado = False
+                    for comissao in comissoes:
+                        if comissao.get('artista') == artista:
+                            comissao['comissao'] += valor_comissao
+                            comissao['valor_total'] += comissao_avulsa.get('valor_total', 0)
+                            artista_encontrado = True
+                            break
+                    
+                    if not artista_encontrado:
+                        comissoes.append({
+                            'artista': artista,
+                            'total_sessoes': 0,
+                            'valor_total': comissao_avulsa.get('valor_total', 0),
+                            'comissao': valor_comissao
+                        })
+                        
+            except Exception as e:
+                print(f"Erro ao incluir comissões avulsas no extrato: {e}")
+                
         else:
             # Mês anterior - buscar no histórico antigo
             comissoes = carregar_historico_antigo(mes_ano, 'comissoes')
@@ -209,9 +257,10 @@ def mover_dados_para_historico():
         print(f"Erro ao mover comissões: {e}")
 
 def calcular_comissoes_por_artista(sessoes):
-    """Calcula comissões por artista baseado nas sessões finalizadas"""
+    """Calcula comissões por artista baseado nas sessões finalizadas e comissões avulsas"""
     artistas = {}
     
+    # Processa comissões das sessões
     for sessao in sessoes:
         artista = sessao.get('artista', 'Desconhecido')
         valor = float(sessao.get('valor', 0))
@@ -234,5 +283,30 @@ def calcular_comissoes_por_artista(sessoes):
         artistas[artista]['total_sessoes'] += 1
         artistas[artista]['valor_total'] += valor
         artistas[artista]['comissao'] += comissao
+    
+    # Processa comissões avulsas
+    try:
+        from financeiro.comissoes import carregar_comissoes
+        comissoes_avulsas = carregar_comissoes()
+        
+        for comissao_avulsa in comissoes_avulsas:
+            artista = comissao_avulsa.get('artista', 'Desconhecido')
+            valor_comissao = float(comissao_avulsa.get('valor_comissao', 0))
+            valor_total = float(comissao_avulsa.get('valor_total', 0))
+            
+            if artista not in artistas:
+                artistas[artista] = {
+                    'artista': artista,
+                    'total_sessoes': 0,
+                    'valor_total': 0,
+                    'comissao': 0
+                }
+            
+            # Para comissões avulsas, não incrementa total_sessoes, apenas valor e comissão
+            artistas[artista]['valor_total'] += valor_total
+            artistas[artista]['comissao'] += valor_comissao
+            
+    except Exception as e:
+        print(f"Erro ao carregar comissões avulsas: {e}")
     
     return list(artistas.values())

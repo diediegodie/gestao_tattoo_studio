@@ -36,22 +36,21 @@
   <label>Cliente: <input type="text" name="cliente" required placeholder="Nome do cliente" value="{{ sessao_pendente.cliente if sessao_pendente else '' }}"></label>
 
   <label>Artista:
-    <select name="artista" required>
-      <option value="">Selecione o artista</option>
-      {% for nome in artistas %}
-        <option value="{{ nome }}" {% if sessao_pendente and sessao_pendente.artista == nome %}selected{% endif %}>{{ nome }}</option>
-      {% endfor %}
+    <select name="artista">
+        <option value="">Selecione um artista</option>
+        {% for artista in artistas %}
+            <option value="{{ artista }}" {% if sessao_pendente.artista == artista %}selected{% endif %}>{{ artista }}</option>
+        {% endfor %}
     </select>
-  </label>
-
-  <label>Porcentagem de Comissão (%): <input type="number" step="0.1" name="porcentagem_comissao" value="70" min="0" max="100" placeholder="70" required></label>
+</label>
+<label>Porcentagem de Comissão (%): <input type="number" step="0.1" name="porcentagem_comissao" value="0" min="0" max="100" placeholder="0"></label>
 
   <label>Observação: <textarea name="descricao" placeholder="Observação do pagamento">{{ sessao_pendente.observacoes if sessao_pendente else '' }}</textarea></label>
   
-  <div class="d-flex justify-between">
-    <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-warning">CANCELAR</a>
-    <button type="submit" class="btn btn-success">REGISTRAR PAGAMENTO</button>
-  </div>
+     <div class="form-botoes">
+     <button type="submit" class="btn btn-success">Registrar Pagamento</button>
+     <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-secondary">Cancelar</a>
+   </div>
 </form>
 
 <script>

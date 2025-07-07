@@ -27,9 +27,9 @@
     <label for="observacoes">Observações:</label>
     <textarea name="observacoes" rows="4" placeholder="Observações sobre a sessão">{{ sessao.observacoes }}</textarea>
     
-    <div class="d-flex justify-between">
-                  <button type="submit" class="btn btn-success">SALVAR ALTERAÇÕES</button>
-        <a href="{{ url_for('sessoes_bp.listar_historico') }}" class="btn btn-warning">CANCELAR</a>
-    </div>
-</form>
+        <div class="form-botoes">
+            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+            <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
 {% endblock %}
