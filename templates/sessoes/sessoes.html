@@ -5,33 +5,12 @@
 {% block conteudo %}
 <h1>Sessões Agendadas</h1>
 
-    <div class="botoes-centralizados">
-        <a href="{{ url_for('sessoes_bp.nova_sessao') }}" class="btn btn-success">Nova Sessão</a>
-        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-info">Ver Histórico</a>
-    </div>
-
-<div class="search-panel">
-    <div class="row">
-        <div class="col-md-6">
-            <input type="text" id="searchInput" class="form-control" placeholder="Digite um nome...">
-        </div>
-        <div class="col-md-6">
-            <input type="date" id="dateFilter" class="form-control">
-        </div>
-    </div>
+<div class="botoes-centralizados" style="margin-bottom: 1.5rem;">
+    <a href="{{ url_for('sessoes_bp.nova_sessao') }}" class="btn btn-success">Nova Sessão</a>
+    <a href="{{ url_for('historico_bp.historico_index') }}" class="btn btn-info">Ver Histórico</a>
 </div>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="mensagem-{{ category }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
-<!-- Botões do topo organizados horizontalmente -->
-<div class="botoes-topo">
-    <a href="{{ url_for('sessoes_bp.nova_sessao') }}" class="btn btn-success">NOVA SESSÃO</a>
+<div class="botoes-topo" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
     <div class="search-toggle" onclick="toggleSearch()">BUSCAR</div>
     <div class="search-toggle" onclick="toggleFilter()">FILTRAR POR DATA</div>
 </div>
@@ -56,93 +35,13 @@
     </form>
 </div>
 
-<script>
-function toggleSearch() {
-    const panel = document.getElementById('searchPanel');
-    const toggle = document.querySelector('.search-toggle');
-    
-    if (panel.classList.contains('show')) {
-        panel.classList.remove('show');
-        toggle.classList.remove('active');
-    } else {
-        panel.classList.add('show');
-        toggle.classList.add('active');
-        // Fecha o painel de filtro se estiver aberto
-        document.getElementById('filterPanel').classList.remove('show');
-        document.querySelectorAll('.search-toggle')[1].classList.remove('active');
-    }
-}
-
-function toggleFilter() {
-    const panel = document.getElementById('filterPanel');
-    const toggle = document.querySelectorAll('.search-toggle')[1];
-    
-    if (panel.classList.contains('show')) {
-        panel.classList.remove('show');
-        toggle.classList.remove('active');
-    } else {
-        panel.classList.add('show');
-        toggle.classList.add('active');
-        // Fecha o painel de busca se estiver aberto
-        document.getElementById('searchPanel').classList.remove('show');
-        document.querySelectorAll('.search-toggle')[0].classList.remove('active');
-    }
-}
-
-// Mostrar painéis se há filtros ativos
-document.addEventListener('DOMContentLoaded', function() {
-    {% if termo %}
-        document.getElementById('searchPanel').classList.add('show');
-        document.querySelectorAll('.search-toggle')[0].classList.add('active');
-    {% endif %}
-    
-    {% if request.args.get('data_inicio') or request.args.get('data_fim') %}
-        document.getElementById('filterPanel').classList.add('show');
-        document.querySelectorAll('.search-toggle')[1].classList.add('active');
-    {% endif %}
-});
-
-// Funções para os botões de ação
-function enviarParaLimbo(id) {
-    if (confirm('Tem certeza que deseja enviar esta sessão para o limbo?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ url_for("sessoes_bp.enviar_para_limbo_route", id=0) }}'.replace('0', id);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-
-function concluirSessao(id) {
-    if (confirm('Tem certeza que deseja concluir esta sessão?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ url_for("sessoes_bp.fechar_sessao", id=0) }}'.replace('0', id);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-
-function retornarDoLimbo(id) {
-    if (confirm('Tem certeza que deseja retornar esta sessão dos agendamentos?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ url_for("sessoes_bp.retornar_do_limbo_route", id=0) }}'.replace('0', id);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-
-function excluirDoLimbo(id) {
-    if (confirm('Tem certeza que deseja excluir definitivamente esta sessão do limbo?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ url_for("sessoes_bp.excluir_do_limbo_route", id=0) }}'.replace('0', id);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-</script>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="mensagem-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
 {% if sessoes %}
 <div class="table-container">
@@ -186,9 +85,9 @@ function excluirDoLimbo(id) {
     </table>
 </div>
 {% else %}
-    <div class="card text-center">
-        <p>Nenhuma sessão agendada.</p>
-    </div>
+<div class="card text-center">
+    <p>Nenhuma sessão agendada.</p>
+</div>
 {% endif %}
 
 <!-- Seção do Limbo -->
@@ -221,8 +120,8 @@ function excluirDoLimbo(id) {
                         <div class="btn-acoes-historico">
                             <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'limbo')">OPÇÕES</button>
                             <div class="btn-acoes-hidden" id="acoes-limbo-{{ loop.index0 }}">
-                                <a href="#" onclick="excluirDoLimbo({{ sessao['id'] }})" class="btn btn-danger">EXCLUIR</a>
                                 <a href="#" onclick="retornarDoLimbo({{ sessao['id'] }})" class="btn btn-success">RETORNAR</a>
+                                <a href="#" onclick="excluirDoLimbo({{ sessao['id'] }})" class="btn btn-danger">EXCLUIR</a>
                             </div>
                         </div>
                     </td>
@@ -232,7 +131,91 @@ function excluirDoLimbo(id) {
         </table>
     </div>
     {% else %}
-    <p>Nenhuma sessão no limbo.</p>
+    <div class="card text-center">
+        <p>Nenhuma sessão no limbo.</p>
+    </div>
     {% endif %}
 </div>
+
+<script>
+function toggleSearch() {
+    const panel = document.getElementById('searchPanel');
+    const toggle = document.querySelector('.search-toggle');
+    if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+        toggle.classList.remove('active');
+    } else {
+        panel.classList.add('show');
+        toggle.classList.add('active');
+        document.getElementById('filterPanel').classList.remove('show');
+        document.querySelectorAll('.search-toggle')[1].classList.remove('active');
+    }
+}
+
+function toggleFilter() {
+    const panel = document.getElementById('filterPanel');
+    const toggle = document.querySelectorAll('.search-toggle')[1];
+    if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+        toggle.classList.remove('active');
+    } else {
+        panel.classList.add('show');
+        toggle.classList.add('active');
+        document.getElementById('searchPanel').classList.remove('show');
+        document.querySelectorAll('.search-toggle')[0].classList.remove('active');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    {% if termo %}
+        document.getElementById('searchPanel').classList.add('show');
+        document.querySelectorAll('.search-toggle')[0].classList.add('active');
+    {% endif %}
+    {% if request.args.get('data_inicio') or request.args.get('data_fim') %}
+        document.getElementById('filterPanel').classList.add('show');
+        document.querySelectorAll('.search-toggle')[1].classList.add('active');
+    {% endif %}
+});
+
+function enviarParaLimbo(id) {
+    if (confirm('Tem certeza que deseja enviar esta sessão para o limbo?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("sessoes_bp.enviar_para_limbo_route", id=0) }}'.replace('0', id);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function concluirSessao(id) {
+    if (confirm('Tem certeza que deseja concluir esta sessão?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("sessoes_bp.fechar_sessao", id=0) }}'.replace('0', id);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function retornarDoLimbo(id) {
+    if (confirm('Tem certeza que deseja retornar esta sessão dos agendamentos?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("sessoes_bp.retornar_do_limbo_route", id=0) }}'.replace('0', id);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function excluirDoLimbo(id) {
+    if (confirm('Tem certeza que deseja excluir definitivamente esta sessão do limbo?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("sessoes_bp.excluir_do_limbo_route", id=0) }}'.replace('0', id);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+
 {% endblock %}

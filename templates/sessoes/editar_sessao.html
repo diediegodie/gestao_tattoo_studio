@@ -14,10 +14,10 @@
 {% endwith %}
 
 <form method="POST">
-  <label>Cliente: <input type="text" name="cliente" value="{{ sessao.cliente }}" required></label>
+  <label>Cliente: <input type="text" name="cliente" value="{{ sessao.cliente }}"></label>
 
   <label>Artista:
-    <select name="artista" required>
+    <select name="artista">
       <option value="">Selecione um artista</option>
       {% for a in artistas %}
         <option value="{{ a }}" {% if sessao.artista == a %}selected{% endif %}>{{ a }}</option>
@@ -26,13 +26,13 @@
   </label>
 
   <label>Data: <input type="date" name="data" value="{{ sessao.data }}" required placeholder="Data da sessão"></label>
-  <label>Hora: <input type="time" name="hora" value="{{ sessao.hora }}" required placeholder="Hora da sessão"></label>
+  <label>Hora: <input type="time" name="hora" value="{{ sessao.hora }}" placeholder="Hora da sessão"></label>
   <label>Valor (R$): <input type="number" step="0.01" name="valor" value="{{ sessao.valor or '' }}" placeholder="0.00"></label>
   <label>Observações: <input type="text" name="observacoes" value="{{ sessao.observacoes }}" placeholder="Observações sobre a sessão"></label>
   
           <div class="form-botoes">
             <button type="submit" class="btn btn-success">Salvar Alterações</button>
-            <a href="{{ url_for('sessoes_bp.listar_sessoes') }}" class="btn btn-secondary">Cancelar</a>
+            <a href="#" onclick="history.back(); return false;" class="btn btn-secondary">Cancelar</a>
         </div>
 </form>
 {% endblock %}

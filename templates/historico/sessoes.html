@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block titulo %}Histórico de Sessões{% endblock %}
+{% block titulo %}Histórico Completo{% endblock %}
 
 {% block conteudo %}
-<h1>Histórico de Sessões Finalizadas</h1>
+<h1>Histórico Completo</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -13,10 +13,100 @@
   {% endif %}
 {% endwith %}
 
-{% if sessoes %}
-<table>
-    <thead>
-        <tr>
+<div class="historico-grid">
+  <!-- Primeira linha: Pagamentos e Comissões lado a lado -->
+  <div class="historico-section" style="min-width: 320px;">
+    <h2>Pagamentos</h2>
+    <div class="table-container">
+      {% if pagamentos %}
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Valor</th>
+            <th>Forma</th>
+            <th>Opções</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pag in pagamentos %}
+          <tr>
+            <td>{{ pag.data | data_brasileira if pag.data else '' }}</td>
+            <td>{{ pag.cliente or '' }}</td>
+            <td>R$ {{ "%.2f"|format(pag.valor|float) if pag.valor else '0,00' }}</td>
+            <td>{{ pag.forma_pagamento or '' }}</td>
+            <td>
+              <div class="btn-acoes-historico">
+                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">OPÇÕES</button>
+                <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
+                  <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
+                  <form action="{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este pagamento?')">EXCLUIR</button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="card text-center"><p>Nenhum pagamento registrado.</p></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="historico-section" style="min-width: 320px;">
+    <h2>Comissões por Artista</h2>
+    <div class="table-container">
+      {% if comissoes %}
+      <table>
+        <thead>
+          <tr>
+            <th>Artista</th>
+            <th>Total Sessões</th>
+            <th>Valor Total</th>
+            <th>Comissão Total</th>
+            <th>Opções</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for com in comissoes %}
+          <tr>
+            <td>{{ com.artista or '' }}</td>
+            <td>{{ com.total_sessoes }}</td>
+            <td>R$ {{ "%.2f"|format(com.valor_total|float) }}</td>
+            <td>R$ {{ "%.2f"|format(com.comissao|float) }}</td>
+            <td>
+              <div class="btn-acoes-historico">
+                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'comissao')">OPÇÕES</button>
+                <div class="btn-acoes-hidden" id="acoes-comissao-{{ loop.index0 }}">
+                  <a href="{{ url_for('historico_bp.editar_comissao', artista=com.artista) }}" class="btn btn-warning">EDITAR</a>
+                  <form action="{{ url_for('historico_bp.excluir_comissao', artista=com.artista) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir as comissões deste artista?')">EXCLUIR</button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="card text-center"><p>Nenhuma comissão registrada.</p></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Segunda linha: Sessões realizadas ocupando toda a largura -->
+  <div class="historico-section" style="grid-column: 1 / span 2; min-width: 320px;">
+    <h2>Sessões Realizadas</h2>
+    <div class="table-container">
+      {% if sessoes %}
+      <table>
+        <thead>
+          <tr>
             <th>Data</th>
             <th>Cliente</th>
             <th>Artista</th>
@@ -24,11 +114,11 @@
             <th>Observações</th>
             <th>Data de Fechamento</th>
             <th>Opções</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for sessao in sessoes %}
-        <tr>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sessao in sessoes %}
+          <tr>
             <td>{{ sessao.data | data_brasileira if sessao.data else '' }}</td>
             <td>{{ sessao.cliente }}</td>
             <td>{{ sessao.artista }}</td>
@@ -36,28 +126,29 @@
             <td>{{ sessao.observacoes }}</td>
             <td>{{ sessao.data_fechamento }}</td>
             <td>
-                <div class="btn-acoes-historico">
-                    <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'historico')">OPÇÕES</button>
-                    <div class="btn-acoes-hidden" id="acoes-historico-{{ loop.index0 }}">
-                        <a href="{{ url_for('sessoes_bp.editar_historico', id=sessao.id) }}" class="btn btn-warning">EDITAR</a>
-                        <form action="{{ url_for('sessoes_bp.excluir_historico', id=sessao.id) }}" method="POST" style="display: inline;">
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta sessão do histórico?')">EXCLUIR</button>
-                        </form>
-                    </div>
+              <div class="btn-acoes-historico">
+                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'historico')">OPÇÕES</button>
+                <div class="btn-acoes-hidden" id="acoes-historico-{{ loop.index0 }}">
+                  <a href="{{ url_for('sessoes_bp.editar_historico', id=sessao.id) }}" class="btn btn-warning">EDITAR</a>
+                  <form action="{{ url_for('sessoes_bp.excluir_historico', id=sessao.id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta sessão do histórico?')">EXCLUIR</button>
+                  </form>
                 </div>
+              </div>
             </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-    <div class="card text-center">
-        <p>Nenhuma sessão finalizada ainda.</p>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="card text-center"><p>Nenhuma sessão finalizada ainda.</p></div>
+      {% endif %}
     </div>
-{% endif %}
+  </div>
+</div>
 
-    <div class="botoes-centralizados">
-        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-secondary">Voltar ao Histórico</a>
-    </div>
+<div class="botoes-centralizados" style="margin-top: 2rem;">
+    <a href="{{ url_for('historico_bp.historico_index') }}" class="btn btn-secondary">Voltar ao Histórico</a>
+</div>
 
 {% endblock %}

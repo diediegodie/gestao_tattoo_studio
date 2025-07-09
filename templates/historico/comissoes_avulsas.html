@@ -3,6 +3,9 @@
 {% block title %}Histórico de Comissões Avulsas{% endblock %}
 
 {% block content %}
+<pre>
+{{ comissoes_avulsas | tojson }}
+</pre>
 <div class="container">
     <div class="header">
         <h1>Histórico de Comissões Avulsas</h1>
@@ -21,6 +24,7 @@
                     <th>Comissão</th>
                     <th>Descrição</th>
                     <th>Data Registro</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +37,11 @@
                     <td class="comissao">R$ {{ "%.2f"|format(comissao.valor_comissao) }}</td>
                     <td>{{ comissao.descricao or "-" }}</td>
                     <td>{{ comissao.data_registro }}</td>
+                    <td>
+                        <form action="{{ url_for('historico_bp.excluir_comissao_historico', id=comissao.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta comissão do histórico?')">EXCLUIR</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -64,7 +73,7 @@
     {% endif %}
 
     <div class="d-flex justify-content-center gap-2">
-        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-secondary">Voltar ao Histórico</a>
+        <a href="{{ url_for('historico_bp.historico_index') }}" class="btn btn-secondary">Voltar ao Histórico</a>
         <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="btn btn-primary">Registrar Pagamento</a>
     </div>
 </div>

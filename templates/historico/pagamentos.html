@@ -4,8 +4,45 @@
 
 {% block conteudo %}
 <h1>Pagamentos Registrados</h1>
-<p>Em desenvolvimento</p>
-    <div class="botoes-centralizados">
-        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-secondary">Voltar ao Histórico</a>
-    </div>
+
+{% if erro %}
+  <div class="alert alert-danger">{{ erro }}</div>
+{% endif %}
+{% if pagamentos %}
+<table>
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Cliente</th>
+      <th>Artista</th>
+      <th>Valor</th>
+      <th>Forma</th>
+      <th>Descrição</th>
+      <th>Opções</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pagamento in pagamentos %}
+    <tr>
+      <td>{{ pagamento['data'] }}</td>
+      <td>{{ pagamento['cliente'] }}</td>
+      <td>{{ pagamento['artista'] }}</td>
+      <td>R$ {{ '%.2f'|format(pagamento['valor']|float) }}</td>
+      <td>{{ pagamento['forma_pagamento'] }}</td>
+      <td>{{ pagamento['descricao'] }}</td>
+      <td>
+        <form action="{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}?redirect_hist=1" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este pagamento?')">EXCLUIR</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Nenhum pagamento registrado.</p>
+{% endif %}
+<div class="botoes-centralizados">
+    <a href="{{ url_for('historico_bp.historico_index') }}" class="btn btn-secondary">Voltar ao Histórico</a>
+</div>
 {% endblock %}

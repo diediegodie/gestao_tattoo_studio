@@ -1,8 +1,9 @@
 import json
 import os
+from pathlib import Path
 from estoque.produtos import carregar_produtos, salvar_produtos
 
-CAMINHO_ARQUIVO = "dados/sessoes.json"  # Usaremos o mesmo arquivo
+CAMINHO_ARQUIVO = Path(__file__).parent.parent / "dados" / "sessoes.json"
 
 
 def registrar_procedimento(id_agendamento, materiais_usados):
@@ -46,13 +47,16 @@ def registrar_procedimento(id_agendamento, materiais_usados):
 
 # Reutiliza funções existentes:
 def carregar_agendamentos():
-    if not os.path.exists(CAMINHO_ARQUIVO):
+    if not CAMINHO_ARQUIVO.exists():
+        CAMINHO_ARQUIVO.parent.mkdir(exist_ok=True)
+        with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
+            json.dump([], arquivo)
         return []
-    with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
-        try:
+    try:
+        with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
             return json.load(arquivo)
-        except json.JSONDecodeError:
-            return []
+    except (json.JSONDecodeError, FileNotFoundError):
+        return []
 
 
 def salvar_agendamentos(lista):

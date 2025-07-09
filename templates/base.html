@@ -19,7 +19,7 @@
         <a href="{{ url_for('extrato_bp.extrato_mensal') }}" class="{{ 'active' if 'extrato' in request.endpoint else '' }}">EXTRATO MENSAL</a>
         <a href="{{ url_for('cadastro_bp.gerenciar_artistas') }}" class="{{ 'active' if 'cadastro' in request.endpoint else '' }}">CADASTRO INTERNO</a>
         <a href="{{ url_for('calculadora_bp.calculadora') }}" class="{{ 'active' if 'calculadora' in request.endpoint else '' }}">CALCULADORA</a>
-        <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="{{ 'active' if 'historico' in request.endpoint else '' }}">HISTÓRICO</a>
+        <a href="{{ url_for('historico_bp.historico_index') }}" class="{{ 'active' if 'historico' in request.endpoint else '' }}">HISTÓRICO</a>
     </nav>
 
     <div class="container">
@@ -30,7 +30,7 @@
     <div style="margin: 10% auto; background: white; padding: 20px; width: 300px; border-radius: 10px;">
         <p id="confirmMessage">Tem certeza que deseja excluir?</p>
         <button onclick="proceedDelete()">Sim</button>
-        <button onclick="closeModal()">Cancelar</button>
+        <button onclick="closeModal()" class="btn-secondary">Cancelar</button>
     </div>
 </div>
 
@@ -121,7 +121,7 @@
             }
         });
         
-        // Debug para formulários de exclusão
+        
         document.addEventListener('submit', function(event) {
             if (event.target.tagName === 'FORM' && event.target.action.includes('excluir')) {
                 console.log('Formulário de exclusão enviado:', event.target.action);
@@ -130,7 +130,7 @@
             }
         });
         
-        // Debug para cliques em botões de exclusão
+        
         document.addEventListener('click', function(event) {
             if (event.target.type === 'submit' && event.target.closest('form') && event.target.closest('form').action.includes('excluir')) {
                 console.log('Botão de exclusão clicado:', event.target);

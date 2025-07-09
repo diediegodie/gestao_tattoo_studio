@@ -16,14 +16,7 @@ def mover_para_historico(sessao_id: int, valor_final: float, comissao: float = 0
     """
     Move uma sessão da lista de ativas para o histórico e a remove da lista de ativas,
     garantindo que o ID no histórico seja único.
-
-    Args:
-        sessao_id (int): O ID da sessão a ser movida.
-        valor_final (float): O valor final a ser registrado no histórico.
-        comissao (float): O valor da comissão do artista.
-
-    Returns:
-        bool: True se a operação foi bem-sucedida, False caso contrário.
+    Também grava a sessão em historico_sessoes.json.
     """
     try:
         with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
@@ -66,20 +59,30 @@ def mover_para_historico(sessao_id: int, valor_final: float, comissao: float = 0
         "paga": True,
         "comissao": comissao
     }
-    
-    print(f"Sessão que será salva no histórico: {sessao_historico}")
-    print(f"Valor final que será salvo: {valor_final} (tipo: {type(valor_final)})")
-    print(f"Comissão que será salva: {comissao} (tipo: {type(comissao)})")
-    
     historico.append(sessao_historico)
-    
-    # Prepara os dados para salvar de volta no arquivo
+
+    # Salva também no arquivo historico_sessoes.json
+    try:
+        from pathlib import Path
+        caminho_hist = Path(__file__).parent.parent / "dados" / "historico_sessoes.json"
+        try:
+            with open(caminho_hist, "r", encoding="utf-8") as f:
+                historico_sessoes = json.load(f)
+        except Exception:
+            historico_sessoes = []
+        # Evita duplicidade: só adiciona se não existir sessão igual
+        if not any(str(s.get('id')) == str(sessao_historico['id']) and s.get('cliente') == sessao_historico['cliente'] for s in historico_sessoes):
+            historico_sessoes.append(sessao_historico)
+        with open(caminho_hist, "w", encoding="utf-8") as f:
+            json.dump(historico_sessoes, f, indent=4, ensure_ascii=False)
+    except Exception as e:
+        print(f"Erro ao salvar no historico_sessoes.json: {e}")
+
+    # Prepara os dados para salvar de volta no arquivo original
     dados_atualizados = {
         "sessoes_ativas": sessoes_ativas,
         "historico": historico
     }
-    
     with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
         json.dump(dados_atualizados, arquivo, indent=4, ensure_ascii=False)
-        
     return True

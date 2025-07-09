@@ -14,10 +14,10 @@
 {% endwith %}
 
 <form method="POST">
-  <label>Cliente: <input type="text" name="cliente" value="{{ cliente or '' }}" required></label>
+  <label>Cliente: <input type="text" name="cliente" value="{{ cliente or '' }}"></label>
 
   <label>Artista:
-    <select name="artista" required>
+    <select name="artista">
       <option value="">Selecione um artista</option>
       {% for nome in artistas %}
         <option value="{{ nome }}" {% if nome == artista %}selected{% endif %}>{{ nome }}</option>
@@ -26,13 +26,13 @@
   </label>
 
   <label>Data: <input type="date" name="data" value="{{ data or '' }}" required placeholder="Data da sessão"></label>
-  <label>Hora: <input type="time" name="hora" value="{{ hora or '' }}" required placeholder="Hora da sessão"></label>
+  <label>Hora: <input type="time" name="hora" value="{{ hora or '' }}" placeholder="Hora da sessão"></label>
   <label>Valor (R$): <input type="number" step="0.01" name="valor" value="{{ valor or '' }}" placeholder="0.00"></label>
   <label>Observações: <input type="text" name="observacoes" value="{{ observacoes or '' }}" placeholder="Observações sobre a sessão"></label>
   
         <div class="form-botoes">
             <button type="submit" class="btn btn-success">Agendar Sessão</button>
-            <a href="{{ url_for('sessoes_bp.listar_sessoes') }}" class="btn btn-secondary">Cancelar</a>
+            <a href="#" onclick="history.back(); return false;" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 {% endblock %}

@@ -1,17 +1,21 @@
 import json
 import os
+from pathlib import Path
 
-CAMINHO_ARQUIVO = "dados/produtos.json"
+CAMINHO_ARQUIVO = Path(__file__).parent.parent / "dados" / "produtos.json"
 
 # --- Função para carregar os produtos do arquivo JSON ---
 def carregar_produtos():
-    if not os.path.exists(CAMINHO_ARQUIVO):
+    if not CAMINHO_ARQUIVO.exists():
+        CAMINHO_ARQUIVO.parent.mkdir(exist_ok=True)
+        with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
+            json.dump([], arquivo)
         return []
-    with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
-        try:
+    try:
+        with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
             return json.load(arquivo)
-        except json.JSONDecodeError:
-            return []
+    except (json.JSONDecodeError, FileNotFoundError):
+        return []
 
 # --- Função para salvar lista de produtos no JSON ---
 def salvar_produtos(lista):

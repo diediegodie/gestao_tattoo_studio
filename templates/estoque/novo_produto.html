@@ -20,7 +20,7 @@
         
         <div class="form-botoes">
             <button type="submit" class="btn btn-success">Cadastrar Produto</button>
-            <a href="{{ url_for('estoque_bp.listar_produtos') }}" class="btn btn-secondary">Cancelar</a>
+            <a href="#" onclick="history.back(); return false;" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 {% endblock %}

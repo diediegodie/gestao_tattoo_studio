@@ -52,6 +52,9 @@ def registrar_comissao_avulsa(artista, valor_comissao, valor_total, cliente, dat
         bool: True se registrado com sucesso, False caso contrário
     """
     try:
+        if not valor_comissao or valor_comissao <= 0:
+            # Não registra comissão se valor_comissao for zero ou vazio
+            return False
         comissoes = carregar_comissoes()
         
         nova_comissao = {

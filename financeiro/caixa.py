@@ -6,6 +6,11 @@ BASE_DIR = Path(__file__).parent.parent
 CAMINHO_PAGAMENTOS = BASE_DIR / "dados" / "pagamentos.json"
 
 def carregar_pagamentos():
+    if not CAMINHO_PAGAMENTOS.exists():
+        CAMINHO_PAGAMENTOS.parent.mkdir(exist_ok=True)
+        with open(CAMINHO_PAGAMENTOS, "w", encoding="utf-8") as arquivo:
+            json.dump([], arquivo)
+        return []
     try:
         with open(CAMINHO_PAGAMENTOS, "r", encoding="utf-8") as arquivo:
             return json.load(arquivo)

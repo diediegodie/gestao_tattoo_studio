@@ -27,18 +27,20 @@ def calcular():
 def confirmar():
     sessao_id_str = request.form.get('sessao_id')
     valor_pago_str = request.form.get('valor')
+    porcentagem_str = request.form.get('porcentagem')
 
-    if not sessao_id_str or not valor_pago_str:
-        flash("ID da sessão ou valor não fornecido.", "erro")
+    if not sessao_id_str or not valor_pago_str or not porcentagem_str:
+        flash("ID da sessão, valor ou porcentagem não fornecido.", "erro")
         return redirect(url_for('sessoes_bp.listar_sessoes'))
 
     sessao_id = int(sessao_id_str)
     valor_pago = float(valor_pago_str)
+    porcentagem = float(porcentagem_str)
+    comissao = round(valor_pago * (porcentagem / 100), 2)
 
-    if mover_para_historico(sessao_id=sessao_id, valor_final=valor_pago):
-        flash("Sessão movida para o histórico com sucesso!", "sucesso")
+    if mover_para_historico(sessao_id=sessao_id, valor_final=valor_pago, comissao=comissao):
+        flash(f"Sessão movida para o histórico com sucesso! Comissão: R$ {comissao:.2f} ({porcentagem:.1f}%)", "sucesso")
     else:
         flash("ERRO: Sessão não encontrada ou falha ao mover para o histórico.", "erro")
     
-    # Redireciona para a página de histórico (ajuste o nome da rota se necessário)
     return redirect(url_for('sessoes_bp.listar_sessoes'))

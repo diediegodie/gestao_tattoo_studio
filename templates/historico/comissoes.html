@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block titulo %}Histórico de Comissões por Artista{% endblock %}
+
+{% block conteudo %}
+<h1>Comissões por Artista</h1>
+
+{% if comissoes %}
+<table>
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Artista</th>
+      <th>Cliente</th>
+      <th>Valor Total</th>
+      <th>Comissão</th>
+      <th>Descrição</th>
+      <th>Data Registro</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for comissao in comissoes %}
+    <tr>
+      <td>{{ comissao['data'] }}</td>
+      <td>{{ comissao['artista'] }}</td>
+      <td>{{ comissao['cliente'] }}</td>
+      <td>R$ {{ '%.2f'|format(comissao['valor_total']|float) }}</td>
+      <td>R$ {{ '%.2f'|format(comissao['valor_comissao']|float) }}</td>
+      <td>{{ comissao['descricao'] }}</td>
+      <td>{{ comissao['data_registro'] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Nenhuma comissão registrada.</p>
+{% endif %}
+<div class="botoes-centralizados">
+    <a href="{{ url_for('historico_bp.historico_index') }}" class="btn btn-secondary">Voltar ao Histórico</a>
+</div>
+{% endblock %}

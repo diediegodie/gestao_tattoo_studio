@@ -16,7 +16,7 @@
     <div class="botoes-centralizados">
         <a href="{{ url_for('financeiro_bp.registrar_pagamento_route') }}" class="btn btn-success">Registrar Pagamento</a>
         <a href="{{ url_for('extrato_bp.extrato_mensal') }}" class="btn btn-info">Extrato Mensal</a>
-        <a href="{{ url_for('historico_bp.historico_comissoes_avulsas') }}" class="btn btn-warning">Comissões Avulsas</a>
+        <a href="{{ url_for('historico_bp.historico_comissoes') }}" class="btn btn-warning">Comissões por Artista</a>
     </div>
 
 <!-- Botão de filtro expansível -->
@@ -73,17 +73,19 @@ document.addEventListener('DOMContentLoaded', function() {
         <tbody>
             {% for p in pagamentos %}
             <tr>
-                <td>{{ p.data | data_brasileira }}</td>
-                <td>{{ p.cliente }}</td>
-                <td>{{ p.artista }}</td>
-                <td>R$ {{ "%.2f"|format(p.valor) }}</td>
-                <td>{{ p.forma_pagamento }}</td>
-                <td>{{ p.descricao }}</td>
+                <td>{{ p['data'] | data_brasileira }}</td>
+                <td>{{ p['cliente'] }}</td>
+                <td>{{ p['artista'] }}</td>
+                <td>R$ {{ "%.2f"|format(p['valor']) }}</td>
+                <td>{{ p['forma_pagamento'] }}</td>
+                <td>{{ p['descricao'] }}</td>
                 <td>
                     <div class="btn-acoes-historico">
                         <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">OPÇÕES</button>
                         <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
-                            <a href="#" onclick="return confirmDelete('{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}')" class="btn btn-danger">EXCLUIR</a>
+                            <form action="{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este pagamento?')">EXCLUIR</button>
+                            </form>
                             <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
                         </div>
                     </div>

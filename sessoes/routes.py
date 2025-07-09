@@ -12,6 +12,7 @@ from sessoes.agendamento import (
 from datetime import datetime
 from cadastro_interno.artistas import carregar_artistas
 from sessoes.historico import mover_para_historico
+from pathlib import Path
 import json
 
 sessoes_bp = Blueprint("sessoes_bp", __name__, url_prefix="/sessoes")
@@ -52,19 +53,16 @@ def fechar_sessao(id):
     sessao = next((s for s in agendamentos if s["id"] == id), None)
     
     if sessao:
-        # Armazena os dados da sessão na sessão Flask para uso no formulário de pagamento
-        from flask import session
-        session['sessao_para_pagamento'] = {
-            'id': sessao['id'],
-            'cliente': sessao['cliente'],
-            'artista': sessao['artista'],
+        # Redireciona para o formulário de pagamento com os dados da sessão na query string
+        params = {
             'valor': sessao.get('valor', 0.0),
-            'data': sessao['data'],
-            'observacoes': sessao.get('observacoes', '')
+            'artista': sessao['artista'],
+            'cliente': sessao['cliente'],
+            'sessao_id': sessao['id']  # Adicionado o id da sessão
         }
         
         flash("Sessão pronta para pagamento!", "sucesso")
-        return redirect(url_for('financeiro_bp.registrar_pagamento_route'))
+        return redirect(url_for('financeiro_bp.registrar_pagamento_route', **params))
     else:
         flash("Sessão não encontrada.", "erro")
         return redirect(url_for('sessoes_bp.listar_sessoes'))
@@ -204,39 +202,40 @@ def excluir_do_limbo_route(id):
 @sessoes_bp.route("/historico")
 def listar_historico():
     try:
-        with open("dados/sessoes.json", "r", encoding="utf-8") as arquivo:
-            dados = json.load(arquivo)
-            historico = dados.get("historico", [])
-            
-            # Processa os dados para garantir que o valor está presente
-            sessoes_historico = []
-            for sessao in historico:
-                # Garante que o valor seja numérico e não seja None
-                valor = sessao.get("valor")
-                if valor is None or valor == "":
+        from utils.json_utils import ler_json_seguro
+        caminho = Path(__file__).parent.parent / "dados" / "sessoes.json"
+        dados = ler_json_seguro(caminho, {"sessoes_ativas": [], "historico": []})
+        historico = dados.get("historico", [])
+        
+        # Processa os dados para garantir que o valor está presente
+        sessoes_historico = []
+        for sessao in historico:
+            # Garante que o valor seja numérico e não seja None
+            valor = sessao.get("valor")
+            if valor is None or valor == "":
+                valor = 0.0
+            else:
+                try:
+                    valor = float(valor)
+                except (ValueError, TypeError):
                     valor = 0.0
-                else:
-                    try:
-                        valor = float(valor)
-                    except (ValueError, TypeError):
-                        valor = 0.0
-                
-                sessoes_historico.append({
-                    "id": sessao.get("id", 0),
-                    "data": sessao.get("data", ""),
-                    "cliente": sessao.get("cliente", ""),
-                    "artista": sessao.get("artista", ""),
-                    "valor": valor,
-                    "observacoes": sessao.get("observacoes", ""),
-                    "data_fechamento": sessao.get("data_fechamento", "")
-                })
             
-            # Inverter a ordem para mostrar os mais recentes no topo
-            sessoes_historico.reverse()
-            
-            print(f"Dados do histórico processados: {sessoes_historico}")
-            
-    except (FileNotFoundError, json.JSONDecodeError) as e:
+            sessoes_historico.append({
+                "id": sessao.get("id", 0),
+                "data": sessao.get("data", ""),
+                "cliente": sessao.get("cliente", ""),
+                "artista": sessao.get("artista", ""),
+                "valor": valor,
+                "observacoes": sessao.get("observacoes", ""),
+                "data_fechamento": sessao.get("data_fechamento", "")
+            })
+        
+        # Inverter a ordem para mostrar os mais recentes no topo
+        sessoes_historico.reverse()
+        
+        print(f"Dados do histórico processados: {sessoes_historico}")
+        
+    except Exception as e:
         print(f"Erro ao carregar histórico: {e}")
         sessoes_historico = []
     
@@ -248,9 +247,10 @@ def listar_historico():
 @sessoes_bp.route("/historico/excluir/<int:id>", methods=["POST"])
 def excluir_historico(id):
     try:
-        with open("dados/sessoes.json", "r", encoding="utf-8") as arquivo:
-            dados = json.load(arquivo)
-    except (FileNotFoundError, json.JSONDecodeError):
+        from utils.json_utils import ler_json_seguro, salvar_json_seguro
+        caminho = Path(__file__).parent.parent / "dados" / "sessoes.json"
+        dados = ler_json_seguro(caminho, {"sessoes_ativas": [], "historico": []})
+    except Exception:
         dados = {"sessoes_ativas": [], "historico": []}
     
     # Corrige a comparação para garantir que ambos são inteiros e o campo id existe
@@ -260,8 +260,7 @@ def excluir_historico(id):
     ]
     
     # Salva as alterações
-    with open("dados/sessoes.json", "w", encoding="utf-8") as arquivo:
-        json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+    salvar_json_seguro(caminho, dados)
     
     flash("Sessão removida do histórico com sucesso!", "sucesso")
     return redirect(url_for('sessoes_bp.listar_historico'))
@@ -270,9 +269,10 @@ def excluir_historico(id):
 @sessoes_bp.route("/historico/editar/<int:id>", methods=["GET", "POST"])
 def editar_historico(id):
     try:
-        with open("dados/sessoes.json", "r", encoding="utf-8") as arquivo:
-            dados = json.load(arquivo)
-    except (FileNotFoundError, json.JSONDecodeError):
+        from utils.json_utils import ler_json_seguro, salvar_json_seguro
+        caminho = Path(__file__).parent.parent / "dados" / "sessoes.json"
+        dados = ler_json_seguro(caminho, {"sessoes_ativas": [], "historico": []})
+    except Exception:
         dados = {"sessoes_ativas": [], "historico": []}
     
     sessao = next((s for s in dados["historico"] if s.get("id") == id), None)
@@ -285,8 +285,7 @@ def editar_historico(id):
         sessao["valor"] = float(request.form.get("valor", 0))
         sessao["observacoes"] = request.form.get("observacoes", "")
         
-        with open("dados/sessoes.json", "w", encoding="utf-8") as arquivo:
-            json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+        salvar_json_seguro(caminho, dados)
         
         flash("Sessão atualizada no histórico!", "sucesso")
         return redirect(url_for('sessoes_bp.listar_historico'))

@@ -1,26 +1,26 @@
 import json
 import os
+from pathlib import Path
 from datetime import datetime
 
-CAMINHO_ARQUIVO = "dados/sessoes.json"
+CAMINHO_ARQUIVO = Path(__file__).parent.parent / "dados" / "sessoes.json"
 
 def carregar_agendamentos():
-    if not os.path.exists(CAMINHO_ARQUIVO):
+    if not CAMINHO_ARQUIVO.exists():
+        CAMINHO_ARQUIVO.parent.mkdir(exist_ok=True)
+        with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
+            json.dump({"sessoes_ativas": [], "historico": []}, arquivo, indent=4, ensure_ascii=False)
         return []
-    
     try:
         with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
             dados = json.load(arquivo)
-            
-            if isinstance(dados, list):  # Compatibilidade com versão antiga
+            if isinstance(dados, list):
                 novos_dados = {"sessoes_ativas": dados, "historico": []}
                 with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
                     json.dump(novos_dados, arquivo, indent=4, ensure_ascii=False)
                 return dados
-            
             return dados.get("sessoes_ativas", [])
-            
-    except (json.JSONDecodeError, IOError):
+    except (json.JSONDecodeError, IOError, FileNotFoundError):
         return []
 
 def salvar_agendamentos(lista):
@@ -97,7 +97,7 @@ def excluir_agendamento(indice):
 
 def carregar_sessoes_limbo():
     """Carrega as sessões que estão no limbo"""
-    if not os.path.exists(CAMINHO_ARQUIVO):
+    if not CAMINHO_ARQUIVO.exists():
         return []
     
     try:

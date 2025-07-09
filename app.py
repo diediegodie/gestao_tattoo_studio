@@ -4,15 +4,18 @@ from pathlib import Path
 from dotenv import load_dotenv
 from datetime import datetime  # Necessário para o filtro de data
 from calculadora import calculadora_bp
+
+# Forçar importação das rotas do histórico antes de registrar o blueprint
+import historico.routes
 from historico import historico_bp
-from sessoes.routes import sessoes_bp
 
 # Configuração inicial
 load_dotenv()
 BASE_DIR = Path(__file__).parent
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', os.urandom(24))
+app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
+
 
 # Filtro personalizado para datas
 @app.template_filter("data_brasileira")
@@ -22,6 +25,7 @@ def data_brasileira(data_str):
         return data_obj.strftime("%d/%m/%Y")
     except (ValueError, TypeError):
         return data_str
+
 
 # Registro de Blueprints
 from estoque.views import estoque_bp
@@ -38,10 +42,11 @@ app.register_blueprint(cadastro_bp)
 app.register_blueprint(calculadora_bp)
 app.register_blueprint(historico_bp)
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
+
 if __name__ == "__main__":
-    app.run(debug=os.getenv('DEBUG', 'False').lower() in ('true', '1', 't'))
-    
+    app.run()

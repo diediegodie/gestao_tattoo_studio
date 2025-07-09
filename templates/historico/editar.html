@@ -29,7 +29,7 @@
     
         <div class="form-botoes">
             <button type="submit" class="btn btn-success">Salvar Alterações</button>
-            <a href="{{ url_for('historico_bp.historico_sessoes') }}" class="btn btn-secondary">Cancelar</a>
+            <a href="#" onclick="history.back(); return false;" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 {% endblock %}

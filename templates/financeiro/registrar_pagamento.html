@@ -14,15 +14,18 @@
 {% endwith %}
 
 <form method="POST">
-  <label>Data: <input type="date" name="data" required placeholder="Data do pagamento" value="{{ sessao_pendente.data if sessao_pendente else '' }}"></label>
+  {% if campos_qs.sessao_id %}
+    <input type="hidden" name="sessao_id" value="{{ campos_qs.sessao_id }}">
+  {% endif %}
+  <label>Data: <input type="date" name="data" required placeholder="Data do pagamento" value="{{ campos_qs.data }}"></label>
   
-  <label>Valor (R$): <input type="number" step="0.01" name="valor" required placeholder="0.00" value="{{ sessao_pendente.valor if sessao_pendente else '' }}"></label>
+  <label>Valor (R$): <input type="number" step="0.01" name="valor" required placeholder="0.00" value="{{ campos_qs.valor }}"></label>
 
   <label>Forma de Pagamento:
     <select name="forma_pagamento" id="formaPagamento" required>
       <option value="">Selecione a forma de pagamento</option>
       {% for forma in formas_pagamento %}
-        <option value="{{ forma }}">{{ forma }}</option>
+        <option value="{{ forma }}" {% if campos_qs.forma_pagamento == forma %}selected{% endif %}>{{ forma }}</option>
       {% endfor %}
     </select>
   </label>
@@ -33,23 +36,23 @@
     </label>
   </div>
 
-  <label>Cliente: <input type="text" name="cliente" required placeholder="Nome do cliente" value="{{ sessao_pendente.cliente if sessao_pendente else '' }}"></label>
+  <label>Cliente: <input type="text" name="cliente" placeholder="Nome do cliente" value="{{ campos_qs.cliente }}"></label>
 
   <label>Artista:
     <select name="artista">
         <option value="">Selecione um artista</option>
         {% for artista in artistas %}
-            <option value="{{ artista }}" {% if sessao_pendente.artista == artista %}selected{% endif %}>{{ artista }}</option>
+            <option value="{{ artista }}" {% if campos_qs.artista == artista %}selected{% endif %}>{{ artista }}</option>
         {% endfor %}
     </select>
 </label>
-<label>Porcentagem de Comissão (%): <input type="number" step="0.1" name="porcentagem_comissao" value="0" min="0" max="100" placeholder="0"></label>
+<label>Porcentagem de Comissão (%): <input type="number" step="0.1" name="porcentagem_comissao" value="{{ campos_qs.porcentagem_comissao }}" min="0" max="100" placeholder=" "></label>
 
-  <label>Observação: <textarea name="descricao" placeholder="Observação do pagamento">{{ sessao_pendente.observacoes if sessao_pendente else '' }}</textarea></label>
+  <label>Observação: <textarea name="descricao" placeholder="Observação do pagamento">{{ campos_qs.descricao }}</textarea></label>
   
      <div class="form-botoes">
      <button type="submit" class="btn btn-success">Registrar Pagamento</button>
-     <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-secondary">Cancelar</a>
+     <a href="#" onclick="history.back(); return false;" class="btn btn-secondary">Cancelar</a>
    </div>
 </form>
 

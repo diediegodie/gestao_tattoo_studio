@@ -16,10 +16,10 @@
 <form method="POST">
     <label>Data: <input type="date" name="data" value="{{ pagamento.data }}" required placeholder="Data do pagamento"></label>
     
-    <label>Cliente: <input type="text" name="cliente" value="{{ pagamento.cliente }}" required placeholder="Nome do cliente"></label>
+    <label>Cliente: <input type="text" name="cliente" value="{{ pagamento.cliente }}" placeholder="Nome do cliente"></label>
     
     <label>Artista:
-        <select name="artista" required>
+        <select name="artista">
             <option value="">Selecione o artista</option>
             {% for nome in artistas %}
                 <option value="{{ nome }}" {% if nome == pagamento.artista %}selected{% endif %}>{{ nome }}</option>
@@ -50,7 +50,7 @@
     
          <div class="form-botoes">
          <button type="submit" class="btn btn-success">Salvar Alterações</button>
-         <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-secondary">Cancelar</a>
+         <a href="#" onclick="history.back(); return false;" class="btn btn-secondary">Cancelar</a>
      </div>
 </form>
 

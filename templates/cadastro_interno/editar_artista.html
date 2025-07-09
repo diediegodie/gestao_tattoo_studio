@@ -23,7 +23,7 @@
   <input type="text" name="nome" value="{{ nome }}" required>
      <div class="form-botoes">
      <button type="submit" class="btn btn-success">Salvar Artista</button>
-     <a href="{{ url_for('cadastro_bp.gerenciar_artistas') }}" class="btn btn-secondary">Cancelar</a>
+     <a href="#" onclick="history.back(); return false;" class="btn btn-secondary">Cancelar</a>
    </div>
 </form>
 {% endblock %}

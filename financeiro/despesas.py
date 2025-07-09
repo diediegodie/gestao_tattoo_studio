@@ -1,17 +1,21 @@
 import json
 import os
+from pathlib import Path
 from datetime import datetime
 
-CAMINHO_ARQUIVO = "dados/despesas.json"
+CAMINHO_ARQUIVO = Path(__file__).parent.parent / "dados" / "despesas.json"
 
 def carregar_despesas():
-    if not os.path.exists(CAMINHO_ARQUIVO):
+    if not CAMINHO_ARQUIVO.exists():
+        CAMINHO_ARQUIVO.parent.mkdir(exist_ok=True)
+        with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:
+            json.dump([], arquivo)
         return []
-    with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
-        try:
+    try:
+        with open(CAMINHO_ARQUIVO, "r", encoding="utf-8") as arquivo:
             return json.load(arquivo)
-        except json.JSONDecodeError:
-            return []
+    except (json.JSONDecodeError, FileNotFoundError):
+        return []
 
 def salvar_despesas(lista):
     with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as arquivo:

@@ -323,6 +323,30 @@ button:hover, .btn:hover {
     color: #333333;
 }
 
+/* Botão Cancelar - Padrão amarelo */
+.btn-secondary {
+    background-color: #EDAE4C;
+    color: #333333;
+}
+
+.btn-secondary:hover {
+    background-color: #F0B85C;
+    color: #333333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Seletor adicional para botões de cancelar no modal */
+button[onclick*="closeModal"] {
+    background-color: #EDAE4C !important;
+    color: #333333 !important;
+}
+
+button[onclick*="closeModal"]:hover {
+    background-color: #F0B85C !important;
+    color: #333333 !important;
+}
+
 /* Botão voltar */
 .btn-voltar {
     background-color: #545454;
@@ -761,19 +785,21 @@ tr:nth-child(even):hover {
 .search-toggle {
     background-color: #545454;
     color: #F2F2F2;
-    padding: 0.5rem 1rem;
+    padding: 0.3rem 0.6rem;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border: 1px solid #666666;
+    border: 0px solid #666666;
     transition: all 0.3s ease;
     display: inline-block;
-    margin-bottom: 0;
+    margin-bottom: 5px;
     width: auto;
-    max-width: 200px;
+    max-width: 140px;
+    min-width: 80px;
+    box-sizing: border-box;
 }
 
 .search-toggle:hover {
