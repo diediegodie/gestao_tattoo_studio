@@ -51,6 +51,7 @@ def historico_index():
             pagamentos = json.load(f)
     except Exception as e:
         pass
+    pagamentos = list(reversed(pagamentos))
     # Comissões
     comissoes = []
     try:
@@ -58,6 +59,7 @@ def historico_index():
             comissoes = json.load(f)
     except Exception as e:
         pass
+    comissoes = list(reversed(comissoes))
     # Sessões realizadas
     sessoes = []
     try:
@@ -66,6 +68,7 @@ def historico_index():
             sessoes = json.load(f)
     except Exception as e:
         pass
+    sessoes = list(reversed(sessoes))
     return render_template(
         "historico/historico.html",
         pagamentos=pagamentos,
