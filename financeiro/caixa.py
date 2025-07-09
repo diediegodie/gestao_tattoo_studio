@@ -5,6 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent.parent
 CAMINHO_PAGAMENTOS = BASE_DIR / "dados" / "pagamentos.json"
 
+
 def carregar_pagamentos():
     if not CAMINHO_PAGAMENTOS.exists():
         CAMINHO_PAGAMENTOS.parent.mkdir(exist_ok=True)
@@ -17,6 +18,7 @@ def carregar_pagamentos():
     except (FileNotFoundError, json.JSONDecodeError):
         return []
 
+
 def salvar_pagamentos(pagamentos):
     try:
         with open(CAMINHO_PAGAMENTOS, "w", encoding="utf-8") as arquivo:
@@ -26,10 +28,12 @@ def salvar_pagamentos(pagamentos):
         print(f"Erro ao salvar pagamentos: {e}")
         return False
 
+
 def registrar_pagamento(novo_pagamento):
     pagamentos = carregar_pagamentos()
     pagamentos.append(novo_pagamento)
     return salvar_pagamentos(pagamentos)
+
 
 def excluir_pagamento(indice):
     pagamentos = carregar_pagamentos()
@@ -38,10 +42,30 @@ def excluir_pagamento(indice):
         return salvar_pagamentos(pagamentos)
     return False
 
+
 def gerar_extrato_mensal(mes, ano):
-    pagamentos = carregar_pagamentos()
+    """
+    Para meses anteriores, lê dos arquivos de backup. Para o mês atual, lê do arquivo principal.
+    """
+    from pathlib import Path
+    import json
+
+    base_dir = Path(__file__).parent.parent / "dados"
+    backup_dir = base_dir / "historico_antigo"
+    hoje = datetime.now().date()
     extrato = []
     total_mes = 0.0
+
+    # Se for mês atual, lê do arquivo principal
+    if mes == hoje.month and ano == hoje.year:
+        pagamentos = carregar_pagamentos()
+    else:
+        backup_pagamentos_path = backup_dir / f"pagamentos_{ano}_{mes:02d}.json"
+        if backup_pagamentos_path.exists():
+            with open(backup_pagamentos_path, "r", encoding="utf-8") as f:
+                pagamentos = json.load(f)
+        else:
+            pagamentos = []
 
     for pagamento in pagamentos:
         try:
@@ -49,37 +73,32 @@ def gerar_extrato_mensal(mes, ano):
             if data_pagamento.month == mes and data_pagamento.year == ano:
                 valor = float(pagamento.get("valor", 0))
                 comissao = valor * 0.7  # 70% para o artista
-                
                 pagamento_formatado = {
                     "data": pagamento.get("data", ""),
                     "cliente": pagamento.get("cliente", ""),
                     "artista": pagamento.get("artista", ""),
                     "valor": valor,
                     "comissao": comissao,
-                    "forma_pagamento": pagamento.get("forma_pagamento", "Não informado"),
-                    "descricao": pagamento.get("descricao", "")
+                    "forma_pagamento": pagamento.get(
+                        "forma_pagamento", "Não informado"
+                    ),
+                    "descricao": pagamento.get("descricao", ""),
                 }
                 extrato.append(pagamento_formatado)
                 total_mes += valor
         except (KeyError, ValueError):
             continue
 
-    hoje = datetime.now().date()
-    if mes == hoje.month and ano == hoje.year:
-        return {"extrato": extrato, "total": total_mes, "completo": False}
-    
-    return {"extrato": extrato, "total": total_mes, "completo": True}
+    completo = not (mes == hoje.month and ano == hoje.year)
+    return {"extrato": extrato, "total": total_mes, "completo": completo}
+
 
 def gerar_relatorio(tipo="mensal"):
     pagamentos = carregar_pagamentos()
     hoje = datetime.now().date()
     relatorio = {
         "detalhes": [],
-        "totais": {
-            "valor_total": 0.0,
-            "comissao_total": 0.0,
-            "quantidade": 0
-        }
+        "totais": {"valor_total": 0.0, "comissao_total": 0.0, "quantidade": 0},
     }
 
     for pagamento in pagamentos:
@@ -91,7 +110,11 @@ def gerar_relatorio(tipo="mensal"):
                 incluir = True
             elif tipo == "semanal" and (hoje - data_pagamento).days <= 7:
                 incluir = True
-            elif tipo == "mensal" and data_pagamento.month == hoje.month and data_pagamento.year == hoje.year:
+            elif (
+                tipo == "mensal"
+                and data_pagamento.month == hoje.month
+                and data_pagamento.year == hoje.year
+            ):
                 incluir = True
 
             if incluir:
@@ -102,17 +125,21 @@ def gerar_relatorio(tipo="mensal"):
                     comissao = float(comissao_salva)
                 else:
                     comissao = valor * 0.7
-                
-                relatorio["detalhes"].append({
-                    "data": pagamento.get("data", ""),
-                    "cliente": pagamento.get("cliente", ""),
-                    "artista": pagamento.get("artista", ""),
-                    "valor": valor,
-                    "comissao": comissao,
-                    "forma_pagamento": pagamento.get("forma_pagamento", "Não informado"),
-                    "descricao": pagamento.get("descricao", "")
-                })
-                
+
+                relatorio["detalhes"].append(
+                    {
+                        "data": pagamento.get("data", ""),
+                        "cliente": pagamento.get("cliente", ""),
+                        "artista": pagamento.get("artista", ""),
+                        "valor": valor,
+                        "comissao": comissao,
+                        "forma_pagamento": pagamento.get(
+                            "forma_pagamento", "Não informado"
+                        ),
+                        "descricao": pagamento.get("descricao", ""),
+                    }
+                )
+
                 relatorio["totais"]["valor_total"] += valor
                 relatorio["totais"]["comissao_total"] += comissao
                 relatorio["totais"]["quantidade"] += 1

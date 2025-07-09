@@ -13,8 +13,16 @@ from historico import historico_bp
 load_dotenv()
 BASE_DIR = Path(__file__).parent
 
+
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
+
+# Executa backup mensal automaticamente no início do app, se for dia 1
+from utils.backup_mensal import realizar_backup_mensal
+from datetime import datetime
+
+if datetime.now().day == 1:
+    realizar_backup_mensal()
 
 
 # Filtro personalizado para datas
