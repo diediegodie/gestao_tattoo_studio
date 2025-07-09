@@ -51,3 +51,4 @@ Thumbs.db
 .env.development
 .env.test
 .qodo/
+.docs/

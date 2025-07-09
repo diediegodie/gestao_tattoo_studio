@@ -1,3 +1,273 @@
+/* ================= HISTORICO PAGE STYLES (from historico.html) ================= */
+.historico-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.historico-section {
+  margin-bottom: 3rem;
+  background: #0A090D;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  border: 1px solid #191726;
+  position: relative;
+  overflow: hidden;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.historico-section h2 {
+  margin-bottom: 1.5rem;
+  color: #00C7B4;
+  font-size: 1.5rem;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+thead th {
+  background: #191726;
+  color: #F2F2F2;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #191726;
+  white-space: nowrap;
+  color: #F2F2F2;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.btn {
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin: 0 2px;
+  transition: background-color 0.2s;
+}
+
+.btn-danger {
+  background: #c0392b;
+  color: #fff;
+}
+
+.btn-warning {
+  background: #f39c12;
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #555;
+  color: #fff;
+}
+
+.btn-acoes-historico {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-acoes-toggle {
+  background: #191726;
+  color: #F2F2F2;
+  border: 1px solid #0A090D;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 80px;
+  font-size: 12px;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  z-index: 1001;
+}
+
+.btn-acoes-toggle:hover {
+  background: #0A090D;
+  border-color: #00C7B4;
+}
+
+.btn-acoes-hidden {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 110%;
+  background: #191726;
+  border: 1px solid #0A090D;
+  border-radius: 8px;
+  min-width: 120px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 0.5rem;
+  color: #F2F2F2;
+}
+
+.btn-acoes-historico.active .btn-acoes-hidden {
+  display: block;
+}
+
+.card.text-center {
+  background: #191726;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  color: #A7D9C1;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .historico-container {
+    padding: 0 0.5rem;
+  }
+  .historico-section {
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+  thead th, tbody td {
+    padding: 0.5rem;
+  }
+}
+/* ================= END HISTORICO PAGE STYLES ================= */
+/* ========================================
+   ESTOQUE (INVENTÁRIO) - NOVA PALETA
+   ======================================== */
+
+/* Container principal do módulo de estoque */
+.estoque-container, .estoque-card, .estoque-section {
+    background: #0A090D;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 18px rgba(0, 199, 180, 0.10);
+    border: 1.5px solid #00C7B4;
+    color: #F2F2F2;
+}
+
+/* Títulos do estoque */
+.estoque-container h1, .estoque-container h2, .estoque-container h3,
+.estoque-card h1, .estoque-card h2, .estoque-card h3 {
+    color: #00C7B4;
+    text-shadow: 0 0 10px rgba(0, 199, 180, 0.15);
+}
+
+/* Tabela de estoque */
+.estoque-table, .estoque-container table, .estoque-card table {
+    background: #0A090D;
+    border: 1.5px solid #00C7B4;
+    border-radius: 10px;
+    color: #F2F2F2;
+    box-shadow: 0 2px 10px rgba(0, 199, 180, 0.08);
+}
+.estoque-table th, .estoque-container th, .estoque-card th {
+    background: #00C7B4;
+    color: #0A090D;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+}
+.estoque-table td, .estoque-container td, .estoque-card td {
+    color: #F2F2F2;
+    background: #0A090D;
+}
+.estoque-table tr:nth-child(even), .estoque-container tr:nth-child(even), .estoque-card tr:nth-child(even) {
+    background: #191726;
+}
+.estoque-table tr:hover, .estoque-container tr:hover, .estoque-card tr:hover {
+    background: #00C7B4;
+    color: #0A090D;
+}
+
+/* Botões do estoque */
+.estoque-container .btn, .estoque-card .btn, .estoque-section .btn {
+    background-color: #00C7B4;
+    color: #102542;
+    border: none;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0.7rem 1.3rem;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 199, 180, 0.10);
+}
+.estoque-container .btn:hover, .estoque-card .btn:hover, .estoque-section .btn:hover {
+    background-color: #EDAE4C;
+    color: #102542;
+    box-shadow: 0 4px 16px rgba(237, 174, 76, 0.15);
+}
+
+/* Botão de ação perigosa (ex: excluir) */
+.estoque-container .btn-danger, .estoque-card .btn-danger {
+    background-color: #FF445A;
+    color: #F2F2F2;
+}
+.estoque-container .btn-danger:hover, .estoque-card .btn-danger:hover {
+    background-color: #C82333;
+    color: #F2F2F2;
+}
+
+/* Inputs e selects do estoque */
+.estoque-container input, .estoque-container select, .estoque-card input, .estoque-card select {
+    background: #22304A;
+    color: #F2F2F2;
+    border: 1.5px solid #00C7B4;
+    border-radius: 7px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 16px;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+.estoque-container input:focus, .estoque-container select:focus,
+.estoque-card input:focus, .estoque-card select:focus {
+    outline: none;
+    border-color: #EDAE4C;
+    box-shadow: 0 0 0 2px rgba(237, 174, 76, 0.15);
+}
+
+/* Mensagens de feedback no estoque */
+.estoque-container .mensagem-sucesso, .estoque-card .mensagem-sucesso {
+    background-color: #00C7B4;
+    color: #102542;
+}
+.estoque-container .mensagem-erro, .estoque-card .mensagem-erro {
+    background-color: #FF445A;
+    color: #F2F2F2;
+}
+
+/* Ajuste para responsividade do estoque */
+@media (max-width: 768px) {
+    .estoque-container, .estoque-card, .estoque-section {
+        padding: 1rem;
+    }
+    .estoque-table th, .estoque-container th, .estoque-card th,
+    .estoque-table td, .estoque-container td, .estoque-card td {
+        font-size: 13px;
+        padding: 0.5rem;
+    }
+    .estoque-container .btn, .estoque-card .btn {
+        font-size: 13px;
+        padding: 0.5rem 1rem;
+    }
+}
 /* ========================================
    SISTEMA DE GESTÃO PARA ESTÚDIO TATTOO
    ========================================
@@ -30,8 +300,8 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #F2F2F2;
-    background-color: #333333;
+    color: #A7D9C1;
+    background-color: #0A090D;
     font-size: 18px;
     display: flex;
 }
@@ -42,7 +312,7 @@ body {
 
 /* Menu lateral */
 nav {
-    background: #545454;
+    background: #0A090D;
     width: 250px;
     min-height: 100vh;
     padding: 2rem 1rem;
@@ -57,7 +327,7 @@ nav {
 }
 
 nav a {
-    color: #F2F2F2;
+    color: #A7D9C1;
     text-decoration: none;
     padding: 0.8rem 1.2rem;
     margin: 0.3rem 0;
@@ -73,17 +343,18 @@ nav a {
 }
 
 nav a:hover {
-    background-color: #00C7B4;
+    background-color: #191726;
     transform: translateX(5px);
 }
 
 nav a.active {
-    background-color: #00C7B4;
+    background-color: #191726;
     color: #F2F2F2;
-    border: 2px solid #00C7B4;
+    border: 2px solid #A7D9C1;
 }
 
 /* Container principal */
+/* Main content area with system-wide background */
 .container {
     margin-left: 250px;
     padding: 2rem;
@@ -92,6 +363,7 @@ nav a.active {
     max-width: none;
     display: flex;
     flex-direction: column;
+    background: #0A090D;
 }
 
 /* ========================================
@@ -111,7 +383,7 @@ nav a.active {
 
 .titulo-principal h1 {
     font-size: 2.5rem;
-    color: #00C7B4;
+    color: #A7D9C1;
     margin-bottom: 1rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -130,7 +402,7 @@ nav a.active {
 
 /* Títulos gerais */
 h1, h2, h3 {
-    color: #00C7B4;
+    color: #F2F2F2;
     margin-bottom: 1.5rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -142,7 +414,7 @@ h1 {
     font-size: 2.5rem;
     text-align: center;
     margin-bottom: 2rem;
-    color: #00C7B4;
+    color: #F2F2F2;
 }
 
 h2 {
@@ -172,12 +444,12 @@ a:hover {
 
 /* Formulários */
 form {
-    background: #545454;
+    background: #0A090D;
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     margin-bottom: 2rem;
-    border: 1px solid #666666;
+    border: 1px solid #0A090D;
 }
 
 /* Labels */
@@ -185,7 +457,7 @@ label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #F2F2F2;
+    color: #A7D9C1;
     text-transform: uppercase;
     font-size: 16px;
     letter-spacing: 0.5px;
@@ -201,12 +473,12 @@ select,
 textarea {
     width: 100%;
     padding: 1rem;
-    border: 2px solid #666666;
+    border: 2px solid #191726;
     border-radius: 8px;
     font-size: 18px;
     transition: all 0.3s ease;
     margin-bottom: 1rem;
-    background-color: #666666;
+    background-color: #191726;
     color: #F2F2F2;
     text-align: center;
 }
@@ -220,7 +492,21 @@ textarea:focus {
     outline: none;
     border-color: #00C7B4;
     box-shadow: 0 0 0 3px rgba(0, 199, 180, 0.2);
-    background-color: #545454;
+    background-color: #191726 !important;
+    color: #F2F2F2 !important;
+}
+
+/* Prevent browser autofill from changing background */
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #191726 inset !important;
+    box-shadow: 0 0 0 1000px #191726 inset !important;
+    -webkit-text-fill-color: #F2F2F2 !important;
+    caret-color: #F2F2F2 !important;
+    color: #F2F2F2 !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Validação de campos obrigatórios */
@@ -236,7 +522,7 @@ select[required] {
 }
 
 select[required]:valid {
-    border-color: #666666;
+    border-color: #498BA6;
     box-shadow: none;
 }
 
@@ -261,11 +547,11 @@ input[type="number"]::-moz-number-spin-box {
 .form-centralizado {
     max-width: 400px;
     margin: 0 auto;
-    background: #545454;
+    background: #0A090D;
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    border: 1px solid #666666;
+    border: 1px solid #191726;
 }
 
 .form-centralizado label {
@@ -288,7 +574,7 @@ input[type="number"]::-moz-number-spin-box {
 
 /* Botões base */
 button, .btn {
-    background-color: #00C7B4;
+    background-color: #498BA6;
     color: #F2F2F2;
     border: none;
     padding: 0.8rem 1.5rem;
@@ -315,43 +601,44 @@ button:hover, .btn:hover {
 }
 
 .btn-success {
-    background-color: #00C7B4;
+    background-color: #498BA6;
 }
 
 .btn-warning {
-    background-color: #EDAE4C;
-    color: #333333;
+    background-color: #498BA6;
+    color: #F2F2F2;
 }
 
 /* Botão Cancelar - Padrão amarelo */
 .btn-secondary {
-    background-color: #EDAE4C;
-    color: #333333;
+background-color: #FFA500;
+    color: #F2F2F2;
 }
 
 .btn-secondary:hover {
-    background-color: #F0B85C;
-    color: #333333;
+    background-color: #0A090D;
+    color: #F2F2F2;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 /* Seletor adicional para botões de cancelar no modal */
 button[onclick*="closeModal"] {
-    background-color: #EDAE4C !important;
-    color: #333333 !important;
+    background-color: #191726 !important;
+    color: #F2F2F2 !important;
 }
 
 button[onclick*="closeModal"]:hover {
-    background-color: #F0B85C !important;
-    color: #333333 !important;
+    background-color: #0A090D !important;
+    color: #F2F2F2 !important;
 }
 
 /* Botão voltar */
+/* Botão voltar */
 .btn-voltar {
-    background-color: #545454;
+    background-color: #191726;
     color: #F2F2F2;
-    border: 1px solid #666666;
+    border: 1px solid #0A090D;
     padding: 0.5rem 1rem;
     border-radius: 6px;
     text-decoration: none;
@@ -367,7 +654,7 @@ button[onclick*="closeModal"]:hover {
 }
 
 .btn-voltar:hover {
-    background-color: #666666;
+    background-color: #0A090D;
     border-color: #00C7B4;
     color: #F2F2F2;
 }
@@ -391,9 +678,9 @@ button[onclick*="closeModal"]:hover {
 
 /* Botões de ações toggle */
 .btn-acoes-toggle {
-    background-color: #545454;
+    background-color: #191726;
     color: #F2F2F2;
-    border: 1px solid #666666;
+    border: 1px solid #0A090D;
     padding: 0.4rem 0.8rem;
     font-size: 12px;
     min-width: 80px;
@@ -403,7 +690,7 @@ button[onclick*="closeModal"]:hover {
 }
 
 .btn-acoes-toggle:hover {
-    background-color: #666666;
+    background-color: #0A090D;
     border-color: #00C7B4;
 }
 
@@ -413,8 +700,8 @@ button[onclick*="closeModal"]:hover {
     position: absolute;
     top: 100%;
     left: 0;
-    background: #545454;
-    border: 1px solid #666666;
+    background: #191726;
+    border: 1px solid #0A090D;
     border-radius: 8px;
     padding: 0.3rem;
     z-index: 999999;
@@ -427,6 +714,9 @@ button[onclick*="closeModal"]:hover {
 }
 
 .btn-acoes-hidden .btn {
+    background: #191726;
+    color: #F2F2F2;
+    border: 1px solid #0A090D;
     padding: 0.2rem 0.4rem;
     font-size: 9px;
     min-width: 60px;
@@ -468,27 +758,28 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 2rem;
-    background: #545454;
+    background: #191726;
     border-radius: 10px;
     overflow: visible;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    border: 1px solid #666666;
+    border: 1px solid #191726;
     position: relative;
     margin-bottom: 0;
     overflow: hidden;
+    color: #F2F2F2
 }
 
 th, td {
     padding: 0.8rem;
     text-align: center;
-    border-bottom: 1px solid #666666;
+    border-bottom: 1px solid #A7D9C1;
     font-size: 16px;
     position: relative;
 }
 
 th {
-    background-color: #666666;
-    color: #F2F2F2;
+    background-color: #498BA6;
+    color: #0A090D;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -496,15 +787,15 @@ th {
 }
 
 tr:hover {
-    background-color: #666666;
+    background-color: #498BA6;
 }
 
 tr:nth-child(even) {
-    background-color: #5a5a5a;
+    background-color: #191726;
 }
 
 tr:nth-child(even):hover {
-    background-color: #666666;
+    background-color: #3C3E73;
 }
 
 /* Container de tabela com scroll */
@@ -512,8 +803,8 @@ tr:nth-child(even):hover {
     max-height: 400px;
     overflow-y: auto;
     border-radius: 10px;
-    border: 1px solid #666666;
-    background: #545454;
+    background: #191726;
+    border: 1px solid #191726;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     position: relative;
 }
@@ -527,12 +818,12 @@ tr:nth-child(even):hover {
 
 /* Tabela de comissões */
 .comissoes-table {
-    background: #545454;
-    border: 1px solid #666666;
+    background: #0A090D;
+    border: 1px solid #191726;
 }
 
 .comissoes-table th {
-    background-color: #666666;
+    background-color: #191726;
     color: #F2F2F2;
 }
 
@@ -545,26 +836,26 @@ tr:nth-child(even):hover {
    ======================================== */
 
 /* Cards base */
+
 .card {
-    background: #545454;
+    background: #0A090D;
     border-radius: 10px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    border: 1px solid #666666;
     position: relative;
     overflow: visible;
 }
 
 /* Calculadora compacta */
+
 .calculadora-compacta {
     max-width: 400px;
     margin: 0 auto;
-    background: #545454;
+    background: #0A090D;
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    border: 1px solid #666666;
 }
 
 .calculadora-compacta h1 {
@@ -587,11 +878,11 @@ tr:nth-child(even):hover {
 
 /* Seções específicas */
 .analise-section {
-    background: #545454;
+    background: #191726;
     padding: 1.5rem;
     border-radius: 10px;
     margin-bottom: 2rem;
-    border: 1px solid #666666;
+    border: 1px solid #191726;
     position: relative;
     overflow: hidden;
     max-height: 600px;
@@ -612,11 +903,11 @@ tr:nth-child(even):hover {
 }
 
 .historico-section {
-    background: #545454;
+    background: #0A090D;
     padding: 1.5rem;
     border-radius: 10px;
     margin-bottom: 2rem;
-    border: 1px solid #666666;
+    border: 0px solid #191726;
     position: relative;
     overflow: hidden;
     max-height: 600px;
@@ -637,6 +928,7 @@ tr:nth-child(even):hover {
 }
 
 /* Grid responsivo para histórico */
+
 .historico-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -664,16 +956,25 @@ tr:nth-child(even):hover {
 }
 
 /* Seção de agendamentos */
+
 .agendamentos-section {
     margin-top: 2rem;
+    background: #0A090D;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #191726;
 }
 
 .agendamentos-section .table-container {
     max-height: 500px;
 }
 
+
 .agendamentos-section table {
     font-size: 14px;
+    background: #191726;
+    border-radius: 10px;
+    border: 1px solid #191726;
 }
 
 /* ========================================
@@ -682,7 +983,7 @@ tr:nth-child(even):hover {
 
 /* Mensagens de sucesso e erro */
 .mensagem-sucesso {
-    background-color: #00C7B4;
+    background-color: #498BA6;
     color: #F2F2F2;
     padding: 1rem;
     border-radius: 8px;
@@ -764,7 +1065,7 @@ tr:nth-child(even):hover {
 }
 
 #confirmModal > div {
-    background-color: #545454;
+    background-color: #191726;
     margin: 15% auto;
     padding: 2rem;
     border-radius: 10px;
@@ -772,7 +1073,7 @@ tr:nth-child(even):hover {
     max-width: 500px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    border: 1px solid #666666;
+    border: 1px solid #0A090D;
 }
 
 #confirmModal p {
@@ -783,7 +1084,7 @@ tr:nth-child(even):hover {
 
 /* Barra de busca */
 .search-toggle {
-    background-color: #545454;
+    background-color: #191726;
     color: #F2F2F2;
     padding: 0.3rem 0.6rem;
     border-radius: 6px;
@@ -792,7 +1093,7 @@ tr:nth-child(even):hover {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border: 0px solid #666666;
+    border: 1px solid #0A090D;
     transition: all 0.3s ease;
     display: inline-block;
     margin-bottom: 5px;
@@ -803,22 +1104,21 @@ tr:nth-child(even):hover {
 }
 
 .search-toggle:hover {
-    background-color: #666666;
+    background-color: #0A090D;
     border-color: #00C7B4;
 }
 
 .search-toggle.active {
     background-color: #00C7B4;
-    color: #F2F2F2;
+    color: #0A090D;
 }
 
 /* Painéis de busca */
 .search-panel {
-    background: #545454;
-    padding: 0.75rem;
+    background: #191726;
     border-radius: 6px;
-    margin-bottom: 1rem;
-    border: 1px solid #666666;
+    margin-bottom: -2rem;
+    border: 1px solid #0A090D;
     display: none;
     transition: all 0.2s ease-in-out;
     max-width: 500px;
@@ -839,18 +1139,27 @@ tr:nth-child(even):hover {
     justify-content: center;
 }
 
+/* Modern palette for search panel inputs */
 .search-panel input[type="text"],
 .search-panel input[type="date"] {
     flex: 0 1 auto;
     min-width: 120px;
     max-width: 200px;
     padding: 0.4rem 0.6rem;
-    background: #333333;
-    border: 1px solid #666666;
-    border-radius: 4px;
+    background: #191726;
+    border: 1.5px solid #00C7B4;
+    border-radius: 6px;
     color: #F2F2F2;
     font-size: 13px;
     transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 4px rgba(0, 199, 180, 0.08);
+}
+
+.search-panel input[type="text"]:focus,
+.search-panel input[type="date"]:focus {
+    outline: none;
+    border-color: #EDAE4C;
+    box-shadow: 0 0 0 2px rgba(237, 174, 76, 0.15);
 }
 
 .search-panel input:focus {
@@ -874,6 +1183,10 @@ tr:nth-child(even):hover {
     font-size: 12px;
     min-width: 70px;
     max-width: 100px;
+    background: #191726;
+    border: 1px solid #0A090D;
+    color: #F2F2F2;
+    border-radius: 6px;
     transition: all 0.2s ease-in-out;
 }
 
@@ -882,11 +1195,11 @@ tr:nth-child(even):hover {
     max-width: 400px;
     margin: 1.5rem auto;
     text-align: center;
-    background: #545454;
+    background: #191726;
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
-    border: 1px solid #666666;
+    border: 1px solid #0A090D;
 }
 
 .seletor-mes select {
@@ -894,8 +1207,8 @@ tr:nth-child(even):hover {
     margin-bottom: 1rem;
     width: 100%;
     padding: 0.8rem;
-    background: #333333;
-    border: 1px solid #666666;
+    background: #191726;
+    border: 1px solid #0A090D;
     border-radius: 8px;
     color: #F2F2F2;
     font-size: 14px;
@@ -922,11 +1235,11 @@ tr:nth-child(even):hover {
 
 /* Seletor de tipo de histórico */
 .seletor-tipo {
-    background: #545454;
+    background: #191726;
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
-    border: 1px solid #666666;
+    border: 1px solid #0A090D;
     max-width: 400px;
     margin-left: auto;
     margin-right: auto;
@@ -943,8 +1256,8 @@ tr:nth-child(even):hover {
 .seletor-tipo select {
     width: 100%;
     padding: 0.8rem;
-    background: #333333;
-    border: 1px solid #666666;
+    background: #191726;
+    border: 1px solid #0A090D;
     border-radius: 8px;
     color: #F2F2F2;
     font-size: 14px;
@@ -958,8 +1271,9 @@ tr:nth-child(even):hover {
 }
 
 /* Resumo financeiro */
+
 .resumo-financeiro {
-    background: linear-gradient(135deg, #545454 0%, #666666 100%);
+    background: linear-gradient(135deg, #0A090D 0%, #191726 100%);
     padding: 1.5rem;
     border-radius: 12px;
     margin-top: 1.5rem;
@@ -988,9 +1302,10 @@ tr:nth-child(even):hover {
 }
 
 /* Valor líquido destacado */
+
 .valor-liquido {
     background: linear-gradient(135deg, #00C7B4 0%, #00A89A 100%);
-    color: #333333;
+    color: #0A090D;
     padding: 1rem;
     border-radius: 8px;
     margin-top: 1rem;
@@ -1042,50 +1357,62 @@ tr:nth-child(even):hover {
 }
 
 /* Busca container */
+
+/* Busca container - NOVA PALETA */
 .busca-container {
-    background: none !important;
-    border: none !important;
+    background: #191726 !important;
+    border: 1px solid #0A090D !important;
     box-shadow: none !important;
-    padding: 0 !important;
+    padding: 0.5rem 1rem !important;
     margin-bottom: 18px !important;
+    border-radius: 8px !important;
 }
 
 .busca-container input,
 .busca-container select {
-    background: #fff !important;
-    border: 1px solid #ccc !important;
-    color: #333 !important;
-    border-radius: 4px !important;
-    padding: 6px 10px !important;
+    background: #191726 !important;
+    border: 1px solid #0A090D !important;
+    color: #F2F2F2 !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
     font-size: 1rem !important;
     margin-right: 8px !important;
     box-shadow: none !important;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.busca-container input:focus,
+.busca-container select:focus {
+    outline: none !important;
+    border-color: #00C7B4 !important;
+    box-shadow: 0 0 0 2px rgba(0, 199, 180, 0.15) !important;
 }
 
 .busca-container label {
     margin-right: 6px !important;
     font-weight: 500 !important;
-    color: #333 !important;
+    color: #F2F2F2 !important;
     background: none !important;
 }
 
-/* Filtro de data minimalista */
+/* Filtro de data minimalista - NOVA PALETA */
 .search-panel input[type="date"],
 .busca-container .filtro-data {
     min-width: 120px !important;
     max-width: 180px !important;
-    background: #fff !important;
-    border: 1px solid #ccc !important;
-    border-radius: 4px !important;
-    padding: 6px 10px !important;
-    color: #333 !important;
+    background: #191726 !important;
+    border: 1px solid #0A090D !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    color: #F2F2F2 !important;
+    transition: border 0.2s, box-shadow 0.2s;
 }
 
-/* Correção específica para página financeiro */
+/* Correção específica para página financeiro - NOVA PALETA */
 .search-panel input[type="date"] {
     color: #F2F2F2 !important;
-    background: #666666 !important;
-    border: 1px solid #666666 !important;
+    background: #191726 !important;
+    border: 1px solid #0A090D !important;
 }
 
 /* ========================================
@@ -1188,6 +1515,7 @@ tr:nth-child(even):hover {
     }
     
     .container {
+        background: #191726;
         margin-left: 200px;
         width: calc(100% - 200px);
         padding: 1rem;
@@ -1302,8 +1630,10 @@ tr:nth-child(even):hover {
 /* Responsividade para tablets */
 @media (min-width: 769px) and (max-width: 1199px) {
     .container {
-        max-width: 1000px;
+        background: #0A090D;
+        max-width: 769px;
         margin: 0 auto 0 250px;
+        align-items: center;
     }
     
     .historico-grid {
@@ -1313,10 +1643,12 @@ tr:nth-child(even):hover {
 }
 
 /* Responsividade para desktop */
-@media (min-width: 1200px) {
+@media (min-width: 1000px) {
     .container {
-        max-width: 1200px;
+        background: #0A090D;
+        max-width: 1000px;
         margin: 0 auto 0 250px;
+        align-items: center;
     }
     
     .historico-grid {
@@ -1419,9 +1751,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Botão principal "OPÇÕES" */
 .btn-acoes-toggle {
-    background: #545454;
+    background: #191726;
     color: #F2F2F2;
-    border: 2px solid #666666;
+    border: 2px solid #0A090D;
     padding: 0.5rem 1rem;
     border-radius: 8px;
     cursor: pointer;
@@ -1459,9 +1791,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Botões individuais (Editar, Excluir, etc.) */
 .btn-acoes-hidden .btn {
-    background: #545454;
+    background: #191726;
     color: #F2F2F2;
-    border: 2px solid #666666;
+    border: 2px solid #0A090D;
     padding: 0.5rem 1rem;
     border-radius: 8px;
     cursor: pointer;
@@ -1558,9 +1890,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .table-container .btn-acoes-toggle {
-    background: #545454 !important;
+    background: #191726 !important;
     color: #F2F2F2 !important;
-    border: 2px solid #666666 !important;
+    border: 2px solid #0A090D !important;
     padding: 0.5rem 1rem !important;
     border-radius: 8px !important;
     cursor: pointer !important;
@@ -1607,9 +1939,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .table-container .btn-acoes-hidden .btn {
-    background: #545454 !important;
+    background: #191726 !important;
     color: #F2F2F2 !important;
-    border: 2px solid #666666 !important;
+    border: 2px solid #0A090D !important;
     padding: 0.5rem 1rem !important;
     border-radius: 8px !important;
     cursor: pointer !important;
