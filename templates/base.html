@@ -28,6 +28,14 @@
             {% for category, message in messages %}
               <div class="mensagem-{{ category }}">{{ message }}</div>
             {% endfor %}
+            <script>
+              setTimeout(function() {
+                var msgs = document.querySelectorAll('.mensagem-success');
+                msgs.forEach(function(msg) {
+                  msg.style.display = 'none';
+                });
+              }, 3000);
+            </script>
           {% endif %}
         {% endwith %}
         {% block conteudo %}{% endblock %}

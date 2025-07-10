@@ -3,6 +3,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  align-items: center;
 }
 
 .historico-section {
@@ -295,6 +296,7 @@ tr:last-child td {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    align-items: center;
 }
 
 body {
@@ -304,6 +306,7 @@ body {
     background-color: #0A090D;
     font-size: 18px;
     display: flex;
+    align-items: center;
 }
 
 /* ========================================
@@ -379,6 +382,7 @@ nav a.active {
     align-items: center;
     justify-content: center;
     min-height: 60vh;
+    align-items: center;
 }
 
 .titulo-principal h1 {
@@ -389,6 +393,7 @@ nav a.active {
     text-transform: uppercase;
     letter-spacing: 2px;
     text-shadow: 0 0 15px rgba(0, 199, 180, 0.3);
+    align-items: center;
 }
 
 .titulo-principal h2 {
@@ -398,6 +403,7 @@ nav a.active {
     text-transform: uppercase;
     letter-spacing: 3px;
     text-shadow: 0 0 20px rgba(242, 242, 242, 0.3);
+    align-items: center;
 }
 
 /* Títulos gerais */
@@ -408,6 +414,7 @@ h1, h2, h3 {
     text-transform: uppercase;
     letter-spacing: 1px;
     text-align: center;
+    align-items: center;
 }
 
 h1 {

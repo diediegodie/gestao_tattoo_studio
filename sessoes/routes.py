@@ -17,15 +17,16 @@ import json
 
 sessoes_bp = Blueprint("sessoes_bp", __name__, url_prefix="/sessoes")
 
+
 @sessoes_bp.route("/")
 def listar_sessoes():
     sessoes = carregar_agendamentos()
     termo = request.args.get("busca", "").strip().lower()
     data_inicio = request.args.get("data_inicio")
     data_fim = request.args.get("data_fim")
-    
+
     if termo:
-        sessoes = [s for s in sessoes if termo in s.get('cliente', '').lower()]
+        sessoes = [s for s in sessoes if termo in s.get("cliente", "").lower()]
 
     if data_inicio and data_fim:
         try:
@@ -38,34 +39,40 @@ def listar_sessoes():
             ]
         except ValueError:
             flash("Formato de data inválido.", "erro")
-    
+
     # Filtrar sessões normais (não no limbo)
-    sessoes_normais = [s for s in sessoes if not s.get('no_limbo', False)]
-    
+    sessoes_normais = [s for s in sessoes if not s.get("no_limbo", False)]
+    # Exibir as sessões mais antigas no topo, mais novas no final
+    sessoes_normais = sessoes_normais[::-1]
+
     # Carregar sessões do limbo
     sessoes_limbo = carregar_sessoes_limbo()
-    
-    return render_template("sessoes/sessoes.html", sessoes=sessoes_normais, sessoes_limbo=sessoes_limbo)
+
+    return render_template(
+        "sessoes/sessoes.html", sessoes=sessoes_normais, sessoes_limbo=sessoes_limbo
+    )
+
 
 @sessoes_bp.route("/fechar/<int:id>", methods=["POST"])
 def fechar_sessao(id):
     agendamentos = carregar_agendamentos()
     sessao = next((s for s in agendamentos if s["id"] == id), None)
-    
+
     if sessao:
         # Redireciona para o formulário de pagamento com os dados da sessão na query string
         params = {
-            'valor': sessao.get('valor', 0.0),
-            'artista': sessao['artista'],
-            'cliente': sessao['cliente'],
-            'sessao_id': sessao['id']  # Adicionado o id da sessão
+            "valor": sessao.get("valor", 0.0),
+            "artista": sessao["artista"],
+            "cliente": sessao["cliente"],
+            "sessao_id": sessao["id"],  # Adicionado o id da sessão
         }
-        
+
         flash("Sessão pronta para pagamento!", "sucesso")
-        return redirect(url_for('financeiro_bp.registrar_pagamento_route', **params))
+        return redirect(url_for("financeiro_bp.registrar_pagamento_route", **params))
     else:
         flash("Sessão não encontrada.", "erro")
-        return redirect(url_for('sessoes_bp.listar_sessoes'))
+        return redirect(url_for("sessoes_bp.listar_sessoes"))
+
 
 @sessoes_bp.route("/nova", methods=["GET", "POST"])
 def nova_sessao():
@@ -110,11 +117,13 @@ def nova_sessao():
 
     return render_template("sessoes/nova_sessao.html", artistas=artistas)
 
+
 @sessoes_bp.route("/excluir/<int:indice>")
 def excluir_agendamento_route(indice):
     excluir_agendamento(indice)
     flash("Agendamento excluído com sucesso!", "sucesso")
     return redirect(url_for("sessoes_bp.listar_sessoes"))
+
 
 @sessoes_bp.route("/editar/<int:indice>", methods=["GET", "POST"])
 def editar_agendamento(indice):
@@ -174,6 +183,7 @@ def editar_agendamento(indice):
         "sessoes/editar_sessao.html", sessao=sessao, indice=indice, artistas=artistas
     )
 
+
 @sessoes_bp.route("/enviar-para-limbo/<int:id>", methods=["POST"])
 def enviar_para_limbo_route(id):
     if enviar_para_limbo(id):
@@ -182,6 +192,7 @@ def enviar_para_limbo_route(id):
         flash("Sessão não encontrada.", "erro")
     return redirect(url_for("sessoes_bp.listar_sessoes"))
 
+
 @sessoes_bp.route("/retornar-do-limbo/<int:id>", methods=["POST"])
 def retornar_do_limbo_route(id):
     if retornar_do_limbo(id):
@@ -189,6 +200,7 @@ def retornar_do_limbo_route(id):
     else:
         flash("Sessão não encontrada no limbo.", "erro")
     return redirect(url_for("sessoes_bp.listar_sessoes"))
+
 
 @sessoes_bp.route("/excluir-do-limbo/<int:id>", methods=["POST"])
 def excluir_do_limbo_route(id):
@@ -203,10 +215,11 @@ def excluir_do_limbo_route(id):
 def listar_historico():
     try:
         from utils.json_utils import ler_json_seguro
+
         caminho = Path(__file__).parent.parent / "dados" / "sessoes.json"
         dados = ler_json_seguro(caminho, {"sessoes_ativas": [], "historico": []})
         historico = dados.get("historico", [])
-        
+
         # Processa os dados para garantir que o valor está presente
         sessoes_historico = []
         for sessao in historico:
@@ -219,75 +232,76 @@ def listar_historico():
                     valor = float(valor)
                 except (ValueError, TypeError):
                     valor = 0.0
-            
-            sessoes_historico.append({
-                "id": sessao.get("id", 0),
-                "data": sessao.get("data", ""),
-                "cliente": sessao.get("cliente", ""),
-                "artista": sessao.get("artista", ""),
-                "valor": valor,
-                "observacoes": sessao.get("observacoes", ""),
-                "data_fechamento": sessao.get("data_fechamento", "")
-            })
-        
+
+            sessoes_historico.append(
+                {
+                    "id": sessao.get("id", 0),
+                    "data": sessao.get("data", ""),
+                    "cliente": sessao.get("cliente", ""),
+                    "artista": sessao.get("artista", ""),
+                    "valor": valor,
+                    "observacoes": sessao.get("observacoes", ""),
+                    "data_fechamento": sessao.get("data_fechamento", ""),
+                }
+            )
+
         # Inverter a ordem para mostrar os mais recentes no topo
         sessoes_historico.reverse()
-        
+
         print(f"Dados do histórico processados: {sessoes_historico}")
-        
+
     except Exception as e:
         print(f"Erro ao carregar histórico: {e}")
         sessoes_historico = []
-    
+
     return render_template("historico/sessoes.html", sessoes=sessoes_historico)
-
-
 
 
 @sessoes_bp.route("/historico/excluir/<int:id>", methods=["POST"])
 def excluir_historico(id):
     try:
         from utils.json_utils import ler_json_seguro, salvar_json_seguro
+
         caminho = Path(__file__).parent.parent / "dados" / "sessoes.json"
         dados = ler_json_seguro(caminho, {"sessoes_ativas": [], "historico": []})
     except Exception:
         dados = {"sessoes_ativas": [], "historico": []}
-    
+
     # Corrige a comparação para garantir que ambos são inteiros e o campo id existe
     dados["historico"] = [
-        s for s in dados["historico"]
-        if int(s.get("id", -1)) != int(id)
+        s for s in dados["historico"] if int(s.get("id", -1)) != int(id)
     ]
-    
+
     # Salva as alterações
     salvar_json_seguro(caminho, dados)
-    
+
     flash("Sessão removida do histórico com sucesso!", "sucesso")
-    return redirect(url_for('sessoes_bp.listar_historico'))
+    return redirect(url_for("sessoes_bp.listar_historico"))
 
 
 @sessoes_bp.route("/historico/editar/<int:id>", methods=["GET", "POST"])
 def editar_historico(id):
     try:
         from utils.json_utils import ler_json_seguro, salvar_json_seguro
+
         caminho = Path(__file__).parent.parent / "dados" / "sessoes.json"
         dados = ler_json_seguro(caminho, {"sessoes_ativas": [], "historico": []})
     except Exception:
         dados = {"sessoes_ativas": [], "historico": []}
-    
+
     sessao = next((s for s in dados["historico"] if s.get("id") == id), None)
-    
+
     if not sessao:
         flash("Sessão não encontrada no histórico.", "erro")
-        return redirect(url_for('sessoes_bp.listar_historico'))
-    
+        return redirect(url_for("sessoes_bp.listar_historico"))
+
     if request.method == "POST":
         sessao["valor"] = float(request.form.get("valor", 0))
         sessao["observacoes"] = request.form.get("observacoes", "")
-        
+
         salvar_json_seguro(caminho, dados)
-        
+
         flash("Sessão atualizada no histórico!", "sucesso")
-        return redirect(url_for('sessoes_bp.listar_historico'))
-    
+        return redirect(url_for("sessoes_bp.listar_historico"))
+
     return render_template("historico/editar.html", sessao=sessao)
