@@ -2,10 +2,17 @@ version: '3.8'
 services:
   web:
     build: .
-    command: python run.py
+    restart: unless-stopped
     volumes:
-      - .:/app
+      - ./dados:/app/dados  # Persist only the data directory
     ports:
       - "5000:5000"
     environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
       - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
