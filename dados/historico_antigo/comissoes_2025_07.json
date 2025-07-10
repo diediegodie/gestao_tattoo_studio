@@ -1,23 +1,12 @@
 [
     {
-        "id": 40,
+        "id": 47,
         "artista": "Diego",
-        "valor_comissao": 350.0,
-        "valor_total": 500.0,
-        "cliente": "otro cliente",
-        "data": "2025-07-10",
-        "data_registro": "2025-07-10 17:57:42",
-        "descricao": "",
-        "tipo": "pagamento_avulso"
-    },
-    {
-        "id": 41,
-        "artista": "Diego",
-        "valor_comissao": 70.0,
-        "valor_total": 100.0,
+        "valor_comissao": 100.0,
+        "valor_total": 200.0,
         "cliente": "Cliente",
         "data": "2025-07-10",
-        "data_registro": "2025-07-10 17:57:54",
+        "data_registro": "2025-07-10 20:55:17",
         "descricao": "",
         "tipo": "pagamento_avulso"
     }

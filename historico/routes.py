@@ -1,3 +1,60 @@
+from . import historico_bp
+from flask import render_template, request, jsonify, flash, redirect, url_for
+from pathlib import Path
+import json
+from datetime import date
+from collections import defaultdict
+
+
+@historico_bp.route("/arquivar_sessoes", methods=["POST"])
+def arquivar_sessoes():
+    base = Path(__file__).parent.parent / "dados"
+    sessoes_path = base / "sessoes.json"
+    historico_sessoes_path = base / "historico_sessoes.json"
+    backup_dir = base / "historico_antigo"
+    backup_dir.mkdir(exist_ok=True)
+    # Load all sessions from historico_sessoes.json
+    try:
+        with open(historico_sessoes_path, "r", encoding="utf-8") as f:
+            sessoes_realizadas = json.load(f)
+    except Exception:
+        sessoes_realizadas = []
+    if not sessoes_realizadas:
+        flash("Nenhuma sessão realizada para arquivar.", "aviso")
+        return redirect(url_for("historico_bp.historico_index"))
+    # Group sessions by (year, month)
+    sessoes_by_month = defaultdict(list)
+    for sessao in sessoes_realizadas:
+        try:
+            dt = sessao.get("data")
+            if dt:
+                year, month = dt.split("-")[:2]
+                key = (int(year), int(month))
+                sessoes_by_month[key].append(sessao)
+        except Exception:
+            continue
+    # For each month, append to backup file
+    for (year, month), sessoes_list in sessoes_by_month.items():
+        backup_file = backup_dir / f"sessoes_{year}_{int(month):02d}.json"
+        if backup_file.exists():
+            try:
+                with open(backup_file, "r", encoding="utf-8") as f:
+                    existing = json.load(f)
+            except Exception:
+                existing = []
+            existing.extend(sessoes_list)
+            with open(backup_file, "w", encoding="utf-8") as f:
+                json.dump(existing, f, indent=4, ensure_ascii=False)
+        else:
+            with open(backup_file, "w", encoding="utf-8") as f:
+                json.dump(sessoes_list, f, indent=4, ensure_ascii=False)
+    # Remove archived sessions from historico_sessoes.json
+    with open(historico_sessoes_path, "w", encoding="utf-8") as f:
+        json.dump([], f, indent=4, ensure_ascii=False)
+    flash("Sessões arquivadas com sucesso.", "sucesso")
+    return redirect(url_for("historico_bp.historico_index"))
+
+
 # Rota para editar comissão por artista
 from . import historico_bp
 from flask import render_template, request, jsonify, flash, redirect, url_for
@@ -49,7 +106,7 @@ def historico_index():
     try:
         with open(base / "historico_pagamentos.json", "r", encoding="utf-8") as f:
             pagamentos = json.load(f)
-    except Exception as e:
+    except Exception:
         pass
     pagamentos = list(reversed(pagamentos))
     # Comissões
@@ -57,7 +114,7 @@ def historico_index():
     try:
         with open(base / "historico_comissoes.json", "r", encoding="utf-8") as f:
             comissoes = json.load(f)
-    except Exception as e:
+    except Exception:
         pass
     comissoes = list(reversed(comissoes))
     # Sessões realizadas
@@ -66,7 +123,7 @@ def historico_index():
         caminho_sessoes = base / "historico_sessoes.json"
         with open(caminho_sessoes, "r", encoding="utf-8") as f:
             sessoes = json.load(f)
-    except Exception as e:
+    except Exception:
         pass
     sessoes = list(reversed(sessoes))
     return render_template(

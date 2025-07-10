@@ -1564,6 +1564,7 @@ tr:nth-child(even):hover {
     .btn {
         padding: 0.6rem 1rem;
         font-size: 12px;
+        
     }
     
     .btn-acoes-hidden {
@@ -1676,6 +1677,7 @@ tr:nth-child(even):hover {
 /* Transições específicas para elementos interativos */
 .btn, .card, .table-container, .search-panel, .btn-acoes-hidden {
     transition: all 0.2s ease-in-out;
+    
 }
 
 /* Hover effects mais suaves */

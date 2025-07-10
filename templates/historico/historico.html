@@ -5,8 +5,9 @@
 {% block conteudo %}
 <h1>Histórico Geral</h1>
 
-<div class="historico-container">
-  <div class="historico-section">
+
+<div class="historico-container" style="display: block;">
+  <div class="historico-section" style="margin-bottom: 2.5rem;">
     <h2>Pagamentos</h2>
     <div class="table-container">
       {% if pagamentos %}
@@ -52,7 +53,7 @@
     </div>
   </div>
 
-  <div class="historico-section">
+  <div class="historico-section" style="margin-bottom: 2.5rem;">
     <h2>Comissões por Artista</h2>
     <div class="table-container">
       {% if comissoes %}
@@ -100,7 +101,7 @@
     </div>
   </div>
 
-  <div class="historico-section">
+  <div class="historico-section" style="margin-bottom: 2.5rem;">
     <h2>Sessões Realizadas</h2>
     <div class="table-container">
       {% if sessoes %}
@@ -143,8 +144,17 @@
       {% else %}
       <div class="card text-center"><p>Nenhuma sessão realizada registrada.</p></div>
       {% endif %}
+      <div style="margin-top: 1.5rem; text-align: right;">
+        <form action="{{ url_for('historico_bp.arquivar_sessoes') }}" method="post" style="display:inline;">
+        </form>
+      </div>
     </div>
   </div>
+</div>
+  <div style="text-align: center; margin-top: 0px;">
+  <form action="/historico/arquivar_sessoes" method="post" style="display: inline;">
+    <button type="submit" class="btn btn-warning">Arquivar Sessões</button>
+  </form>
 </div>
 
 

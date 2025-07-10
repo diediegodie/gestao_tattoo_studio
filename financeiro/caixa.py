@@ -89,8 +89,49 @@ def gerar_extrato_mensal(mes, ano):
         except (KeyError, ValueError):
             continue
 
+    # Comissões
+    comissoes = []
+    total_comissoes = 0.0
+    backup_comissoes_path = backup_dir / f"comissoes_{ano}_{mes:02d}.json"
+    if backup_comissoes_path.exists():
+        with open(backup_comissoes_path, "r", encoding="utf-8") as f:
+            comissoes_data = json.load(f)
+        for c in comissoes_data:
+            try:
+                data_comissao = datetime.strptime(c["data"], "%Y-%m-%d").date()
+                if data_comissao.month == mes and data_comissao.year == ano:
+                    valor_comissao = float(c.get("valor_comissao", 0))
+                    valor_total = float(c.get("valor_total", 0))
+                    comissao_formatada = {
+                        "data": c.get("data", ""),
+                        "cliente": c.get("cliente", ""),
+                        "artista": c.get("artista", ""),
+                        "valor_comissao": valor_comissao,
+                        "valor_total": valor_total,
+                        "descricao": c.get("descricao", ""),
+                        "tipo": c.get("tipo", ""),
+                    }
+                    comissoes.append(comissao_formatada)
+                    total_comissoes += valor_comissao
+            except (KeyError, ValueError):
+                continue
+
+    # Sessões arquivadas
+    sessoes_arquivadas = []
+    backup_sessoes_path = backup_dir / f"sessoes_{ano}_{mes:02d}.json"
+    if backup_sessoes_path.exists():
+        with open(backup_sessoes_path, "r", encoding="utf-8") as f:
+            sessoes_arquivadas = json.load(f)
+
     completo = not (mes == hoje.month and ano == hoje.year)
-    return {"extrato": extrato, "total": total_mes, "completo": completo}
+    return {
+        "extrato": extrato,
+        "total": total_mes,
+        "completo": completo,
+        "comissoes": comissoes,
+        "total_comissoes": total_comissoes,
+        "sessoes_arquivadas": sessoes_arquivadas,
+    }
 
 
 def gerar_relatorio(tipo="mensal"):
