@@ -1,0 +1,20 @@
+[
+    {
+        "data": "2025-06-10",
+        "cliente": "otro cliente",
+        "artista": "Diego",
+        "valor": 500.0,
+        "forma_pagamento": "Débito",
+        "descricao": "",
+        "porcentagem_comissao": 70.0
+    },
+    {
+        "data": "2025-06-10",
+        "cliente": "Cliente",
+        "artista": "Diego",
+        "valor": 100.0,
+        "forma_pagamento": "Débito",
+        "descricao": "",
+        "porcentagem_comissao": 70.0
+    }
+]
