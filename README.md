@@ -1,5 +1,5 @@
-# Sistema de Gestão | Tattoo Studio
+# Management System | Tattoo Studio
 
-Sistema completo para gestão de estúdio de tatuagem, incluindo agendamento, financeiro, estoque e histórico.
+A complete management system for tattoo studios, covering scheduling, finances, inventory, and client history.
 
-Em construção.
+Currently in development.
