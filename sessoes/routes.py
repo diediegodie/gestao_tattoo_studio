@@ -118,35 +118,40 @@ def nova_sessao():
     return render_template("sessoes/nova_sessao.html", artistas=artistas)
 
 
-@sessoes_bp.route("/excluir/<int:indice>")
-def excluir_agendamento_route(indice):
-    excluir_agendamento(indice)
-    flash("Agendamento excluído com sucesso!", "sucesso")
+# Agora usando id em vez de indice
+@sessoes_bp.route("/excluir/<int:id>")
+def excluir_agendamento_route(id):
+    agendamentos = carregar_agendamentos()
+    # Encontra o índice do agendamento pelo id
+    idx = next((i for i, s in enumerate(agendamentos) if s.get("id") == id), None)
+    if idx is not None:
+        agendamentos.pop(idx)
+        salvar_agendamentos(agendamentos)
+        flash("Agendamento excluído com sucesso!", "sucesso")
+    else:
+        flash("Agendamento não encontrado.", "erro")
     return redirect(url_for("sessoes_bp.listar_sessoes"))
 
 
-@sessoes_bp.route("/editar/<int:indice>", methods=["GET", "POST"])
-def editar_agendamento(indice):
+@sessoes_bp.route("/editar/<int:id>", methods=["GET", "POST"])
+def editar_agendamento(id):
     agendamentos = carregar_agendamentos()
     artistas = carregar_artistas()
 
-    if indice < 0 or indice >= len(agendamentos):
+    sessao = next((s for s in agendamentos if s.get("id") == id), None)
+    if not sessao:
         flash("Agendamento não encontrado.", "erro")
         return redirect(url_for("sessoes_bp.listar_sessoes"))
-
-    sessao = agendamentos[indice]
 
     if request.method == "POST":
         cliente = request.form.get("cliente", "").strip()
         artista = request.form.get("artista", "").strip()
         data = request.form.get("data", "").strip()
         hora = request.form.get("hora", "").strip()
-        # --- CORREÇÃO 1: Ler o valor do formulário ---
         valor = request.form.get("valor", "").strip()
         observacoes = request.form.get("observacoes", "").strip()
 
         erros = []
-
         if not cliente:
             erros.append("Nome do cliente é obrigatório.")
         if not artista:
@@ -162,7 +167,7 @@ def editar_agendamento(indice):
             return render_template(
                 "sessoes/editar_sessao.html",
                 sessao=sessao,
-                indice=indice,
+                id=id,
                 artistas=artistas,
             )
 
@@ -170,8 +175,6 @@ def editar_agendamento(indice):
         sessao["artista"] = artista
         sessao["data"] = data
         sessao["hora"] = hora
-        # --- CORREÇÃO 2: Atualizar o valor na sessão ---
-        # Converte para float, ou define como 0.0 se estiver vazio
         sessao["valor"] = float(valor) if valor else 0.0
         sessao["observacoes"] = observacoes
 
@@ -180,7 +183,7 @@ def editar_agendamento(indice):
         return redirect(url_for("sessoes_bp.listar_sessoes"))
 
     return render_template(
-        "sessoes/editar_sessao.html", sessao=sessao, indice=indice, artistas=artistas
+        "sessoes/editar_sessao.html", sessao=sessao, id=id, artistas=artistas
     )
 
 

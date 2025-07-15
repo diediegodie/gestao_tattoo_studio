@@ -70,7 +70,7 @@ def novo_produto():
     return render_template("estoque/novo_produto.html")
 
 
-@estoque_bp.route("/excluir/<nome>")
+@estoque_bp.route("/excluir/<nome>", methods=["POST", "GET"])
 def excluir_produto_route(nome):
     excluir_produto(nome)
     flash(f"Produto '{nome}' excluído com sucesso!", "sucesso")

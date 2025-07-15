@@ -62,10 +62,10 @@
                 <td>
                     <div class="btn-acoes-historico">
                         <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'sessao')">OPÇÕES</button>
-                        <div class="btn-acoes-hidden" id="acoes-sessao-{{ loop.index0 }}">
+                        <div class="btn-acoes-hidden" id="acoes-sessao-{{ sessao['id'] }}">
                             <a href="#" onclick="enviarParaLimbo({{ sessao['id'] }})" class="btn btn-warning">ENVIAR PARA LIMBO</a>
-                            <a href="{{ url_for('sessoes_bp.editar_agendamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
-                            <a href="#" onclick="return confirmDelete('{{ url_for('sessoes_bp.excluir_agendamento_route', indice=loop.index0) }}')" class="btn btn-danger">EXCLUIR</a>
+                            <a href="{{ url_for('sessoes_bp.editar_agendamento', id=sessao['id']) }}" class="btn btn-warning">EDITAR</a>
+                            <a href="{{ url_for('sessoes_bp.excluir_agendamento_route', id=sessao['id']) }}" class="btn btn-danger">EXCLUIR</a>
                             {% if not sessao.get('paga', False) %}
                                 <a href="#" onclick="concluirSessao({{ sessao['id'] }})" class="btn btn-success">CONCLUÍDO</a>
                             {% endif %}
@@ -170,44 +170,40 @@ document.addEventListener('DOMContentLoaded', function() {
     {% endif %}
 });
 
+
 function enviarParaLimbo(id) {
-    if (confirm('Tem certeza que deseja enviar esta sessão para o limbo?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ url_for("sessoes_bp.enviar_para_limbo_route", id=0) }}'.replace('0', id);
-        document.body.appendChild(form);
-        form.submit();
-    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("sessoes_bp.enviar_para_limbo_route", id=0) }}'.replace('0', id);
+    document.body.appendChild(form);
+    form.submit();
 }
+
 
 function concluirSessao(id) {
-    if (confirm('Tem certeza que deseja concluir esta sessão?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ url_for("sessoes_bp.fechar_sessao", id=0) }}'.replace('0', id);
-        document.body.appendChild(form);
-        form.submit();
-    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("sessoes_bp.fechar_sessao", id=0) }}'.replace('0', id);
+    document.body.appendChild(form);
+    form.submit();
 }
+
 
 function retornarDoLimbo(id) {
-    if (confirm('Tem certeza que deseja retornar esta sessão dos agendamentos?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ url_for("sessoes_bp.retornar_do_limbo_route", id=0) }}'.replace('0', id);
-        document.body.appendChild(form);
-        form.submit();
-    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("sessoes_bp.retornar_do_limbo_route", id=0) }}'.replace('0', id);
+    document.body.appendChild(form);
+    form.submit();
 }
 
+
 function excluirDoLimbo(id) {
-    if (confirm('Tem certeza que deseja excluir definitivamente esta sessão do limbo?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ url_for("sessoes_bp.excluir_do_limbo_route", id=0) }}'.replace('0', id);
-        document.body.appendChild(form);
-        form.submit();
-    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("sessoes_bp.excluir_do_limbo_route", id=0) }}'.replace('0', id);
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 

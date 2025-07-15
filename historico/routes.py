@@ -63,8 +63,8 @@ import json
 from datetime import date
 
 
-@historico_bp.route("/comissoes/editar/<artista>", methods=["GET", "POST"])
-def editar_comissao(artista):
+@historico_bp.route("/comissoes/editar/<id>", methods=["GET", "POST"])
+def editar_comissao(id):
     base = Path(__file__).parent.parent / "dados"
     caminho = base / "historico_comissoes.json"
     comissoes = []
@@ -75,7 +75,7 @@ def editar_comissao(artista):
         flash("Erro ao carregar dados da comissão.", "erro")
         return redirect(url_for("historico_bp.historico_index"))
 
-    comissao = next((c for c in comissoes if c.get("artista") == artista), None)
+    comissao = next((c for c in comissoes if str(c.get("id")) == str(id)), None)
     if not comissao:
         flash("Comissão não encontrada.", "erro")
         return redirect(url_for("historico_bp.historico_index"))
@@ -86,6 +86,15 @@ def editar_comissao(artista):
                 request.form.get("comissao", comissao.get("porcentagem", 0))
             )
             comissao["porcentagem"] = nova_comissao
+            valor_total = comissao.get("valor_total")
+            if valor_total is not None:
+                try:
+                    valor_total = float(valor_total)
+                    comissao["valor_comissao"] = round(
+                        valor_total * (nova_comissao / 100), 2
+                    )
+                except Exception:
+                    pass
             with open(caminho, "w", encoding="utf-8") as f:
                 json.dump(comissoes, f, indent=4, ensure_ascii=False)
             flash("Comissão atualizada com sucesso!", "sucesso")
@@ -94,7 +103,7 @@ def editar_comissao(artista):
             flash("Erro ao salvar alterações.", "erro")
 
     return render_template(
-        "historico/editar_comissao.html", artista=artista, comissao=comissao
+        "historico/editar_comissao.html", artista=comissao["artista"], comissao=comissao
     )
 
 
@@ -103,19 +112,67 @@ def historico_index():
     base = Path(__file__).parent.parent / "dados"
     # Pagamentos
     pagamentos = []
+    pagamentos_path = base / "historico_pagamentos.json"
     try:
-        with open(base / "historico_pagamentos.json", "r", encoding="utf-8") as f:
+        with open(pagamentos_path, "r", encoding="utf-8") as f:
             pagamentos = json.load(f)
     except Exception:
         pass
-    pagamentos = list(reversed(pagamentos))
-    # Comissões
+    # Ensure all pagamentos have a unique, persistent 'id' key
+    import uuid
+
+    changed = False
+    existing_ids = set()
+    for p in pagamentos:
+        if "id" in p:
+            existing_ids.add(str(p["id"]))
+    for p in pagamentos:
+        if (
+            "id" not in p
+            or str(p["id"]) in (None, "", "null")
+            or list(existing_ids).count(str(p["id"])) > 1
+        ):
+            new_id = str(uuid.uuid4())
+            while new_id in existing_ids:
+                new_id = str(uuid.uuid4())
+            p["id"] = new_id
+            existing_ids.add(new_id)
+            changed = True
+    if changed:
+        with open(pagamentos_path, "w", encoding="utf-8") as f:
+            json.dump(pagamentos, f, indent=4, ensure_ascii=False)
+
+    # Ensure all comissoes have a unique, persistent 'id' key
     comissoes = []
+    comissoes_path = base / "historico_comissoes.json"
     try:
-        with open(base / "historico_comissoes.json", "r", encoding="utf-8") as f:
+        with open(comissoes_path, "r", encoding="utf-8") as f:
             comissoes = json.load(f)
     except Exception:
         pass
+    changed_comissoes = False
+    existing_com_ids = set()
+    for c in comissoes:
+        if "id" in c:
+            existing_com_ids.add(str(c["id"]))
+    for c in comissoes:
+        if (
+            "id" not in c
+            or str(c["id"]) in (None, "", "null")
+            or list(existing_com_ids).count(str(c["id"])) > 1
+        ):
+            new_id = str(uuid.uuid4())
+            while new_id in existing_com_ids:
+                new_id = str(uuid.uuid4())
+            c["id"] = new_id
+            existing_com_ids.add(new_id)
+            changed_comissoes = True
+    if changed_comissoes:
+        with open(comissoes_path, "w", encoding="utf-8") as f:
+            json.dump(comissoes, f, indent=4, ensure_ascii=False)
+    pagamentos = list(reversed(pagamentos))
+    # Use the comissoes list with guaranteed ids
+    # (already loaded and fixed above)
     comissoes = list(reversed(comissoes))
     # Sessões realizadas
     sessoes = []
@@ -125,7 +182,11 @@ def historico_index():
             sessoes = json.load(f)
     except Exception:
         pass
+    # Ensure all sessoes have an 'id' key for template compatibility
     sessoes = list(reversed(sessoes))
+    for idx, s in enumerate(sessoes):
+        if "id" not in s:
+            s["id"] = idx
     return render_template(
         "historico/historico.html",
         pagamentos=pagamentos,
@@ -175,8 +236,8 @@ def excluir_sessao_realizada(id):
     return redirect(url_for("historico_bp.historico_index"))
 
 
-@historico_bp.route("/pagamentos/excluir/<int:indice>", methods=["POST"])
-def excluir_pagamento_historico(indice):
+@historico_bp.route("/pagamentos/excluir/<id>", methods=["POST"])
+def excluir_pagamento_historico(id):
     base = Path(__file__).parent.parent / "dados"
     caminho = base / "historico_pagamentos.json"
     pagamentos = []
@@ -185,8 +246,10 @@ def excluir_pagamento_historico(indice):
             pagamentos = json.load(f)
     except Exception:
         pass
-    if 0 <= indice < len(pagamentos):
-        pagamentos.pop(indice)
+    # Remove pagamento by id (string match)
+    original_len = len(pagamentos)
+    pagamentos = [p for p in pagamentos if str(p.get("id")) != str(id)]
+    if len(pagamentos) < original_len:
         with open(caminho, "w", encoding="utf-8") as f:
             json.dump(pagamentos, f, indent=4, ensure_ascii=False)
         flash("Pagamento excluído com sucesso.", "sucesso")
@@ -233,33 +296,20 @@ def editar_historico(id):
         return redirect(url_for("historico_bp.historico_index"))
 
     if request.method == "POST":
-        cliente = request.form.get("cliente", "").strip()
-        artista = request.form.get("artista", "").strip()
-        data = request.form.get("data", "").strip()
-        hora = request.form.get("hora", "").strip()
         valor = request.form.get("valor", "").strip()
         observacoes = request.form.get("observacoes", "").strip()
 
+        # Só valida os campos que são editáveis
         erros = []
-        if not cliente:
-            erros.append("Nome do cliente é obrigatório.")
-        if not artista:
-            erros.append("Nome do artista é obrigatório.")
-        if not data:
-            erros.append("Data é obrigatória.")
-        if not hora:
-            erros.append("Hora é obrigatória.")
+        if valor == "":
+            erros.append("Valor é obrigatório.")
 
         if erros:
             for erro in erros:
                 flash(erro, "erro")
             return render_template("historico/editar.html", sessao=sessao)
 
-        # Atualiza os dados da sessão
-        sessao["cliente"] = cliente
-        sessao["artista"] = artista
-        sessao["data"] = data
-        sessao["hora"] = hora
+        # Atualiza apenas os campos editáveis
         sessao["valor"] = float(valor) if valor else 0.0
         sessao["observacoes"] = observacoes
 

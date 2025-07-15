@@ -6,117 +6,102 @@ from financeiro.caixa import (
     salvar_pagamentos,
     CAMINHO_PAGAMENTOS,
 )
-from financeiro.comissoes import registrar_comissao_avulsa
-from datetime import datetime
+from financeiro.comissoes import (
+    registrar_comissao_avulsa,
+    carregar_comissoes,
+    salvar_comissoes,
+    gerar_id_comissao,
+)
 from cadastro_interno.artistas import carregar_artistas
+from datetime import datetime
 from sessoes.historico import mover_para_historico
-
-# Lista de formas de pagamento disponíveis
-FORMAS_PAGAMENTO = ["Dinheiro", "Pix", "Crédito", "Débito", "Outros"]
+from pathlib import Path
+import json
 
 financeiro_bp = Blueprint("financeiro_bp", __name__, url_prefix="/financeiro")
 
+FORMAS_PAGAMENTO = ["Dinheiro", "Pix", "Crédito", "Débito", "Outros"]
 
-@financeiro_bp.route("/")
-def listar_pagamentos():
-    # Carrega pagamentos do historico_pagamentos.json
-    from pathlib import Path
-    import json
 
+# Helper functions for loading/saving historical payments/commissions
+def carregar_historico_pagamentos():
     caminho = Path(__file__).parent.parent / "dados" / "historico_pagamentos.json"
     try:
         with open(caminho, "r", encoding="utf-8") as f:
-            pagamentos = json.load(f)
+            return json.load(f)
     except Exception:
-        pagamentos = []
+        return []
 
-    data_inicio = request.args.get("data_inicio")
-    data_fim = request.args.get("data_fim")
 
-    if data_inicio and data_fim:
-        try:
-            inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
-            fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
-            pagamentos = [
-                p
-                for p in pagamentos
-                if inicio <= datetime.strptime(p["data"], "%Y-%m-%d").date() <= fim
-            ]
-        except ValueError:
-            flash("Formato de data inválido.", "erro")
+def salvar_historico_pagamentos(lista):
+    caminho = Path(__file__).parent.parent / "dados" / "historico_pagamentos.json"
+    try:
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(lista, f, indent=4, ensure_ascii=False)
+    except Exception as e:
+        flash("Erro ao salvar histórico de pagamentos.", "erro")
 
-    # Inverter a ordem para mostrar os mais recentes no topo
-    pagamentos.reverse()
 
-    return render_template(
-        "financeiro/financeiro.html",
-        pagamentos=pagamentos,
-        formas_pagamento=FORMAS_PAGAMENTO,
-    )
+def carregar_historico_comissoes():
+    caminho = Path(__file__).parent.parent / "dados" / "historico_comissoes.json"
+    try:
+        with open(caminho, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+
+def salvar_historico_comissoes(lista):
+    caminho = Path(__file__).parent.parent / "dados" / "historico_comissoes.json"
+    try:
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(lista, f, indent=4, ensure_ascii=False)
+    except Exception as e:
+        flash("Erro ao salvar histórico de comissões.", "erro")
 
 
 @financeiro_bp.route("/registrar", methods=["GET", "POST"])
 def registrar_pagamento_route():
-    from financeiro.caixa import carregar_pagamentos, salvar_pagamentos
-    from financeiro.comissoes import (
-        carregar_comissoes,
-        salvar_comissoes,
-        gerar_id_comissao,
-    )
-    from pathlib import Path
-    import json
-    from datetime import datetime
-
-    def carregar_historico_pagamentos():
-        caminho = Path(__file__).parent.parent / "dados" / "historico_pagamentos.json"
-        try:
-            with open(caminho, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return []
-
-    def salvar_historico_pagamentos(lista):
-        caminho = Path(__file__).parent.parent / "dados" / "historico_pagamentos.json"
-        try:
-            with open(caminho, "w", encoding="utf-8") as f:
-                json.dump(lista, f, indent=4, ensure_ascii=False)
-        except Exception as e:
-            flash("Erro ao salvar histórico de pagamentos.", "erro")
-
-    def carregar_historico_comissoes():
-        caminho = Path(__file__).parent.parent / "dados" / "historico_comissoes.json"
-        try:
-            with open(caminho, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return []
-
-    def salvar_historico_comissoes(lista):
-        caminho = Path(__file__).parent.parent / "dados" / "historico_comissoes.json"
-        try:
-            with open(caminho, "w", encoding="utf-8") as f:
-                json.dump(lista, f, indent=4, ensure_ascii=False)
-        except Exception as e:
-            flash("Erro ao salvar histórico de comissões.", "erro")
-
     artistas = carregar_artistas()
     if request.method == "POST":
         try:
             valor_str = request.form.get("valor", "0").replace(",", ".")
-            valor = float(valor_str) if valor_str else 0.0
+            try:
+                valor = float(valor_str)
+            except Exception:
+                valor = 0.0
             artista = request.form.get("artista", "").strip()
             porcentagem_str = request.form.get("porcentagem_comissao", "0").replace(
                 ",", "."
             )
-            porcentagem = float(porcentagem_str) if porcentagem_str else 0.0
+            try:
+                porcentagem = float(porcentagem_str)
+            except Exception:
+                porcentagem = 0.0
             descricao = request.form.get("descricao", "").strip()
             data = request.form.get("data") or datetime.now().strftime("%Y-%m-%d")
             cliente = request.form.get("cliente", "").strip()
             forma_pagamento = request.form.get("forma_pagamento", "").strip()
             sessao_id = request.form.get("sessao_id") or request.args.get("sessao_id")
 
-            # Monta o pagamento
+            historico_pagamentos = carregar_historico_pagamentos()
+            if historico_pagamentos:
+                novo_id = (
+                    max(
+                        [
+                            int(p.get("id", 0))
+                            for p in historico_pagamentos
+                            if str(p.get("id", "")).isdigit()
+                        ]
+                        + [0]
+                    )
+                    + 1
+                )
+            else:
+                novo_id = 1
+
             novo_pagamento = {
+                "id": novo_id,
                 "data": data,
                 "cliente": cliente,
                 "artista": artista,
@@ -125,13 +110,9 @@ def registrar_pagamento_route():
                 "descricao": descricao,
                 "porcentagem_comissao": porcentagem,
             }
-
-            # Salva no histórico de pagamentos (arquivo separado)
-            historico_pagamentos = carregar_historico_pagamentos()
             historico_pagamentos.append(novo_pagamento)
             salvar_historico_pagamentos(historico_pagamentos)
 
-            # Se artista preenchido e porcentagem > 0, salva comissão
             if artista and porcentagem > 0:
                 valor_comissao = round(valor * (porcentagem / 100), 2)
                 if valor_comissao > 0:
@@ -147,10 +128,8 @@ def registrar_pagamento_route():
                         "descricao": descricao,
                         "tipo": "pagamento_avulso",
                     }
-                    # Sempre salva comissão avulsa, independente de ser pagamento de sessão ou não
                     comissoes.append(nova_comissao)
                     salvar_comissoes(comissoes)
-                    # Salva também no histórico de comissões
                     historico_comissoes = carregar_historico_comissoes()
                     historico_comissoes.append(nova_comissao)
                     salvar_historico_comissoes(historico_comissoes)
@@ -166,7 +145,6 @@ def registrar_pagamento_route():
             else:
                 flash("Pagamento registrado com sucesso!", "sucesso")
 
-            # Se for pagamento de sessão, mover para histórico
             if sessao_id:
                 try:
                     comissao_valor = (
@@ -212,8 +190,28 @@ def registrar_pagamento_route():
     )
 
 
-@financeiro_bp.route("/excluir/<int:indice>", methods=["POST", "GET"])
-def excluir_pagamento_route(indice):
+@financeiro_bp.route("/", methods=["GET"])
+def listar_pagamentos():
+    caminho = Path(__file__).parent.parent / "dados" / "historico_pagamentos.json"
+    try:
+        with open(caminho, "r", encoding="utf-8") as f:
+            pagamentos = json.load(f)
+    except Exception:
+        pagamentos = []
+    # Ensure all pagamentos have an 'id' key for template compatibility
+    for idx, p in enumerate(pagamentos):
+        if "id" not in p:
+            p["id"] = idx
+    return render_template(
+        "financeiro/financeiro.html",
+        pagamentos=pagamentos,
+        formas_pagamento=FORMAS_PAGAMENTO,
+        filtro_ativo=False,
+    )
+
+
+@financeiro_bp.route("/excluir/<id>", methods=["POST", "GET"])
+def excluir_pagamento_route(id):
     from pathlib import Path
     import json
 
@@ -224,8 +222,11 @@ def excluir_pagamento_route(indice):
             pagamentos = json.load(f)
     except Exception:
         pagamentos = []
-    if 0 <= indice < len(pagamentos):
-        pagamentos.pop(indice)
+    idx = next(
+        (i for i, p in enumerate(pagamentos) if str(p.get("id")) == str(id)), None
+    )
+    if idx is not None:
+        pagamentos.pop(idx)
         with open(caminho, "w", encoding="utf-8") as f:
             json.dump(pagamentos, f, indent=4, ensure_ascii=False)
         flash("Pagamento excluído com sucesso.", "sucesso")
@@ -236,8 +237,8 @@ def excluir_pagamento_route(indice):
     return redirect(url_for("financeiro_bp.listar_pagamentos"))
 
 
-@financeiro_bp.route("/editar/<int:indice>", methods=["GET", "POST"])
-def editar_pagamento(indice):
+@financeiro_bp.route("/editar/<id>", methods=["GET", "POST"])
+def editar_pagamento(id):
     from pathlib import Path
     import json
 
@@ -249,15 +250,13 @@ def editar_pagamento(indice):
     except Exception:
         pagamentos = []
 
-    if indice < 0 or indice >= len(pagamentos):
+    pagamento = next((p for p in pagamentos if str(p.get("id")) == str(id)), None)
+    if not pagamento:
         flash("Pagamento não encontrado.", "erro")
         return redirect(url_for("financeiro_bp.listar_pagamentos"))
 
-    pagamento = pagamentos[indice]
-
     if request.method == "POST":
         try:
-            # Determina a forma de pagamento final
             forma_pagamento = request.form.get("forma_pagamento")
             outra_forma = request.form.get("outra_forma_pagamento", "").strip()
             forma_final = (
@@ -292,7 +291,7 @@ def editar_pagamento(indice):
     return render_template(
         "financeiro/editar_pagamento.html",
         pagamento=pagamento,
-        indice=indice,
+        id=id,
         artistas=artistas,
         formas_pagamento=FORMAS_PAGAMENTO,
         forma_pagamento=forma_exibicao,

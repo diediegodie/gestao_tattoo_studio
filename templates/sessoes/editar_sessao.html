@@ -6,7 +6,7 @@
 <h1>Editar Agendamento</h1>
 
 
-<form method="POST">
+<form method="POST" action="{{ url_for('sessoes_bp.editar_agendamento', id=id) }}">
   <label>Cliente: <input type="text" name="cliente" value="{{ sessao.cliente }}"></label>
 
   <label>Artista:

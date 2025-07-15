@@ -1,0 +1,10 @@
+[
+  {
+    "data": "2025-05-10",
+    "cliente": "Test Client",
+    "artista": "Test Artist",
+    "valor": 123.45,
+    "observacoes": "Test session entry for validation.",
+    "data_fechamento": "2025-05-11"
+  }
+]

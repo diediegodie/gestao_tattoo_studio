@@ -18,134 +18,166 @@
 {% block titulo %}Extrato Mensal{% endblock %}
 
 {% block conteudo %}
-<h1>Extrato Mensal</h1>
+<div class="extrato-center-wrapper">
+  <h1>Extrato Mensal</h1>
 
-<form method="POST" style="margin-bottom: 2rem;">
-    <div class="form-group" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: flex-start;">
-        <label style="margin-bottom: 0;">Mês: 
-            <select name="mes" required>
-                <option value="">Selecione</option>
-                {% for num, nome in meses.items() %}
-                <option value="{{ num }}" {% if mes == num %}selected{% endif %}>{{ nome }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <label style="margin-bottom: 0;">Ano: 
-            <input type="number" name="ano" min="2000" max="2100" 
-                   value="{{ ano if ano else datetime.now().year }}" required>
-        </label>
-        <button type="submit">Buscar Extrato</button>
-    </div>
-</form>
+  <form method="POST" style="margin-bottom: 2rem;">
+      <div class="form-group" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: flex-start;">
+          <label style="margin-bottom: 0;">Mês: 
+              <select name="mes" required>
+                  <option value="">Selecione</option>
+                  {% for num, nome in meses.items() %}
+                  <option value="{{ num }}" {% if mes == num %}selected{% endif %}>{{ nome }}</option>
+                  {% endfor %}
+              </select>
+          </label>
+          <label style="margin-bottom: 0;">Ano: 
+              <input type="number" name="ano" min="2000" max="2100" 
+                     value="{{ ano if ano else datetime.now().year }}" required>
+          </label>
+          <button type="submit">Buscar Extrato</button>
+      </div>
+  </form>
 
-{% if extrato %}
-    <div class="table-container">
-        <h2>Pagamentos - {{ meses.get(mes, '') }}/{{ ano }}</h2>
-        <div class="resumo">
-            <p><strong>Total do período:</strong> R$ {{ "%.2f"|format(total) }}</p>
-            {% if not completo %}
-            <p class="aviso">⚠️ Dados parciais (mês em andamento)</p>
-            {% endif %}
-        </div>
-        <table class="tabela-extrato">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Cliente</th>
-                    <th>Artista</th>
-                    <th>Valor (R$)</th>
-                    <th>Forma de Pagamento</th>
-                    <th>Observação</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in extrato %}
-                <tr>
-                    <td>{{ p.data }}</td>
-                    <td>{{ p.cliente }}</td>
-                    <td>{{ p.artista }}</td>
-                    <td class="valor">R$ {{ "%.2f"|format(p.valor) }}</td>
-                    <td>{{ p.forma_pagamento }}</td>
-                    <td>{{ p.descricao }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% endif %}
+  {% if extrato %}
+      <div class="table-container">
+          <h2>Pagamentos - {{ meses.get(mes, '') }}/{{ ano }}</h2>
+          <div class="resumo">
+              <p><strong>Total do período:</strong> R$ {{ "%.2f"|format(total) }}</p>
+              {% if not completo %}
+              <p class="aviso">⚠️ Dados parciais (mês em andamento)</p>
+              {% endif %}
+          </div>
+          <table class="tabela-extrato">
+              <thead>
+                  <tr>
+                      <th>Data</th>
+                      <th>Cliente</th>
+                      <th>Artista</th>
+                      <th>Valor (R$)</th>
+                      <th>Forma de Pagamento</th>
+                      <th>Observação</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for p in extrato %}
+                  <tr>
+                      <td>{{ p.data }}</td>
+                      <td>{{ p.cliente }}</td>
+                      <td>{{ p.artista }}</td>
+                      <td class="valor">R$ {{ "%.2f"|format(p.valor) }}</td>
+                      <td>{{ p.forma_pagamento }}</td>
+                      <td>{{ p.descricao }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  {% endif %}
 
-{% if comissoes %}
-    <div class="table-container">
-        <h2>Comissões - {{ meses.get(mes, '') }}/{{ ano }}</h2>
-        <div class="resumo">
-            <p><strong>Total de comissões:</strong> R$ {{ "%.2f"|format(total_comissoes) }}</p>
-        </div>
-        <table class="tabela-extrato">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Cliente</th>
-                    <th>Artista</th>
-                    <th>Valor Comissão (R$)</th>
-                    <th>Valor Total (R$)</th>
-                    <th>Tipo</th>
-                    <th>Observação</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for c in comissoes %}
-                <tr>
-                    <td>{{ c.data }}</td>
-                    <td>{{ c.cliente }}</td>
-                    <td>{{ c.artista }}</td>
-                    <td class="valor">R$ {{ "%.2f"|format(c.valor_comissao) }}</td>
-                    <td class="valor">R$ {{ "%.2f"|format(c.valor_total) }}</td>
-                    <td>{{ c.tipo }}</td>
-                    <td>{{ c.descricao }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% endif %}
+  {% if pagamentos_arquivados %}
+      <div class="table-container">
+          <h2>Pagamentos Arquivados - {{ meses.get(mes, '') }}/{{ ano }}</h2>
+          <table class="tabela-extrato">
+              <thead>
+                  <tr>
+                      <th>Data</th>
+                      <th>Cliente</th>
+                      <th>Artista</th>
+                      <th>Valor (R$)</th>
+                      <th>Forma de Pagamento</th>
+                      <th>Observação</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for p in pagamentos_arquivados %}
+                  <tr>
+                      <td>{{ p.data }}</td>
+                      <td>{{ p.cliente }}</td>
+                      <td>{{ p.artista }}</td>
+                      <td class="valor">R$ {{ "%.2f"|format(p.valor) }}</td>
+                      <td>{{ p.forma_pagamento }}</td>
+                      <td>{{ p.descricao }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  {% endif %}
 
-{% if sessoes_arquivadas %}
-    <div class="table-container" style="margin-top: 2rem;">
-        <h3>Sessões Arquivadas - {{ meses.get(mes, '') }}/{{ ano }}</h3>
-        <div class="resumo">
-            <p><strong>Total de sessões arquivadas:</strong> {{ sessoes_arquivadas|length }}</p>
-        </div>
-        <table class="tabela-extrato">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Cliente</th>
-                    <th>Artista</th>
-                    <th>Valor (R$)</th>
-                    <th>Observações</th>
-                    <th>Data de Fechamento</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sessao in sessoes_arquivadas %}
-                <tr>
-                    <td>{{ sessao.data }}</td>
-                    <td>{{ sessao.cliente }}</td>
-                    <td>{{ sessao.artista }}</td>
-                    <td class="valor">R$ {{ "%.2f"|format(sessao.valor) }}</td>
-                    <td>{{ sessao.observacoes }}</td>
-                    <td>{{ sessao.data_fechamento }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% endif %}
+  {% if comissoes %}
+      <div class="table-container">
+          <h2>Comissões - {{ meses.get(mes, '') }}/{{ ano }}</h2>
+          <div class="resumo">
+              <p><strong>Total de comissões:</strong> R$ {{ "%.2f"|format(total_comissoes) }}</p>
+          </div>
+          <table class="tabela-extrato">
+              <thead>
+                  <tr>
+                      <th>Data</th>
+                      <th>Cliente</th>
+                      <th>Artista</th>
+                      <th>Valor Comissão (R$)</th>
+                      <th>Valor Total (R$)</th>
+                      <th>Tipo</th>
+                      <th>Observação</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for c in comissoes %}
+                  <tr>
+                      <td>{{ c.data }}</td>
+                      <td>{{ c.cliente }}</td>
+                      <td>{{ c.artista }}</td>
+                      <td class="valor">R$ {{ "%.2f"|format(c.valor_comissao) }}</td>
+                      <td class="valor">R$ {{ "%.2f"|format(c.valor_total) }}</td>
+                      <td>{{ c.tipo }}</td>
+                      <td>{{ c.descricao }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  {% endif %}
 
-{% if not extrato and not comissoes and mes and ano %}
-    <p class="sem-dados">Nenhum pagamento ou comissão registrado para {{ mes }}/{{ ano }}</p>
-{% endif %}
-    <div class="botoes-centralizados">
-        <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-secondary">Voltar ao Financeiro</a>
-    </div>
+  {% if sessoes_arquivadas %}
+      <div class="table-container" style="margin-top: 2rem;">
+          <h3>Sessões Arquivadas - {{ meses.get(mes, '') }}/{{ ano }}</h3>
+          <div class="resumo">
+              <p><strong>Total de sessões arquivadas:</strong> {{ sessoes_arquivadas|length }}</p>
+          </div>
+          <table class="tabela-extrato">
+              <thead>
+                  <tr>
+                      <th>Data</th>
+                      <th>Cliente</th>
+                      <th>Artista</th>
+                      <th>Valor (R$)</th>
+                      <th>Observações</th>
+                      <th>Data de Fechamento</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for sessao in sessoes_arquivadas %}
+                  <tr>
+                      <td>{{ sessao.data }}</td>
+                      <td>{{ sessao.cliente }}</td>
+                      <td>{{ sessao.artista }}</td>
+                      <td class="valor">R$ {{ "%.2f"|format(sessao.valor) }}</td>
+                      <td>{{ sessao.observacoes }}</td>
+                      <td>{{ sessao.data_fechamento }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  {% endif %}
+
+  {% if not extrato and not comissoes and mes and ano %}
+      <p class="sem-dados">Nenhum pagamento ou comissão registrado para {{ mes }}/{{ ano }}</p>
+  {% endif %}
+  <div class="botoes-centralizados">
+      <a href="{{ url_for('financeiro_bp.listar_pagamentos') }}" class="btn btn-secondary">Voltar ao Financeiro</a>
+  </div>
+</div>
 {% endblock %}

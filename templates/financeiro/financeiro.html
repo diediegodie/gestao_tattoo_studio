@@ -41,12 +41,11 @@ function toggleFilter() {
 }
 
 // Mostrar painel se há filtros ativos
-{% if request.args.get('data_inicio') or request.args.get('data_fim') %}
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('filterPanel').classList.add('show');
-    document.querySelector('.search-toggle').classList.add('active');
+    // Painel de filtro será mostrado se filtro_ativo for True
+    // O backend pode definir filtro_ativo e o JS pode usar um atributo/data-attr se necessário
+    // Para evitar erro de template, não usar Jinja2 if/endif aqui
 });
-{% endif %}
 </script>
 
 {% if pagamentos %}
@@ -74,12 +73,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>{{ p['descricao'] }}</td>
                 <td>
                     <div class="btn-acoes-historico">
-                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">OPÇÕES</button>
-                        <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
-                            <form action="{{ url_for('financeiro_bp.excluir_pagamento_route', indice=loop.index0) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este pagamento?')">EXCLUIR</button>
+                        <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ p.id|default(loop.index0)|int }}, 'pagamento')">OPÇÕES</button>
+                        <div class="btn-acoes-hidden" id="acoes-pagamento-{{ p['id'] }}">
+                            <form action="{{ url_for('financeiro_bp.excluir_pagamento_route', id=p['id']) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">EXCLUIR</button>
                             </form>
-                            <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">EDITAR</a>
+                            <a href="{{ url_for('financeiro_bp.editar_pagamento', id=p['id']) }}" class="btn btn-warning">EDITAR</a>
                         </div>
                     </div>
                 </td>

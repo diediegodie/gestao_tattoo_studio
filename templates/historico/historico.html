@@ -3,10 +3,11 @@
 {% block titulo %}Histórico Geral{% endblock %}
 
 {% block conteudo %}
-<h1>Histórico Geral</h1>
 
-
-<div class="historico-container" style="display: block;">
+<div class="historico-container">
+  <div class="historico-header">
+    <h1>Histórico Geral</h1>
+  </div>
   <div class="historico-section" style="margin-bottom: 2.5rem;">
     <h2>Pagamentos</h2>
     <div class="table-container">
@@ -34,10 +35,10 @@
             <td>{{ pagamento['descricao'] }}</td>
             <td>
               <div class="btn-acoes-historico">
-                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'pagamento')">OPÇÕES</button>
-                <div class="btn-acoes-hidden" id="acoes-pagamento-{{ loop.index0 }}">
-                  <a href="{{ url_for('financeiro_bp.editar_pagamento', indice=loop.index0) }}" class="btn btn-warning">Editar</a>
-                  <form action="{{ url_for('historico_bp.excluir_pagamento_historico', indice=loop.index0) }}" method="POST" style="display:inline;">
+                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ pagamento['id']|default(loop.index0)|int }}, 'pagamento')">OPÇÕES</button>
+                <div class="btn-acoes-hidden" id="acoes-pagamento-{{ pagamento['id']|default(loop.index0)|int }}">
+                  <a href="{{ url_for('financeiro_bp.editar_pagamento', id=pagamento['id']|default(loop.index0)|int) }}" class="btn btn-warning">Editar</a>
+                  <form action="{{ url_for('historico_bp.excluir_pagamento_historico', id=pagamento['id']|default(loop.index0)|int) }}" method="POST" style="display:inline;">
                     <button type="submit" class="btn btn-danger">Excluir</button>
                   </form>
                 </div>
@@ -84,7 +85,7 @@
               <div class="btn-acoes-historico">
                 <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'comissao')">OPÇÕES</button>
                 <div class="btn-acoes-hidden" id="acoes-comissao-{{ loop.index0 }}">
-                  <a href="{{ url_for('historico_bp.editar_comissao', artista=comissao['artista']) }}" class="btn btn-warning">Editar</a>
+                  <a href="{{ url_for('historico_bp.editar_comissao', id=comissao['id']) }}" class="btn btn-warning">Editar</a>
                   <form action="{{ url_for('historico_bp.excluir_comissao_historico', indice=loop.index0) }}" method="POST" style="display:inline;">
                     <button type="submit" class="btn btn-danger">Excluir</button>
                   </form>
@@ -128,10 +129,10 @@
             <td>{{ sessao['data_fechamento'] }}</td>
             <td>
               <div class="btn-acoes-historico">
-                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ loop.index0 }}, 'sessao')">OPÇÕES</button>
-                <div class="btn-acoes-hidden" id="acoes-sessao-{{ loop.index0 }}">
-                  <a href="{{ url_for('historico_bp.editar_historico', id=sessao['id']) }}" class="btn btn-warning">Editar</a>
-                  <form action="{{ url_for('historico_bp.excluir_sessao_realizada', id=sessao['id']) }}" method="POST" style="display:inline;">
+                <button class="btn btn-acoes-toggle" onclick="toggleAcoes({{ sessao['id']|default(loop.index0)|int }}, 'sessao')">OPÇÕES</button>
+                <div class="btn-acoes-hidden" id="acoes-sessao-{{ sessao['id']|default(loop.index0)|int }}">
+                  <a href="{{ url_for('historico_bp.editar_historico', id=sessao['id']|default(loop.index0)|int) }}" class="btn btn-warning">Editar</a>
+                  <form action="{{ url_for('historico_bp.excluir_sessao_realizada', id=sessao['id']|default(loop.index0)|int) }}" method="POST" style="display:inline;">
                     <button type="submit" class="btn btn-danger">Excluir</button>
                   </form>
                 </div>
@@ -144,17 +145,14 @@
       {% else %}
       <div class="card text-center"><p>Nenhuma sessão realizada registrada.</p></div>
       {% endif %}
-      <div style="margin-top: 1.5rem; text-align: right;">
-        <form action="{{ url_for('historico_bp.arquivar_sessoes') }}" method="post" style="display:inline;">
-        </form>
-      </div>
+      <!-- Removed empty form to fix black square issue -->
     </div>
+
+  <div class="historico-footer">
+    <form action="/historico/arquivar_sessoes" method="post">
+      <button type="submit" class="btn btn-warning">Arquivar Sessões</button>
+    </form>
   </div>
-</div>
-  <div style="text-align: center; margin-top: 0px;">
-  <form action="/historico/arquivar_sessoes" method="post" style="display: inline;">
-    <button type="submit" class="btn btn-warning">Arquivar Sessões</button>
-  </form>
 </div>
 
 

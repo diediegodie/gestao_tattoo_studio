@@ -1,0 +1,14 @@
+[
+    {
+        "id": 6,
+        "cliente": "Cliente",
+        "artista": "Artistaaa",
+        "data": "2025-09-13",
+        "hora": "22:49",
+        "valor": 200.02,
+        "observacoes": "",
+        "data_fechamento": "2025-07-14 11:01:58",
+        "paga": true,
+        "comissao": 140.01
+    }
+]

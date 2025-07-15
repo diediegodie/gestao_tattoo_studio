@@ -56,17 +56,19 @@ def gerar_extrato_mensal(mes, ano):
     extrato = []
     total_mes = 0.0
 
-    # Se for mês atual, lê do arquivo principal
+    pagamentos_arquivados = []
+    pagamentos = []
     if mes == hoje.month and ano == hoje.year:
         pagamentos = carregar_pagamentos()
     else:
         backup_pagamentos_path = backup_dir / f"pagamentos_{ano}_{mes:02d}.json"
         if backup_pagamentos_path.exists():
             with open(backup_pagamentos_path, "r", encoding="utf-8") as f:
-                pagamentos = json.load(f)
+                pagamentos_arquivados = json.load(f)
         else:
-            pagamentos = []
+            pagamentos_arquivados = []
 
+    # Extrato principal (pagamentos do mês atual)
     for pagamento in pagamentos:
         try:
             data_pagamento = datetime.strptime(pagamento["data"], "%Y-%m-%d").date()
@@ -86,6 +88,27 @@ def gerar_extrato_mensal(mes, ano):
                 }
                 extrato.append(pagamento_formatado)
                 total_mes += valor
+        except (KeyError, ValueError):
+            continue
+
+    # Pagamentos arquivados (para meses anteriores)
+    pagamentos_arquivados_formatados = []
+    for pagamento in pagamentos_arquivados:
+        try:
+            data_pagamento = datetime.strptime(pagamento["data"], "%Y-%m-%d").date()
+            if data_pagamento.month == mes and data_pagamento.year == ano:
+                valor = float(pagamento.get("valor", 0))
+                pagamento_formatado = {
+                    "data": pagamento.get("data", ""),
+                    "cliente": pagamento.get("cliente", ""),
+                    "artista": pagamento.get("artista", ""),
+                    "valor": valor,
+                    "forma_pagamento": pagamento.get(
+                        "forma_pagamento", "Não informado"
+                    ),
+                    "descricao": pagamento.get("descricao", ""),
+                }
+                pagamentos_arquivados_formatados.append(pagamento_formatado)
         except (KeyError, ValueError):
             continue
 
@@ -131,6 +154,7 @@ def gerar_extrato_mensal(mes, ano):
         "comissoes": comissoes,
         "total_comissoes": total_comissoes,
         "sessoes_arquivadas": sessoes_arquivadas,
+        "pagamentos_arquivados": pagamentos_arquivados_formatados,
     }
 
 

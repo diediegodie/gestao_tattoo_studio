@@ -1,0 +1,11 @@
+[
+  {
+    "data": "2025-05-15",
+    "cliente": "Test Client",
+    "artista": "Test Artist",
+    "valor": 200.00,
+    "forma_pagamento": "Test Payment Method",
+    "descricao": "Test archived payment for validation.",
+    "porcentagem_comissao": 25.0
+  }
+]

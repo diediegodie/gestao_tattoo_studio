@@ -28,6 +28,9 @@
       <td>R$ {{ '%.2f'|format(comissao['valor_comissao']|float) }}</td>
       <td>{{ comissao['descricao'] }}</td>
       <td>{{ comissao['data_registro'] }}</td>
+      <td>
+        <a href="{{ url_for('historico_bp.editar_comissao', id=comissao['id']) }}" class="btn btn-warning">Editar</a>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

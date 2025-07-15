@@ -80,6 +80,7 @@ def extrato_mensal():
         comissoes=dados_extrato["comissoes"],
         total_comissoes=dados_extrato["total_comissoes"],
         sessoes_arquivadas=dados_extrato["sessoes_arquivadas"],
+        pagamentos_arquivados=dados_extrato.get("pagamentos_arquivados", []),
         meses=MESES,
         anos=ANOS,
         datetime=datetime,
