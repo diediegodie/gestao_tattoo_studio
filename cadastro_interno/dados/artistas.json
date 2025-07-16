@@ -2,41 +2,41 @@
     {
         "id": 1,
         "nome": "Ana Silva",
-        "especialidade": "Tradicional",
-        "comissao_padrao": 71.8,
+        "especialidade": "Aquarela",
+        "comissao_padrao": 61.3,
         "ativo": true,
-        "data_cadastro": "2025-01-19"
+        "data_cadastro": "2025-01-18"
     },
     {
         "id": 2,
         "nome": "Carlos Santos",
-        "especialidade": "Aquarela",
-        "comissao_padrao": 60.7,
+        "especialidade": "Tribal",
+        "comissao_padrao": 71.0,
         "ativo": true,
-        "data_cadastro": "2025-01-15"
+        "data_cadastro": "2025-01-14"
     },
     {
         "id": 3,
         "nome": "Maria Oliveira",
-        "especialidade": "Tradicional",
-        "comissao_padrao": 74.3,
+        "especialidade": "Aquarela",
+        "comissao_padrao": 78.0,
         "ativo": true,
-        "data_cadastro": "2025-01-16"
+        "data_cadastro": "2025-01-10"
     },
     {
         "id": 4,
         "nome": "João Pereira",
-        "especialidade": "Tradicional",
-        "comissao_padrao": 67.0,
+        "especialidade": "Minimalista",
+        "comissao_padrao": 77.0,
         "ativo": true,
-        "data_cadastro": "2025-01-06"
+        "data_cadastro": "2025-01-12"
     },
     {
         "id": 5,
         "nome": "Fernanda Costa",
-        "especialidade": "Aquarela",
-        "comissao_padrao": 60.6,
+        "especialidade": "Realismo",
+        "comissao_padrao": 77.8,
         "ativo": true,
-        "data_cadastro": "2025-01-21"
+        "data_cadastro": "2025-01-02"
     }
 ]
